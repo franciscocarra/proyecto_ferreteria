@@ -1,0 +1,19 @@
+/* Ajustes para el carrusel */
+.carousel-inner {
+    max-height: 700px; /* Altura máxima del contenedor del carrusel */
+    background-color: #f8f9fa; /* Color de fondo neutro */
+  }
+  
+  /* Ajustes para las imágenes del carrusel */
+  .carousel-inner img {
+    width: 100%; /* La imagen ocupa todo el ancho del carrusel */
+    height: 100%; /* Altura ajustada al contenedor */
+    object-fit: contain; /* Asegura que toda la imagen sea visible */
+    background-color: #000; /* Opcional: color de fondo para espacios vacíos */
+  }
+  
+  /* Estilos opcionales para los controles del carrusel */
+  .carousel-control-prev-icon,
+  .carousel-control-next-icon {
+    filter: invert(1); /* Cambia el color de los controles si es necesario */
+  }

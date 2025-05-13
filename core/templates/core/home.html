@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ferretería FERREMAS - Menú</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'core/css/carousel.css' %}">
+</head>
+<body class="bg-gray-100 text-gray-900">
+    <header class="bg-dark text-white py-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold">Ferretería Rinco Del Herrero</h1>
+            <nav>
+                <ul class="flex space-x-4">
+                    <li><a href="#inicio" class="hover:underline">Inicio</a></li>
+                    <li><a href="#productos" class="hover:underline">Productos</a></li>
+                    <li><a href="#categorias" class="hover:underline">Categorías</a></li>
+                    <li><a href="#promociones" class="hover:underline">Promociones</a></li>
+                    <li><a href="#contacto" class="hover:underline">Contacto</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div id="carouselExample" class="carousel slide" data-bs-ride="carousel">
+        <!-- Indicadores -->
+        <div class="carousel-indicators">
+          <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+          <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="1" aria-label="Slide 2"></button>
+          <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="2" aria-label="Slide 3"></button>
+        </div>
+      
+        <!-- Imágenes -->
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <img src="{% static 'core/img/herramientas_1.jpg' %}" class="d-block w-100" alt="Los Angeles" style="width:100%; height:auto;">
+          </div>
+          <div class="carousel-item">
+            <img src="{% static 'core/img/herramientas_2.jpg' %}" class="d-block w-100" alt="Chicago" style="width:100%; height:auto;">
+          </div>
+          <div class="carousel-item">
+            <img src="{% static 'core/img/herramientas_3.jpg' %}" class="d-block w-100" alt="New York" style="width:100%; height:auto;">
+          </div>
+        </div>
+      
+        <!-- Controles -->
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Anterior</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Siguiente</span>
+        </button>
+    </div>
+
+    <section class="py-16 bg-white">
+        <div class="container mx-auto text-center">
+            <h2 class="text-3xl font-semibold text-gray-800 mb-8">Nuestros Productos</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-gray-100 p-6 rounded-lg shadow-lg">
+                    <img src="{% static 'core/img/materiales_construccion.jpg' %}" alt="Materiales de construcción" class="w-full h-40 object-cover rounded-t-lg mb-4">
+                    <div class="text-center">
+                        <h3 class="text-xl font-bold text-blue-600 mb-2">MATERIALES DE CONSTRUCCIÓN</h3>
+                        <p class="text-gray-600">Contamos con todos los elementos, productos o materias primas empleados para la construcción de una obra sin importar su composición, forma y método constructivo.</p>
+                    </div>
+                </div>
+                <div class="bg-gray-100 p-6 rounded-lg shadow-lg">
+                    <img src="{% static 'core/img/pintura.jpg' %}" alt="Ferretería" class="w-full h-40 object-cover rounded-t-lg mb-4">
+                    <div class="text-center">
+                        <h3 class="text-xl font-bold text-blue-600 mb-2">pintura</h3>
+                        <p class="text-gray-600">Todo lo tipo de pinturas están aquí a igual de brochas y rodillo de pintura.</p>
+                    </div>
+                </div>
+                <div class="bg-gray-100 p-6 rounded-lg shadow-lg">
+                    <img src="{% static 'core/img/herramientas_4.jpg' %}" alt="Herramientas" class="w-full h-40 object-cover rounded-t-lg mb-4">
+                    <div class="text-center">
+                        <h3 class="text-xl font-bold text-blue-600 mb-2">HERRAMIENTAS</h3>
+                        <p class="text-gray-600">Tenemos todo tipo de herramientas para construir, reparar y modificar para lograr una gran experiencia.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between mb-8">
+                <div class="flex items-center">
+                    <div class="w-1 h-6 bg-orange-500 mr-2"></div>
+                    <h2 class="text-2xl font-bold text-blue-900">LOS MÁS BUSCADOS</h2>
+                </div>
+                <a href="#" class="border border-orange-500 text-orange-500 px-4 py-2 rounded hover:bg-orange-500 hover:text-white transition">VER TODO</a>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+                <div class="bg-white p-4 shadow rounded text-center">
+                    <img src="{% static 'core/img/Martillo_Carpintero_16.png' %}" alt="Ladrillo Fiscal" class="mx-auto mb-3 h-32 object-contain">
+                    <h3 class="font-bold text-gray-800">Martillo Carpintero 16 Oz Uyustools</h3>
+                    <h3 class="text-center font-bold text-gray-800">$8.990 c/u</h3>
+                </div>
+                <div class="bg-white p-4 shadow rounded text-center">
+                    <img src="{% static 'core/img/Ladrillo_princesa_9.webp' %}" alt="Ladrillo Princesa 9" class="mx-auto mb-3 h-32 object-contain">
+                    <h3 class="font-bold text-gray-800">Ladrillo princesa 9 (29X14X9.4)</h3>
+                    <h3 class="text-center font-bold text-gray-800">$990 c/u</h3>
+                </div>
+                <!-- Producto 3 -->
+                <div class="bg-white p-4 shadow rounded text-center relative">
+                    <img src="{% static 'core/img/huincha.jpg' %}" alt="OSB Techshield" class="mx-auto mb-3 h-32 object-contain">
+                    <span class="absolute top-2 right-2 bg-blue-600 text-white text-xs px-2 py-1 rounded">AGOTADO</span>
+                    <h3 class="font-bold text-gray-800">Huincha de medir 10M X 32MM contra impacto</h3>
+                    <h3 class="text-center font-bold text-gray-800">$17.440 c/u</h3>
+                </div>
+                <!-- Producto 4 -->
+                <div class="bg-white p-4 shadow rounded text-center">
+                    <img src="{% static 'core/img/clavos.webp' %}" alt="Ladrillo Princesa 7" class="mx-auto mb-3 h-32 object-contain">
+                    <h3 class="font-bold text-gray-800">Clavo Corriente 2" x 12 Bolsa 1 KG </h3>
+                    <h3 class="text-center font-bold text-gray-800">$1.810 c/u</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-black text-white py-10 mt-16">
+        <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-5 gap-8 text-sm">
+            <!-- Logo y contacto -->
+            <div>
+                <div class="flex items-center mb-4">
+                    <div class="bg-warning text-white font-bold text-lg px-2 py-1 mr-2">FT</div>
+                    <span class="font-bold text-xl">FERREMAS</span>
+                </div>
+                <p class="font-semibold">Casa Matriz</p>
+                <p>Av. Américo Vespucio 1252, Pudahuel, Región Metropolitana</p>
+                <div class="flex items-center mt-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10l1.5-1.5M21 10l-1.5-1.5M9 16h6M10 12h4m-1 8v-8m-4 4h8" /></svg>
+                    <span>+56 9 5940 0400</span>
+                </div>
+                <button class="mt-4 bg-white text-red-600 font-bold py-2 px-4 rounded">Contáctanos</button>
+                <div class="mt-6">
+                    <p class="font-semibold mb-1">Medios de pago</p>
+                    <div class="flex space-x-4 items-center">
+                        <img src="{% static 'core/img/webpay.png' %}" alt="Webpay" class="h-6">
+                        <img src="{% static 'core/img/mercadopago.png' %}" alt="MercadoPago" class="h-6">
+                        <img src="{% static 'core/img/khipu.png' %}" alt="Khipu" class="h-6">
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Nosotros -->
+            <div>
+                <h3 class="font-semibold mb-2">Nosotros</h3>
+                <ul class="space-y-1">
+                    <li><a href="#" class="hover:underline">Quiénes Somos</a></li>
+                    <li><a href="#" class="hover:underline">Tiendas</a></li>
+                    <li><a href="#" class="hover:underline">Canal de Denuncias</a></li>
+                </ul>
+            </div>
+    
+            <!-- Ayuda -->
+            <div>
+                <h3 class="font-semibold mb-2">Ayuda</h3>
+                <ul class="space-y-1">
+                    <li><a href="#" class="hover:underline">FAQ</a></li>
+                    <li><a href="#" class="hover:underline">¿Cómo Comprar?</a></li>
+                    <li><a href="#" class="hover:underline">Condiciones de despacho</a></li>
+                    <li><a href="#" class="hover:underline">Seguimiento de Compra</a></li>
+                </ul>
+            </div>
+    
+            <!-- Categorías -->
+            <div>
+                <h3 class="font-semibold mb-2">Categorías</h3>
+                <ul class="space-y-1">
+                    <li><a href="#" class="hover:underline">Herramientas de Construcción</a></li>
+                    <li><a href="#" class="hover:underline">Herramientas de Aseo y Jardín</a></li>
+                    <li><a href="#" class="hover:underline">Insumos y Accesorios</a></li>
+                    <li><a href="#" class="hover:underline">Pinturas</a></li>
+                </ul>
+            </div>
+    
+            <!-- Legal -->
+            <div>
+                <h3 class="font-semibold mb-2">Legal</h3>
+                <ul class="space-y-1">
+                    <li><a href="#" class="hover:underline">Términos y condiciones</a></li>
+                    <li><a href="#" class="hover:underline">Política de garantía y devoluciones</a></li>
+                    <li><a href="#" class="hover:underline">Políticas de cookies</a></li>
+                    <li><a href="#" class="hover:underline">Políticas de privacidad</a></li>
+                </ul>
+                <div class="mt-4">
+                    <img src="{% static 'core/img/ssl.png' %}" alt="SSL" class="h-10">
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+
+</html>
