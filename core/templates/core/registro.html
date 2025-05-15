@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ferretería FERREMAS - Menú</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'core/css/carousel.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+</head>
+<body class="bg-gray-100 text-gray-900">
+    <header class="bg-dark text-white py-4">
+    <div class="container mx-auto flex justify-between items-center">
+        <h1 class="text-2xl font-bold"><a href="{% url 'home' %}">Ferretería Rinco Del Herrero</a></h1>
+        <nav>
+            <ul class="flex space-x-4">
+                <li><a href="{% url 'home' %}" class="hover:underline">Inicio</a></li>
+                <li><a href="{% url 'productos' %}" class="hover:underline">Productos</a></li>
+                <!-- CAMBIO: botón para mostrar categorías -->
+                <li><button onclick="toggleCategorias()" class="hover:underline focus:outline-none">Categorías</button></li>
+                <li><a href="#promociones" class="hover:underline">Promociones</a></li>
+                <li><a href="{% url 'contacto' %}" class="hover:underline">Contacto</a></li>
+                <li><a href="{% url 'iniciar_session' %}" class="hover:underline">Iniciar sesion</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<!-- SIDEBAR DE CATEGORÍAS -->
+<div id="categoriasSidebar" class="fixed top-0 left-0 w-80 h-full bg-white shadow-lg z-50 transform -translate-x-full transition-transform duration-300 ease-in-out overflow-y-auto">
+    <div class="flex items-center justify-between px-4 py-3 border-b">
+        <h2 class="text-lg font-bold text-gray-800">Categorías</h2>
+        <button onclick="toggleCategorias()" class="text-xl font-bold text-gray-600 hover:text-black">&times;</button>
+    </div>
+    <ul class="p-4 space-y-2 text-gray-700">
+        <li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Aseo Industrial</li>
+        <li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Ropa de Seguridad y Protección Personal</li>
+        <li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Materiales de Construcción</li>
+        <li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Techos y Aislantes</li>
+        <li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Herramientas y máquinas</li>
+        <li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Fijaciones</li>
+        <li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Pintura</li>
+        <li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Maderas y tableros</li>
+        <li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Tensores</li>
+    </ul>
+</div>
+
+<!-- SECCIÓN DE REGISTRO -->
+<section class="container mx-auto my-16 px-4 max-w-2xl text-center">
+    <h2 class="text-2xl font-bold mb-8">Crear nueva cuenta de cliente</h2>
+
+    <!-- Información Personal -->
+    <div class="border rounded-md p-6 mb-8 text-left">
+        <h3 class="text-lg font-semibold mb-4 text-center">Información Personal</h3>
+        <form action="#" method="POST" class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium mb-1">Nombre <span class="text-red-600">*</span></label>
+                <input type="text" name="nombre" class="w-full border rounded p-2" required>
+            </div>
+            <div>
+                <label class="block text-sm font-medium mb-1">Apellidos <span class="text-red-600">*</span></label>
+                <input type="text" name="apellidos" class="w-full border rounded p-2" required>
+            </div>
+            <div class="flex items-center">
+                <input type="checkbox" id="boletin" class="mr-2">
+                <label for="boletin" class="text-sm">Suscribirse al boletín</label>
+            </div>
+            <div>
+                <label class="block text-sm font-medium mb-1">RUT <span class="text-red-600">*</span></label>
+                <input type="text" name="rut" placeholder="12.345.678-9" class="w-full border rounded p-2" required>
+            </div>
+        </form>
+    </div>
+
+    <!-- Información de inicio de sesión -->
+    <div class="border rounded-md p-6 text-left">
+        <h3 class="text-lg font-semibold mb-4 text-center">Información de inicio de sesión</h3>
+        <form action="#" method="POST" class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium mb-1">Correo electrónico <span class="text-red-600">*</span></label>
+                <input type="email" name="email" class="w-full border rounded p-2" required>
+            </div>
+            <div>
+                <label for="password" class="block text-sm font-medium mb-1">Contraseña <span class="text-red-600">*</span></label>
+                <input type="password" id="password" name="password" class="w-full border rounded p-2" required>
+                <p id="password-strength" class="mt-1 text-sm font-semibold">Fuerza de la contraseña: Sin contraseña</p>
+            </div>
+            <div>
+                <label class="block text-sm font-medium mb-1">Confirmar contraseña <span class="text-red-600">*</span></label>
+                <input type="password" name="confirm_password" class="w-full border rounded p-2" required>
+            </div>
+            <div class="flex items-center">
+                <input type="checkbox" id="mostrarContrasena" class="mr-2">
+                <label for="mostrarContrasena" class="text-sm">Mostrar Contraseña</label>
+            </div>
+            <button type="submit" class="bg-gray-800 text-white font-semibold px-6 py-2 rounded">Regístrate</button>
+            <p class="text-sm text-red-500 mt-2">* Campos obligatorios</p>
+        </form>
+    </div>
+</section>
+
+<footer class="bg-black text-white py-10 mt-16">
+        <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-5 gap-8 text-sm">
+            <!-- Logo y contacto -->
+            <div>
+                <div class="flex items-center mb-4">
+                    <div class="bg-warning text-white font-bold text-lg px-2 py-1 mr-2">FT</div>
+                    <span class="font-bold text-xl">FERREMAS</span>
+                </div>
+                <p class="font-semibold">Casa Matriz</p>
+                <p>Av. Américo Vespucio 1252, Pudahuel, Región Metropolitana</p>
+                <div class="flex items-center mt-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10l1.5-1.5M21 10l-1.5-1.5M9 16h6M10 12h4m-1 8v-8m-4 4h8" /></svg>
+                    <span>+56 9 4722 9108</span>
+                </div>
+                <button class="mt-4 bg-white text-red-600 font-bold py-2 px-4 rounded">Contáctanos</button>
+            </div>
+    
+            <!-- Nosotros -->
+            <div>
+                <h3 class="font-semibold mb-2">Nosotros</h3>
+                <ul class="space-y-1">
+                    <li><a href="#" class="hover:underline">Quiénes Somos</a></li>
+                    <li><a href="#" class="hover:underline">Tiendas</a></li>
+                    <li><a href="#" class="hover:underline">Canal de Denuncias</a></li>
+                </ul>
+            </div>
+    
+            <!-- Ayuda -->
+            <div>
+                <h3 class="font-semibold mb-2">Ayuda</h3>
+                <ul class="space-y-1">
+                    <li><a href="#" class="hover:underline">FAQ</a></li>
+                    <li><a href="#" class="hover:underline">¿Cómo Comprar?</a></li>
+                    <li><a href="#" class="hover:underline">Condiciones de despacho</a></li>
+                    <li><a href="#" class="hover:underline">Seguimiento de Compra</a></li>
+                </ul>
+            </div>
+    
+            <!-- Categorías -->
+            <div>
+                <h3 class="font-semibold mb-2">Categorías</h3>
+                <ul class="space-y-1">
+                    <li><a href="#" class="hover:underline">Herramientas de Construcción</a></li>
+                    <li><a href="#" class="hover:underline">Herramientas de Aseo y Jardín</a></li>
+                    <li><a href="#" class="hover:underline">Insumos y Accesorios</a></li>
+                    <li><a href="#" class="hover:underline">Pinturas</a></li>
+                </ul>
+            </div>
+    
+            <!-- Legal -->
+            <div>
+                <h3 class="font-semibold mb-2">Legal</h3>
+                <ul class="space-y-1">
+                    <li><a href="#" class="hover:underline">Términos y condiciones</a></li>
+                    <li><a href="#" class="hover:underline">Política de garantía y devoluciones</a></li>
+                    <li><a href="#" class="hover:underline">Políticas de cookies</a></li>
+                    <li><a href="#" class="hover:underline">Políticas de privacidad</a></li>
+                </ul>
+                <div class="mt-4">
+                    <img src="{% static 'core/img/ssl.png' %}" alt="SSL" class="h-10">
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'core/js/menu_categoria.js' %}"></script>
+    <script src="{% static 'core/js/fuerza_pass.js' %}"></script>
+</body>
+</html>

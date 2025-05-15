@@ -5,3 +5,12 @@ def home(request):
 
 def producto(request):
     return render(request, 'core/productos.html')
+
+def contacto(request):
+    return render(request, 'core/contacto.html')
+
+def iniciar_session(request):
+    return render(request, 'core/iniciar_session.html')
+
+def registro(request):
+    return render(request, 'core/registro.html')
