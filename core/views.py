@@ -14,3 +14,6 @@ def iniciar_session(request):
 
 def registro(request):
     return render(request, 'core/registro.html')
+
+def pintura(request):
+    return render(request, 'core/pintura.html')
