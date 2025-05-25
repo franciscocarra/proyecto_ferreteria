@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ferretería FERREMAS - Menú</title>
+    <title>Ferretería Rinco Del Herrero - Menú</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'core/css/carousel.css' %}">
@@ -22,7 +22,7 @@
                 <li><button onclick="toggleCategorias()" class="hover:underline focus:outline-none">Categorías</button></li>
                 <li><a href="#promociones" class="hover:underline">Promociones</a></li>
                 <li><a href="{% url 'contacto' %}" class="hover:underline">Contacto</a></li>
-                <li><a href="#promociones" class="hover:underline">Iniciar sesion</a></li>
+                <li><a href="{% url 'iniciar_session' %}" class="hover:underline">Iniciar sesion</a></li>
             </ul>
         </nav>
     </div>
@@ -74,246 +74,230 @@
             </aside>
             <div class="col-span-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 <!-- Producto 1 -->
-                <div class="bg-gray-100 p-4 rounded shadow">
-                    <img src="{% static 'core/img/productos/producto_1.webp' %}" alt="Producto 1" class="h-50 w-full object-cover mb-4">
-                    <h4 class="text-lg font-semibold mb-2">Huincha De Medir 8m/26' Sensor Hcs Stanley 33-428ht</h4>
-                    <p class="text-blue-600 font-bold">$19.500</p>
-                    <button class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                        Ver Ficha
+                <div class="bg-white p-4 rounded shadow text-center border">
+                    <img src="{% static 'core/img/productos/producto_1.webp' %}" alt="Producto 1" class="h-30 w-full object-contain mb-2" />
+                    <p class="text-sm text-gray-500">Stanley</p>
+                    <h4 class="text-base font-medium mb-1 leading-tight">
+                        Huincha De Medir 8m/26' Sensor Hcs Stanley 33-428ht
+                    </h4>
+                    <p class="text-lg font-bold text-green-700 mb-3">$19.500</p>
+                    <div class="flex items-center justify-center gap-2 mb-3">
+                        <button class="px-2 py-1 border rounded text-lg">-</button>
+                        <input type="text" value="1" class="w-10 text-center border rounded" />
+                        <button class="px-2 py-1 border rounded text-lg">+</button>
+                    </div>
+                    <button class="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600">
+                        🛒
                     </button>
                 </div>
 
                 <!-- Producto 2 -->
-                <div class="bg-gray-100 p-4 rounded shadow">
-                    <img src="{% static 'core/img/productos/producto_2.png' %}" alt="Producto 2" class="h-50 w-full object-cover mb-4">
-                    <h4 class="text-lg font-semibold mb-2">ESMERIL ANGULAR 4 1/2" 650W BLACK & DECKER G650</h4>
-                    <p class="text-blue-600 font-bold">$42.990</p>
-                    <button class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                        Ver Ficha
+                <div class="bg-white p-4 rounded shadow text-center border">
+                    <img src="{% static 'core/img/productos/producto_2.png' %}" alt="Producto 2" class="h-30 w-full object-contain mb-2" />
+                    <p class="text-sm text-gray-500">Black & Decker</p>
+                    <h4 class="text-base font-medium mb-1 leading-tight">
+                        ESMERIL ANGULAR 4 1/2" 650W BLACK & DECKER G650
+                    </h4>
+                    <p class="text-lg font-bold text-green-700 mb-3">$42.990</p>
+                    <div class="flex items-center justify-center gap-2 mb-3">
+                        <button class="px-2 py-1 border rounded text-lg">-</button>
+                        <input type="text" value="1" class="w-10 text-center border rounded" />
+                        <button class="px-2 py-1 border rounded text-lg">+</button>
+                    </div>
+                    <button class="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600">
+                        🛒
                     </button>
                 </div>
 
                 <!-- Producto 3 -->
-                <div class="bg-gray-100 p-4 rounded shadow">
-                    <img src="{% static 'core/img/productos/producto_3.jpg' %}" alt="Producto 3" class="h-50 w-full object-cover mb-4">
-                    <h4 class="text-lg font-semibold mb-2">Set Herramientas Manuales 120 Piezas Makita E-08713</h4>
-                    <p class="text-blue-600 font-bold">$144.990</p>
-                    <button class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                        Ver Ficha
+                <div class="bg-white p-4 rounded shadow text-center border">
+                    <img src="{% static 'core/img/productos/producto_3.jpg' %}" alt="Producto 3" class="h-30 w-full object-contain mb-2" />
+                    <p class="text-sm text-gray-500">makita</p>
+                    <h4 class="text-base font-medium mb-1 leading-tight">
+                        Set Herramientas Manuales 120 Piezas Makita E-08713
+                    </h4>
+                    <p class="text-lg font-bold text-green-700 mb-3">$144.990</p>
+                    <div class="flex items-center justify-center gap-2 mb-3">
+                        <button class="px-2 py-1 border rounded text-lg">-</button>
+                        <input type="text" value="1" class="w-10 text-center border rounded" />
+                        <button class="px-2 py-1 border rounded text-lg">+</button>
+                    </div>
+                    <button class="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600">
+                        🛒
                     </button>
                 </div>
 
                 <!-- Producto 4 -->
-                <div class="bg-gray-100 p-4 rounded shadow">
-                    <img src="{% static 'core/img/productos/producto_4.jpg' %}" alt="Producto 4" class="h-50 w-full object-cover mb-4"> 
-                    <h4 class="text-lg font-semibold mb-2">Pistola De Calor Aire Caliente Lusqtoff Naranja</h4>
-                    <h2></h2>
-                    <p class="text-blue-600 font-bold">$38.990</p>
-                    <button class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                        Ver Ficha
+                <div class="bg-white p-4 rounded shadow text-center border">
+                    <img src="{% static 'core/img/productos/producto_4.jpg' %}" alt="Producto 4" class="h-30 w-full object-contain mb-2" />
+                    <p class="text-sm text-gray-500">makita</p>
+                    <h4 class="text-base font-medium mb-1 leading-tight">
+                        Pistola De Calor Aire Caliente Lusqtoff Naranja
+                    </h4>
+                    <p class="text-lg font-bold text-green-700 mb-3">$38.990</p>
+                    <div class="flex items-center justify-center gap-2 mb-3">
+                        <button class="px-2 py-1 border rounded text-lg">-</button>
+                        <input type="text" value="1" class="w-10 text-center border rounded" />
+                        <button class="px-2 py-1 border rounded text-lg">+</button>
+                    </div>
+                    <button class="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600">
+                        🛒
                     </button>
                 </div>
 
                 <!-- Producto 5 -->
-                <div class="bg-gray-100 p-4 rounded shadow">
-                    <img src="{% static 'core/img/productos/producto_5.png' %}" alt="Producto 5" class="h-50 w-full object-cover mb-4">
-                    <h4 class="text-lg font-semibold mb-2">Tijera De Aviación Fatmax Recta 12.6' (320mm) Stanley 14-563</h4>
-                    <p class="text-blue-600 font-bold">$21.990</p>
-                    <button class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                        Ver Ficha
+                <div class="bg-white p-4 rounded shadow text-center border">
+                    <img src="{% static 'core/img/productos/producto_5.png' %}" alt="Producto 5" class="h-30 w-full object-contain mb-2" />
+                    <p class="text-sm text-gray-500">Stanley</p>
+                    <h4 class="text-base font-medium mb-1 leading-tight">
+                        Tijera De Aviación Fatmax Recta 12.6' (320mm) Stanley 14-563
+                    </h4>
+                    <p class="text-lg font-bold text-green-700 mb-3">$21.990</p>
+                    <div class="flex items-center justify-center gap-2 mb-3">
+                        <button class="px-2 py-1 border rounded text-lg">-</button>
+                        <input type="text" value="1" class="w-10 text-center border rounded" />
+                        <button class="px-2 py-1 border rounded text-lg">+</button>
+                    </div>
+                    <button class="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600">
+                        🛒
                     </button>
                 </div>
 
                 <!-- Producto 6 -->
-                <div class="bg-gray-100 p-4 rounded shadow">
-                    <img src="{% static 'core/img/productos/producto_6.webp' %}" alt="Producto 6" class="h-50 w-full object-cover mb-4">
-                    <h4 class="text-lg font-semibold mb-2">Martillo carpintero fibra de vidrio 16 Oz</h4>
-                    <p class="text-blue-600 font-bold">$3.690</p>
-                    <button class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                        Ver Ficha
+                <div class="bg-white p-4 rounded shadow text-center border">
+                    <img src="{% static 'core/img/productos/producto_6.webp' %}" alt="Producto 6" class="h-30 w-full object-contain mb-2" />
+                    <p class="text-sm text-gray-500">Karson</p>
+                    <h4 class="text-base font-medium mb-1 leading-tight">
+                        Martillo carpintero fibra de vidrio 16 Oz
+                    </h4>
+                    <p class="text-lg font-bold text-green-700 mb-3">$3.690</p>
+                    <div class="flex items-center justify-center gap-2 mb-3">
+                        <button class="px-2 py-1 border rounded text-lg">-</button>
+                        <input type="text" value="1" class="w-10 text-center border rounded" />
+                        <button class="px-2 py-1 border rounded text-lg">+</button>
+                    </div>
+                    <button class="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600">
+                        🛒
                     </button>
                 </div>
 
                 <!-- Producto 7 -->
-                <div class="bg-gray-100 p-4 rounded shadow">
-                    <img src="{% static 'core/img/productos/producto_7.webp' %}" alt="Producto 7" class="h-50 w-full object-cover mb-4">
-                    <h4 class="text-lg font-semibold mb-2">Tornillo Autoperforante Cabeza Phillips Yeso-Cartón 2 " 6 mm 400 Unidades</h4>
-                    <p class="text-blue-600 font-bold">$5.990</p>
-                    <button class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                        Ver Ficha
+                <div class="bg-white p-4 rounded shadow text-center border">
+                    <img src="{% static 'core/img/productos/producto_7.webp' %}" alt="Producto 7" class="h-30 w-full object-contain mb-2" />
+                    <p class="text-sm text-gray-500">mamut</p>
+                    <h4 class="text-base font-medium mb-1 leading-tight">
+                        Tornillo Autoperforante Cabeza Phillips Yeso-Cartón 2 " 6 mm 400 Unidades
+                    </h4>
+                    <p class="text-lg font-bold text-green-700 mb-3">$5.990</p>
+                    <div class="flex items-center justify-center gap-2 mb-3">
+                        <button class="px-2 py-1 border rounded text-lg">-</button>
+                        <input type="text" value="1" class="w-10 text-center border rounded" />
+                        <button class="px-2 py-1 border rounded text-lg">+</button>
+                    </div>
+                    <button class="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600">
+                        🛒
                     </button>
                 </div>
 
                 <!-- Producto 8 -->
-                <div class="bg-gray-100 p-4 rounded shadow">
-                    <img src="{% static 'core/img/productos/producto_8.webp' %}" alt="Producto 8" class="h-50 w-full object-cover mb-4">
-                    <h4 class="text-lg font-semibold mb-2">Overol de Trabajo Actium Canvas</h4>
-                    <p class="text-blue-600 font-bold">$41.590</p>
-                    <button class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                        Ver Ficha
+                <div class="bg-white p-4 rounded shadow text-center border">
+                    <img src="{% static 'core/img/productos/producto_8.webp' %}" alt="Producto 8" class="h-30 w-full object-contain mb-2" />
+                    <p class="text-sm text-gray-500">teamgraff</p>
+                    <h4 class="text-base font-medium mb-1 leading-tight">
+                        Overol de Trabajo Actium Canvas
+                    </h4>
+                    <p class="text-lg font-bold text-green-700 mb-3">$41.590</p>
+                    <div class="flex items-center justify-center gap-2 mb-3">
+                        <button class="px-2 py-1 border rounded text-lg">-</button>
+                        <input type="text" value="1" class="w-10 text-center border rounded" />
+                        <button class="px-2 py-1 border rounded text-lg">+</button>
+                    </div>
+                    <button class="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600">
+                        🛒
                     </button>
                 </div>
 
                 <!-- Producto 9 -->
-                <div class="bg-gray-100 p-4 rounded shadow">
-                    <img src="{% static 'core/img/productos/producto_9.webp' %}" alt="Producto 9" class="h-50 w-full object-cover mb-4">
-                    <h4 class="text-lg font-semibold mb-2">Zapato Trabajo Hombre Traver</h4>
-                    <p class="text-blue-600 font-bold">$94.990</p>
-                    <button class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                        Ver Ficha
+                <div class="bg-white p-4 rounded shadow text-center border">
+                    <img src="{% static 'core/img/productos/producto_9.webp' %}" alt="Producto 9" class="h-30 w-full object-contain mb-2" />
+                    <p class="text-sm text-gray-500">Skechers</p>
+                    <h4 class="text-base font-medium mb-1 leading-tight">
+                        Zapato Trabajo Hombre Traver
+                    </h4>
+                    <p class="text-lg font-bold text-green-700 mb-3">$94.990</p>
+                    <div class="flex items-center justify-center gap-2 mb-3">
+                        <button class="px-2 py-1 border rounded text-lg">-</button>
+                        <input type="text" value="1" class="w-10 text-center border rounded" />
+                        <button class="px-2 py-1 border rounded text-lg">+</button>
+                    </div>
+                    <button class="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600">
+                        🛒
                     </button>
                 </div>
 
                 <!-- Producto 10 -->
-                <div class="bg-gray-100 p-4 rounded shadow">
-                    <img src="{% static 'core/img/productos/producto_10.webp' %}" alt="Producto 10" class="h-50 w-full object-cover mb-4">
-                    <h4 class="text-lg font-semibold mb-2">Soldadora arco manual 160A nanoweld</h4>
-                    <p class="text-blue-600 font-bold">$169.990</p>
-                    <button class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                        Ver Ficha
+                <div class="bg-white p-4 rounded shadow text-center border">
+                    <img src="{% static 'core/img/productos/producto_10.webp' %}" alt="Producto 10" class="h-30 w-full object-contain mb-2" />
+                    <p class="text-sm text-gray-500">indura</p>
+                    <h4 class="text-base font-medium mb-1 leading-tight">
+                        Soldadora arco manual 160A nanoweld
+                    </h4>
+                    <p class="text-lg font-bold text-green-700 mb-3">$169.990</p>
+                    <div class="flex items-center justify-center gap-2 mb-3">
+                        <button class="px-2 py-1 border rounded text-lg">-</button>
+                        <input type="text" value="1" class="w-10 text-center border rounded" />
+                        <button class="px-2 py-1 border rounded text-lg">+</button>
+                    </div>
+                    <button class="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600">
+                        🛒
                     </button>
                 </div>
-
                 <!-- Producto 11 -->
-                <div class="bg-gray-100 p-4 rounded shadow">
-                    <img src="{% static 'core/img/productos/producto_11.webp' %}" alt="Producto 11" class="h-50 w-full object-cover mb-4">
-                    <h4 class="text-lg font-semibold mb-2">Juego destornilladores 6pz stmt60060la Stanley</h4>
-                    <p class="text-blue-600 font-bold">$9.580</p>
-                    <button class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                        Ver Ficha
+                <div class="bg-white p-4 rounded shadow text-center border">
+                    <img src="{% static 'core/img/productos/producto_11.webp' %}" alt="Producto 11" class="h-30 w-full object-contain mb-2" />
+                    <p class="text-sm text-gray-500">Stanley</p>
+                    <h4 class="text-base font-medium mb-1 leading-tight">
+                        Juego destornilladores 6pz stmt60060la Stanley
+                    </h4>
+                    <p class="text-lg font-bold text-green-700 mb-3">$9.580</p>
+                    <div class="flex items-center justify-center gap-2 mb-3">
+                        <button class="px-2 py-1 border rounded text-lg">-</button>
+                        <input type="text" value="1" class="w-10 text-center border rounded" />
+                        <button class="px-2 py-1 border rounded text-lg">+</button>
+                    </div>
+                    <button class="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600">
+                        🛒
                     </button>
                 </div>
 
                 <!-- Producto 12 -->
-                <div class="bg-gray-100 p-4 rounded shadow">
-                    <img src="{% static 'core/img/productos/producto_12.webp' %}" alt="Producto 12" class="h-50 w-full object-cover mb-4">
-                    <h4 class="text-lg font-semibold mb-2">Taladro percutor atornillador inalámbrico de 10mm Bauker...</h4>
-                    <p class="text-blue-600 font-bold">$56.990</p>
-                    <button class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                        Ver Ficha
+                <div class="bg-white p-4 rounded shadow text-center border">
+                    <img src="{% static 'core/img/productos/producto_12.webp' %}" alt="Producto 12" class="h-30 w-full object-contain mb-2" />
+                    <p class="text-sm text-gray-500">Bauker</p>
+                    <h4 class="text-base font-medium mb-1 leading-tight">
+                        Taladro percutor atornillador inalámbrico de 10mm Bauker...
+                    </h4>
+                    <p class="text-lg font-bold text-green-700 mb-3">$3.690</p>
+                    <div class="flex items-center justify-center gap-2 mb-3">
+                        <button class="px-2 py-1 border rounded text-lg">-</button>
+                        <input type="text" value="1" class="w-10 text-center border rounded" />
+                        <button class="px-2 py-1 border rounded text-lg">+</button>
+                    </div>
+                    <button class="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600">
+                        🛒
                     </button>
                 </div>
 
-                <!-- Producto 13 -->
-                <div class="bg-gray-100 p-4 rounded shadow">
-                    <img src="https://via.placeholder.com/150" alt="Producto 13" class="h-50 w-full object-cover mb-4">
-                    <h4 class="text-lg font-semibold mb-2">Linterna LED Bahco</h4>
-                    <p class="text-blue-600 font-bold">$52.990</p>
-                    <button class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                        Ver Ficha
-                    </button>
-                </div>
 
-                <!-- Producto 14 -->
-                <div class="bg-gray-100 p-4 rounded shadow">
-                    <img src="https://via.placeholder.com/150" alt="Producto 14" class="h-50 w-full object-cover mb-4">
-                    <h4 class="text-lg font-semibold mb-2">Linterna LED Bahco</h4>
-                    <p class="text-blue-600 font-bold">$52.990</p>
-                    <button class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                        Ver Ficha
-                    </button>
-                </div>
-
-                <!-- Producto 15 -->
-                <div class="bg-gray-100 p-4 rounded shadow">
-                    <img src="https://via.placeholder.com/150" alt="Producto 15" class="h-50 w-full object-cover mb-4">
-                    <h4 class="text-lg font-semibold mb-2">Linterna LED Bahco</h4>
-                    <p class="text-blue-600 font-bold">$52.990</p>
-                    <button class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                        Ver Ficha
-                    </button>
-                </div>
-
-                <!-- Producto 16 -->
-                <div class="bg-gray-100 p-4 rounded shadow">
-                    <img src="https://via.placeholder.com/150" alt="Producto 16" class="h-50 w-full object-cover mb-4">
-                    <h4 class="text-lg font-semibold mb-2">Linterna LED Bahco</h4>
-                    <p class="text-blue-600 font-bold">$52.990</p>
-                    <button class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                        Ver Ficha
-                    </button>
-                </div>
-
-                <!-- Producto 17 -->
-                <div class="bg-gray-100 p-4 rounded shadow">
-                    <img src="https://via.placeholder.com/150" alt="Producto 17" class="h-50 w-full object-cover mb-4">
-                    <h4 class="text-lg font-semibold mb-2">Linterna LED Bahco</h4>
-                    <p class="text-blue-600 font-bold">$52.990</p>
-                    <button class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                        Ver Ficha
-                    </button>
-                </div>
-
-                <!-- Producto 18 -->
-                <div class="bg-gray-100 p-4 rounded shadow">
-                    <img src="https://via.placeholder.com/150" alt="Producto 18" class="h-50 w-full object-cover mb-4">
-                    <h4 class="text-lg font-semibold mb-2">Linterna LED Bahco</h4>
-                    <p class="text-blue-600 font-bold">$52.990</p>
-                    <button class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                        Ver Ficha
-                    </button>
-                </div>
-
-                <!-- Producto 19 -->
-                <div class="bg-gray-100 p-4 rounded shadow">
-                    <img src="https://via.placeholder.com/150" alt="Producto 19" class="h-50 w-full object-cover mb-4">
-                    <h4 class="text-lg font-semibold mb-2">Linterna LED Bahco</h4>
-                    <p class="text-blue-600 font-bold">$52.990</p>
-                    <button class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                        Ver Ficha
-                    </button>
-                </div>
-
-                <!-- Producto 20 -->
-                <div class="bg-gray-100 p-4 rounded shadow">
-                    <img src="https://via.placeholder.com/150" alt="Producto 20" class="h-50 w-full object-cover mb-4">
-                    <h4 class="text-lg font-semibold mb-2">Linterna LED Bahco</h4>
-                    <p class="text-blue-600 font-bold">$52.990</p>
-                    <button class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                        Ver Ficha
-                    </button>
-                </div>
-
-                <!-- Producto 21 -->
-                <div class="bg-gray-100 p-4 rounded shadow">
-                    <img src="https://via.placeholder.com/150" alt="Producto 21" class="h-50 w-full object-cover mb-4">
-                    <h4 class="text-lg font-semibold mb-2">Linterna LED Bahco</h4>
-                    <p class="text-blue-600 font-bold">$52.990</p>
-                    <button class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                        Ver Ficha
-                    </button>
-                </div>
-
-                <!-- Producto 22 -->
-                <div class="bg-gray-100 p-4 rounded shadow">
-                    <img src="https://via.placeholder.com/150" alt="Producto 22" class="h-50 w-full object-cover mb-4">
-                    <h4 class="text-lg font-semibold mb-2">Linterna LED Bahco</h4>
-                    <p class="text-blue-600 font-bold">$52.990</p>
-                    <button class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                        Ver Ficha
-                    </button>
-                </div>
-                <!-- Producto 23 -->
-                <div class="bg-gray-100 p-4 rounded shadow">
-                    <img src="https://via.placeholder.com/150" alt="Producto 23" class="h-50 w-full object-cover mb-4">
-                    <h4 class="text-lg font-semibold mb-2">Linterna LED Bahco</h4>
-                    <p class="text-blue-600 font-bold">$52.990</p>
-                    <button class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                        Ver Ficha
-                    </button>
-                </div>
-
-                <!-- Producto 24 -->
-                <div class="bg-gray-100 p-4 rounded shadow">
-                    <img src="https://via.placeholder.com/150" alt="Producto 24" class="h-50 w-full object-cover mb-4">
-                    <h4 class="text-lg font-semibold mb-2">Linterna LED Bahco</h4>
-                    <p class="text-blue-600 font-bold">$52.990</p>
-                    <button class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                        Ver Ficha
-                    </button>
-                </div>
-                <!-- Añade más productos -->
             </div>
+        </div>
+        <div class="container mt-3 d-flex flex-column align-items-right">
+            <ul class="pagination justify-content-center">
+                <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                <li class="page-item active"><a class="page-link" href="{% url 'productos' %}">1</a></li>
+                <li class="page-item "><a class="page-link" href="{% url 'productos_2' %}">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">Next</a></li>
+            </ul>
         </div>
     </div>
 </section>
@@ -325,8 +309,8 @@
             <!-- Logo y contacto -->
             <div>
                 <div class="flex items-center mb-4">
-                    <div class="bg-warning text-white font-bold text-lg px-2 py-1 mr-2">FT</div>
-                    <span class="font-bold text-xl">FERREMAS</span>
+                    <div class="bg-warning text-white font-bold text-lg px-2 py-1 mr-2">RDH</div>
+                    <span class="font-bold text-xl">Ferretería Rinco Del Herrero</span>
                 </div>
                 <p class="font-semibold">Casa Matriz</p>
                 <p>Av. Américo Vespucio 1252, Pudahuel, Región Metropolitana</p>
@@ -378,9 +362,7 @@
                     <li><a href="#" class="hover:underline">Políticas de cookies</a></li>
                     <li><a href="#" class="hover:underline">Políticas de privacidad</a></li>
                 </ul>
-                <div class="mt-4">
-                    <img src="{% static 'core/img/ssl.png' %}" alt="SSL" class="h-10">
-                </div>
+            </div>
             </div>
         </div>
     </footer>

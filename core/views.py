@@ -6,6 +6,11 @@ def home(request):
 def producto(request):
     return render(request, 'core/productos.html')
 
+def producto2(request):
+    return render(request, 'core/productos_2.html')
+
+
+
 def contacto(request):
     return render(request, 'core/contacto.html')
 
