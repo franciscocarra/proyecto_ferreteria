@@ -23,3 +23,9 @@ def pintura(request):
 
 def error_producto(request):
     return render(request, 'core/error_producto.html')
+
+def herramientas(request):
+    return render(request, 'core/herramientas.html')
+
+def materiales(request):
+    return render(request, 'core/materiales.html')

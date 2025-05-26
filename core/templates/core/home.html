@@ -36,14 +36,14 @@
     </div>
     <ul class="p-4 space-y-2 text-gray-700">
         <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Aseo Industrial</li></a>
-        <li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Ropa de Seguridad y Protección Personal</li>
-        <li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Materiales de Construcción</li>
-        <li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Techos y Aislantes</li>
-        <li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Herramientas y máquinas</li>
-        <li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Fijaciones</li>
-        <li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Pintura</li>
-        <li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Maderas y tableros</li>
-        <li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Tensores</li>
+        <a href=""><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Ropa de Seguridad y Protección Personal</li></a>
+        <a href="{% url 'materiales' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Materiales de Construcción</li></a>
+        <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Techos y Aislantes</li></a>
+        <a href=""><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">máquinas</li></a>
+        <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Fijaciones</li></a>
+        <a href="{% url 'pintura' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Pintura</li></a>
+        <a href=""><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Maderas y tableros</li></a>
+        <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Tensores</li></a>
     </ul>
 </div>
 
@@ -84,11 +84,11 @@
             <h2 class="text-3xl font-semibold text-gray-800 mb-8">Nuestros Productos</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div class="bg-gray-100 p-6 rounded-lg shadow-lg">
-                    <img src="{% static 'core/img/materiales_construccion.jpg' %}" alt="Materiales de construcción" class="w-full h-40 object-cover rounded-t-lg mb-4">
+                    <a href="{% url 'materiales' %}"><img src="{% static 'core/img/materiales_construccion.jpg' %}" alt="Materiales de construcción" class="w-full h-40 object-cover rounded-t-lg mb-4">
                     <div class="text-center">
                         <h3 class="text-xl font-bold text-blue-600 mb-2">MATERIALES DE CONSTRUCCIÓN</h3>
                         <p class="text-gray-600">Contamos con todos los elementos, productos o materias primas empleados para la construcción de una obra sin importar su composición, forma y método constructivo.</p>
-                    </div>
+                    </div></a>
                 </div>
                 <div class="bg-gray-100 p-6 rounded-lg shadow-lg">
                     <a href="{% url 'pintura' %}"><img src="{% static 'core/img/pintura.jpg' %}" alt="Ferretería" class="w-full h-40 object-cover rounded-t-lg mb-4">
@@ -98,11 +98,11 @@
                     </div></a>
                 </div>
                 <div class="bg-gray-100 p-6 rounded-lg shadow-lg">
-                    <img src="{% static 'core/img/herramientas_4.jpg' %}" alt="Herramientas" class="w-full h-40 object-cover rounded-t-lg mb-4">
+                    <a href="{% url 'herramientas' %}"><img src="{% static 'core/img/herramientas_4.jpg' %}" alt="Herramientas" class="w-full h-40 object-cover rounded-t-lg mb-4">
                     <div class="text-center">
                         <h3 class="text-xl font-bold text-blue-600 mb-2">HERRAMIENTAS</h3>
                         <p class="text-gray-600">Tenemos todo tipo de herramientas para construir, reparar y modificar para lograr una gran experiencia.</p>
-                    </div>
+                    </div></a>
                 </div>
             </div>
         </div>
@@ -159,7 +159,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10l1.5-1.5M21 10l-1.5-1.5M9 16h6M10 12h4m-1 8v-8m-4 4h8" /></svg>
                     <span>+56 9 4722 9108</span>
                 </div>
-                <button class="mt-4 bg-white text-red-600 font-bold py-2 px-4 rounded">Contáctanos</button>                
+                <button class="mt-4 bg-white text-red-600 font-bold py-2 px-4 rounded"><a href="{% url 'contacto' %}">Contáctanos</a></button>                
             </div>
     
             <!-- Nosotros -->
