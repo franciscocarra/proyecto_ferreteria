@@ -9,8 +9,6 @@ def producto(request):
 def producto2(request):
     return render(request, 'core/productos_2.html')
 
-
-
 def contacto(request):
     return render(request, 'core/contacto.html')
 
@@ -22,3 +20,6 @@ def registro(request):
 
 def pintura(request):
     return render(request, 'core/pintura.html')
+
+def error_producto(request):
+    return render(request, 'core/error_producto.html')

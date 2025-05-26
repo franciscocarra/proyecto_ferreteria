@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ferretería Rinco Del Herrero - Menú</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+<body class="bg-gray-100 text-gray-900">
+    <header class="bg-dark text-white py-4">
+    <div class="container mx-auto flex justify-between items-center">
+        <h1 class="text-2xl font-bold"><a href="{% url 'home' %}">Ferretería Rinco Del Herrero</a></h1>
+        <nav>
+            <ul class="flex space-x-4">
+                <li><a href="{% url 'home' %}" class="hover:underline">Inicio</a></li>
+                <li><a href="{% url 'productos' %}" class="hover:underline">Productos</a></li>
+                <!-- CAMBIO: botón para mostrar categorías -->
+                <li><button onclick="toggleCategorias()" class="hover:underline focus:outline-none">Categorías</button></li>
+                <li><a href="#promociones" class="hover:underline">Promociones</a></li>
+                <li><a href="{% url 'contacto' %}" class="hover:underline">Contacto</a></li>
+                <li><a href="{% url 'iniciar_session' %}" class="hover:underline">Iniciar sesion</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<!-- SIDEBAR DE CATEGORÍAS -->
+<div id="categoriasSidebar" class="fixed top-0 left-0 w-80 h-full bg-white shadow-lg z-50 transform -translate-x-full transition-transform duration-300 ease-in-out overflow-y-auto">
+    <div class="flex items-center justify-between px-4 py-3 border-b">
+        <h2 class="text-lg font-bold text-gray-800">Categorías</h2>
+        <button onclick="toggleCategorias()" class="text-xl font-bold text-gray-600 hover:text-black">&times;</button>
+    </div>
+    <ul class="p-4 space-y-2 text-gray-700">
+        <li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Aseo Industrial</li>
+        <li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Ropa de Seguridad y Protección Personal</li>
+        <li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Materiales de Construcción</li>
+        <li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Techos y Aislantes</li>
+        <li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Herramientas y máquinas</li>
+        <li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Fijaciones</li>
+        <li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Pintura</li>
+        <li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Maderas y tableros</li>
+        <li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Tensores</li>
+    </ul>
+</div>
+
+<section class="flex flex-col items-center justify-center py-20 pb-60 bg-blue-100 text-center text-gray-800">
+    <h2 class="text-4xl font-bold mb-2">¡Oops! La página se encuentra en construcción.</h2>
+    <p class="text-xl mb-6">vuelva proximamente</p>
+
+    <!-- Martillo -->
+    <img src="{% static 'core/img/martillo_error.gif' %}" alt="Martillo animado" class="mb-6 w-24 h-24" />
+
+    <!-- Botón de regreso -->
+    <a href="{% url 'home' %}" class="mt-6 bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition mb-40">
+        Volver al inicio
+    </a>
+</section>  
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'core/js/menu_categoria.js' %}"></script>
+</body>
+
+
+</html>
