@@ -29,3 +29,6 @@ def herramientas(request):
 
 def materiales(request):
     return render(request, 'core/materiales.html')
+
+def carrito(request):
+    return render(request, 'core/carrito.html')

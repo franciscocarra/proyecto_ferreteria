@@ -23,6 +23,14 @@
                 <li><a href="#promociones" class="hover:underline">Promociones</a></li>
                 <li><a href="{% url 'contacto' %}" class="hover:underline">Contacto</a></li>
                 <li><a href="{% url 'iniciar_session' %}" class="hover:underline">Iniciar sesion</a></li>
+                <li>
+                    <a href="{% url 'carrito' %}" class="relative inline-block w-8 h-8">
+                        <div class="absolute bottom-0 left-0 w-8 h-5 border-2 border-white rounded-sm"></div>
+                        <div class="absolute bottom-5 left-1 w-6 h-2 border-2 border-white border-b-0 rounded-t-sm"></div>
+                        <div class="absolute bottom-1 left-1 w-1 h-1 bg-white rounded-full"></div>
+                        <div class="absolute bottom-1 right-1 w-1 h-1 bg-white rounded-full"></div>
+                    </a>
+                </li>
             </ul>
         </nav>
     </div>
