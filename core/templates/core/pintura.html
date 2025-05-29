@@ -22,7 +22,33 @@
                 <li><button onclick="toggleCategorias()" class="hover:underline focus:outline-none">Categorías</button></li>
                 <li><a href="#promociones" class="hover:underline">Promociones</a></li>
                 <li><a href="{% url 'contacto' %}" class="hover:underline">Contacto</a></li>
-                <li><a href="{% url 'iniciar_session' %}" class="hover:underline">Iniciar sesion</a></li>
+                {% if user.is_authenticated %}
+                <li class="relative">
+                    <div id="userMenuButton" class="flex items-center space-x-2 cursor-pointer">
+                        <img src="{% static 'core/img/usuario/usuario.png' %}" alt="Perfil" class="w-8 h-8 rounded-full">
+                        <span>{{ user.username }}</span>
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M6 9l6 6 6-6"></path>
+                        </svg>
+                    </div>
+                
+                    <div id="userMenuDropdown" class="absolute hidden flex-col bg-white text-black right-0 mt-2 py-2 w-48 rounded shadow-lg z-50">
+                        <a href="#" class="px-4 py-2 hover:bg-gray-200">Mi perfil</a>
+                        {% if user.is_staff %}
+                            {% if perms.core.view_empleado %}
+                                <a href="{% url 'home' %}" class="px-4 py-2 hover:bg-gray-200">Configuración</a>
+                            {% endif %}
+                            <a href="/admin" class="px-4 py-2 hover:bg-gray-200">Administración</a>
+                        {% endif %}
+                        <form action="{% url 'logout' %}" method="post" class="px-4 py-2">
+                            {% csrf_token %}
+                            <button type="submit" class="w-full text-left hover:bg-gray-200">Cerrar sesión</button>
+                        </form>
+                    </div>
+                </li>
+                {% else %}
+                <li><a href="{% url 'iniciar_session' %}" class="hover:underline">Iniciar sesión</a></li>
+                {% endif %}
                 <li>
                     <a href="{% url 'carrito' %}" class="relative inline-block w-8 h-8">
                         <div class="absolute bottom-0 left-0 w-8 h-5 border-2 border-white rounded-sm"></div>
@@ -371,6 +397,7 @@
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{% static 'core/js/menu_categoria.js' %}"></script>
+    <script src="{% static 'core/js/icono.js' %}"></script>
 </body>
 
 

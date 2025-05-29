@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 {% load static %}
-
+{% load crispy_forms_tags %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,7 +23,6 @@
                 <li><button onclick="toggleCategorias()" class="hover:underline focus:outline-none">Categorías</button></li>
                 <li><a href="#promociones" class="hover:underline">Promociones</a></li>
                 <li><a href="{% url 'contacto' %}" class="hover:underline">Contacto</a></li>
-                <li><a href="{% url 'iniciar_session' %}" class="hover:underline">Iniciar sesion</a></li>
                 <li>
                     <a href="{% url 'carrito' %}" class="relative inline-block w-8 h-8">
                         <div class="absolute bottom-0 left-0 w-8 h-5 border-2 border-white rounded-sm"></div>
@@ -57,58 +56,27 @@
 </div>
 
 <!-- SECCIÓN DE REGISTRO -->
-<section class="container mx-auto my-16 px-4 max-w-2xl text-center">
-    <h2 class="text-2xl font-bold mb-8">Crear nueva cuenta de cliente</h2>
-
-    <!-- Información Personal -->
-    <div class="border rounded-md p-6 mb-8 text-left">
-        <h3 class="text-lg font-semibold mb-4 text-center">Información Personal</h3>
-        <form action="#" method="POST" class="space-y-4">
-            <div>
-                <label class="block text-sm font-medium mb-1">Nombre <span class="text-red-600">*</span></label>
-                <input type="text" name="nombre" class="w-full border rounded p-2" required>
-            </div>
-            <div>
-                <label class="block text-sm font-medium mb-1">Apellidos <span class="text-red-600">*</span></label>
-                <input type="text" name="apellidos" class="w-full border rounded p-2" required>
-            </div>
-            <div class="flex items-center">
-                <input type="checkbox" id="boletin" class="mr-2">
-                <label for="boletin" class="text-sm">Suscribirse al boletín</label>
-            </div>
-            <div>
-                <label class="block text-sm font-medium mb-1">RUT <span class="text-red-600">*</span></label>
-                <input type="text" name="rut" placeholder="12.345.678-9" class="w-full border rounded p-2" required>
-            </div>
-        </form>
+<div class="card bg-dark text-white">
+    <div class="card-header">
+        Registro de Usuarios
     </div>
-
-    <!-- Información de inicio de sesión -->
-    <div class="border rounded-md p-6 text-left">
-        <h3 class="text-lg font-semibold mb-4 text-center">Información de inicio de sesión</h3>
-        <form action="#" method="POST" class="space-y-4">
-            <div>
-                <label class="block text-sm font-medium mb-1">Correo electrónico <span class="text-red-600">*</span></label>
-                <input type="email" name="email" class="w-full border rounded p-2" required>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-sm-8 offset-sm-2">
+                <form method="POST">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <div class="form-group">
+                        <input type="submit" class="btn btn-primary" value="Registrarse">
+                    </div>
+                    <div class="form-group mt-2">
+                        <small class="text-muted">¿Olvidaste tu contraseña? <a href="#">¡Crea una nueva!</a></small>
+                    </div>
+                </form>
             </div>
-            <div>
-                <label for="password" class="block text-sm font-medium mb-1">Contraseña <span class="text-red-600">*</span></label>
-                <input type="password" id="password" name="password" class="w-full border rounded p-2" required>
-                <p id="password-strength" class="mt-1 text-sm font-semibold">Fuerza de la contraseña: Sin contraseña</p>
-            </div>
-            <div>
-                <label class="block text-sm font-medium mb-1">Confirmar contraseña <span class="text-red-600">*</span></label>
-                <input type="password" name="confirm_password" class="w-full border rounded p-2" required>
-            </div>
-            <div class="flex items-center">
-                <input type="checkbox" id="mostrarContrasena" class="mr-2">
-                <label for="mostrarContrasena" class="text-sm">Mostrar Contraseña</label>
-            </div>
-            <button type="submit" class="bg-gray-800 text-white font-semibold px-6 py-2 rounded">Regístrate</button>
-            <p class="text-sm text-red-500 mt-2">* Campos obligatorios</p>
-        </form>
+        </div>
     </div>
-</section>
+</div>
 
 <footer class="bg-black text-white py-10 mt-16">
         <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-5 gap-8 text-sm">

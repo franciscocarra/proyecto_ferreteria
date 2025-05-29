@@ -9,7 +9,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'core/css/carousel.css' %}">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.dataTables.min.css">
 </head>
 <body class="bg-gray-100 text-gray-900">
     <header class="bg-dark text-white py-4">
@@ -82,44 +83,58 @@
     </ul>
 </div>
 
-<!-- SECCIÓN DE CONTACTO -->
-<section id="contacto" class="bg-white py-12 mt-16">
-  <div class="container mx-auto px-4">
-    <h2 class="text-xl font-semibold mb-2 border-b-2 border-red-600 inline-block">CONTÁCTANOS</h2>
-    <p class="text-sm mb-6">Aquí puedes encontrar todos los canales disponibles mediante los cuales nos puedes contactar.</p>
 
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 text-sm mb-12">
-      <div>
-        <p class="font-bold mb-1"><i class="bi bi-telephone-fill"></i> Teléfono de Contacto</p>
-        <p>+56947229108</p>
-      </div>
-      <div>
-        <p class="font-bold mb-1"><i class="bi bi-whatsapp"></i> Número de WhatsApp</p>
-        <p>56989451263</p>
-      </div>
-      <div>
-        <p class="font-bold mb-1"><i class="bi bi-geo-alt-fill"></i> Dirección</p>
-        <p>Cienfuegos 10, Ferretería Metropolitana,<br>8320000, Santiago Centro, Chile</p>
-      </div>
+        <div class="card bg-dark text-white">
+        <div class="card-header">
+            Lista de Usuarios
+        </div>
+        <div class="card-body">
+            <table class="table table-striped table-dark">
+                <thead>
+                    <tr>
+                        <th>Rut</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Edad</th>
+                        <th>Dirección</th>
+                        <th>Teléfono</th>
+                        <th>Género</th>
+                        <th>Tipo</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for aux in lista %}
+                        <tr>
+                            <td>{{ aux.rut }}</td>
+                            <td>{{ aux.nombre }}</td>
+                            <td>{{ aux.apellido }}</td>
+                            <td>{{ aux.edad }}</td>
+                            <td>{{ aux.direccion }}</td>
+                            <td>{{ aux.telefono }}</td>
+                            <td>{{ aux.genero }}</td>
+                            <td>{{ aux.tipo }}</td>
+                            <td>
+                                {% if perms.core.change_empleado %}
+                                <div class="dropdown">
+                                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton{{ aux.id }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Opciones
+                                    </button>
+                                    
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ aux.id }}">
+                                        <a class="dropdown-item" href="#">Editar</a>
+                                    <!--<a class="dropdown-item" onclick="confirmarDelete({{aux.id}})">Eliminar</a>-->
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 
-    <h3 class="text-lg font-semibold mb-2 border-b-2 border-red-600 inline-block">MÁNDANOS UN MENSAJE</h3>
-    <p class="text-sm mb-4">Llena todos los campos y envía tu mensaje. Te responderemos a la brevedad posible.</p>
-
-    <form class="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <input type="email" placeholder="E-mail *" class="border px-4 py-2 rounded col-span-1" required>
-      <input type="text" placeholder="Nombre *" class="border px-4 py-2 rounded col-span-1" required>
-      <input type="tel" placeholder="Teléfono" class="border px-4 py-2 rounded col-span-1">
-
-      <textarea placeholder="Mensaje *" class="border px-4 py-2 rounded col-span-full h-32 resize-none" required></textarea>
-      <div class="col-span-full flex justify-end">
-        <button type="submit" class="bg-red-600 text-white font-semibold px-6 py-2 rounded hover:bg-red-700">ENVIAR</button>
-      </div>
-    </form>
-
-    <p class="text-xs italic text-gray-500 mt-2">* Campos obligatorios</p>
-  </div>
-</section>
 
     <footer class="bg-black text-white py-10 mt-16">
         <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-5 gap-8 text-sm">
@@ -179,9 +194,7 @@
                     <li><a href="#" class="hover:underline">Políticas de cookies</a></li>
                     <li><a href="#" class="hover:underline">Políticas de privacidad</a></li>
                 </ul>
-                <div class="mt-4">
-                    <img src="{% static 'core/img/ssl.png' %}" alt="SSL" class="h-10">
-                </div>
+            </div>
             </div>
         </div>
     </footer>
@@ -189,6 +202,9 @@
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{% static 'core/js/menu_categoria.js' %}"></script>
+    <script src="{% static 'core/js/lista.js' %}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
     <script src="{% static 'core/js/icono.js' %}"></script>
 </body>
 

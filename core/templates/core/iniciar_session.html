@@ -23,7 +23,6 @@
                 <li><button onclick="toggleCategorias()" class="hover:underline focus:outline-none">Categorías</button></li>
                 <li><a href="#promociones" class="hover:underline">Promociones</a></li>
                 <li><a href="{% url 'contacto' %}" class="hover:underline">Contacto</a></li>
-                <li><a href="{% url 'iniciar_session' %}" class="hover:underline">Iniciar sesion</a></li>
                 <li>
                     <a href="{% url 'carrito' %}" class="relative inline-block w-8 h-8">
                         <div class="absolute bottom-0 left-0 w-8 h-5 border-2 border-white rounded-sm"></div>
@@ -57,39 +56,36 @@
 </div>
 
 
-<section class="container mx-auto my-16 px-4 grid md:grid-cols-2 gap-8 items-start">
-    <!-- Clientes Registrados -->
-    <div class="border rounded-md p-8 bg-white shadow-sm">
-        <h2 class="text-xl font-bold mb-4">Clientes registrados</h2>
-        <p class="mb-6 text-gray-700">Si ya tienes una cuenta, inicia sesión con tu correo electrónico y contraseña.</p>
-        <form action="#" method="POST" class="space-y-4">
-            <div>
-                <label class="block font-semibold text-sm mb-1 text-gray-800">Correo electrónico <span class="text-red-600">*</span></label>
-                <input type="email" name="email" required class="w-full border rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+<div class="container-fluid mt-5 pt-3">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="bg-white border p-4">
+                <div class="section-title mb-4">
+                    <h4 class="m-0 text-uppercase font-weight-bold">Login</h4>
+                </div>
+                <div class="row">
+                    <div class="col-sm-8 offset-sm-2">
+                        {% load crispy_forms_tags %}
+                        <form method="post">
+                            {% csrf_token %}
+                            {{ form|crispy }}
+                            <input type="submit" class="btn btn-primary" value="Ingresar">
+                        </form>
+                    </div>
+                </div>
+                <div class="text-center mt-3">
+                    <small class="text-muted">
+                        ¿No tienes una cuenta? <a href="{% url 'registro' %}">¡Crea una!</a>
+                    </small>
+                    <br>
+                    <small class="text-muted">
+                        ¿Olvidaste tu contraseña? <a href="#">¡Crea una nueva!</a>
+                    </small>
+                </div>
             </div>
-            <div>
-                <label class="block font-semibold text-sm mb-1 text-gray-800">Contraseña <span class="text-red-600">*</span></label>
-                <input type="password" name="password" required class="w-full border rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-            </div>
-            <div class="flex items-center">
-                <input type="checkbox" id="mostrarContrasena" class="mr-2">
-                <label for="mostrarContrasena" class="text-sm text-gray-700">Mostrar Contraseña</label>
-            </div>
-            <button type="submit" class="bg-gray-800 text-white px-6 py-2 rounded font-bold">Iniciar sesión</button>
-            <div class="mt-2">
-                <a href="#" class="text-sm text-blue-600 hover:underline">¿Olvidó su contraseña?</a>
-            </div>
-        </form>
-        <p class="mt-6 text-sm text-red-500">* Campos obligatorios</p>
+        </div>
     </div>
-
-    <!-- Clientes Nuevos -->
-    <div class="bg-black text-white p-8 rounded-md text-center">
-        <h2 class="text-xl font-bold mb-4">Clientes nuevos</h2>
-        <p class="mb-6">Para disfrutar de todos los beneficios que ofrece el Rinco Del Herrero, crea una cuenta.</p>
-        <a href="{% url 'registro' %}" class="bg-white text-black font-semibold px-6 py-2 rounded hover:bg-gray-200">Crear cuenta</a>
-    </div>
-</section>
+</div>
 
 <footer class="bg-black text-white py-10 mt-16">
         <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-5 gap-8 text-sm">
