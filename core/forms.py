@@ -4,37 +4,90 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django import forms
 from .models import Producto
+from django.forms.widgets import DateInput
 
-class CustomUserCreationForm(UserCreationForm):
+class CustomUserCreationForm(forms.ModelForm):
+    username = forms.CharField(max_length=150)
+    password1 = forms.CharField(label="Contraseña", widget=forms.PasswordInput)
+    password2 = forms.CharField(label="Confirmar contraseña", widget=forms.PasswordInput)
+
+    fec_nac = forms.DateField(
+        input_formats=['%d/%m/%Y'],
+        widget=DateInput(format='%d/%m/%Y', attrs={'placeholder': 'DD/MM/AAAA', 'type': 'text'}),
+        label='Fecha de nacimiento'
+    )
+
     class Meta:
-        model = User
-        fields = ['username', 'first_name', 'last_name', 'email', 'password1', 'password2']
+        model = Usuario
+        fields = [
+            'rut', 'nombre', 'appaterno', 'apmaterno', 'correo', 
+            'genero', 'fec_nac', 'telefono', 'direccion'
+        ]
+
+    def clean(self):
+        cleaned_data = super().clean()
+        p1 = cleaned_data.get('password1')
+        p2 = cleaned_data.get('password2')
+        if p1 and p2 and p1 != p2:
+            raise forms.ValidationError("Las contraseñas no coinciden")
+        return cleaned_data
 
     def save(self, commit=True):
-        user = super().save(commit=commit)
-        # Asignar tipo 'cliente' automáticamente
-        cliente_tipo = TipoUsuario.objects.get_or_create(descripcion='cliente')[0]
-        user.tipo_usuario = cliente_tipo  # Guardar esta referencia para crear el modelo Usuario luego
-        return user
+        # Crear el usuario base de Django
+        user = User.objects.create_user(
+            username=self.cleaned_data['username'],
+            password=self.cleaned_data['password1'],
+            email=self.cleaned_data['correo'],
+            first_name=self.cleaned_data['nombre'],
+            last_name=f"{self.cleaned_data['appaterno']} {self.cleaned_data['apmaterno']}"
+        )
+        
+        # Obtener o crear tipo cliente
+        cliente_tipo, _ = TipoUsuario.objects.get_or_create(descripcion='cliente')
 
+        usuario = super().save(commit=False)
+        usuario.tipo = cliente_tipo
+        usuario.habilitado = True
+        usuario.correo = self.cleaned_data['correo']
+        usuario.save()
+
+        # Asignar grupo 'cliente' al usuario de Django
+        from django.contrib.auth.models import Group
+        group, created = Group.objects.get_or_create(name='cliente')
+        user.groups.add(group)
+
+        if commit:
+            usuario.save()
+
+        return usuario
+    
 class LoginForm(forms.Form):
     username = forms.CharField(max_length=150, label="Usuario")
     password = forms.CharField(widget=forms.PasswordInput, label="Contraseña")
 
 
 class AdminUserCreationForm(UserCreationForm):
-    rut = forms.CharField(max_length=12)
-    nombre = forms.CharField(max_length=40)
-    apellido = forms.CharField(max_length=40)
-    edad = forms.IntegerField()
-    direccion = forms.CharField(max_length=60)
-    telefono = forms.CharField(max_length=20)
-    genero = forms.ModelChoiceField(queryset=Genero.objects.all())
-    tipo = forms.ModelChoiceField(queryset=TipoUsuario.objects.all())
+    fec_nac = forms.DateField(
+        input_formats=['%d/%m/%Y'],
+        widget=DateInput(attrs={'type': 'text', 'placeholder': 'DD/MM/AAAA'}),
+        label='Fecha de nacimiento'
+    )
 
     class Meta:
-        model = User
-        fields = ['username', 'first_name', 'last_name', 'email', 'password1', 'password2']
+        model = Usuario
+        fields = [
+            'rut',          # campo para login, no username
+            'nombre',
+            'appaterno',
+            'apmaterno',
+            'correo',
+            'genero',
+            'fec_nac',
+            'telefono',
+            'direccion',
+            'password1',
+            'password2',
+        ]
 
     def save(self, commit=True):
         user = super().save(commit=commit)

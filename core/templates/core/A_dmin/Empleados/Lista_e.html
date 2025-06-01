@@ -1,0 +1,85 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Empleados</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap CSS + Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'core/css/admini.css' %}">
+</head>
+<body>
+
+<div class="d-flex">
+    <!-- Sidebar -->
+    <div class="sidebar p-3">
+        <h4 class="text-center py-3">💼 Admin Panel</h4>
+        <a href="#"><i class="bi bi-speedometer2"></i> Dashboard</a>
+        <a href="#"><i class="bi bi-people-fill"></i> Empleados</a>
+        <a href="#"><i class="bi bi-person-lines-fill"></i> Clientes</a>
+        <a href="#"><i class="bi bi-box"></i> Productos</a>
+        <a href="#"><i class="bi bi-cart-check"></i> Pedidos</a>
+        <hr>
+        <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger w-100">
+                <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+            </button>
+        </form>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-grow-1 card bg-dark text-white m-3">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h2>Lista de Empleados</h2>
+            <a href="{% url 'registro_empleado' %}" class="btn btn-success">
+                <i class="bi bi-plus-circle"></i> Agregar Empleado
+            </a>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <table class="table table-striped table-dark">
+    <thead>
+        <tr>
+            <th>RUT</th>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Edad</th>
+            <th>Teléfono</th>
+            <th>Dirección</th>
+            <th>Tipo</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for empleado in lista_empleados %}
+        <tr>
+            <td>{{ empleado.rut }}</td>
+            <td>{{ empleado.nombre }}</td>
+            <td>{{ empleado.apellido }}</td>
+            <td>{{ empleado.edad }}</td>
+            <td>{{ empleado.telefono }}</td>
+            <td>{{ empleado.direccion }}</td>
+            <td>{{ empleado.tipo.descripcion }}</td>
+            <td>
+                <a href="{% url 'empleado_editar' empleado.id %}" class="btn btn-sm btn-warning">Editar</a>
+                <a href="{% url 'empleado_eliminar' empleado.id %}" class="btn btn-sm btn-danger">Eliminar</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="8" class="text-center">No hay empleados registrados.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

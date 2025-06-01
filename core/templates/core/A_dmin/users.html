@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 {% load static %}
@@ -35,7 +34,7 @@
     <!-- Main Content -->
     <div class="content flex-grow-1">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 id="titulo-seccion">Dashboard</h2>
+        <h2 id="titulo-seccion">Usuarios</h2>
         <div>
             <i class="bi bi-bell me-3"></i>
             <i class="bi bi-person-circle"></i>
@@ -48,11 +47,11 @@
             <div class="col-md-4">
                 <div class="card border-0 shadow" onclick="mostrarSeccion('usuarios')">
                     <div class="card-header bg-primary text-white text-center">
-                        <h5>Usuarios</h5>
+                        <h5>Empleados</h5>
                     </div>
                     <div class="card-body text-center">
-                        <p>Gestiona todos los usuarios del sistema.</p>
-                        <a href="{% url 'users' %}"><button class="btn btn-primary">Ir a Usuarios</button></a>
+                        <p>Gestiona todos los Empleados del sistema.</p>
+                        <a href="{% url 'lista_empleados' %}"><button class="btn btn-primary">Entrar</button></a>
                     </div>
                 </div>
             </div>
@@ -60,11 +59,11 @@
             <div class="col-md-4">
                 <div class="card border-0 shadow" onclick="mostrarSeccion('pedidos')">
                     <div class="card-header bg-warning text-white text-center">
-                        <h5>Pedidos</h5>
+                        <h5>Clientes</h5>
                     </div>
                     <div class="card-body text-center">
-                        <p>Supervisa los pedidos realizados.</p>
-                        <button class="btn btn-warning">Ir a Pedidos</button>
+                        <p>Gestiona todos los Clientes del sistema.</p>
+                        <a href="{% url 'Clientes' %}"><button class="btn btn-warning">Entrar</button></a>
                     </div>
                 </div>
             </div>
