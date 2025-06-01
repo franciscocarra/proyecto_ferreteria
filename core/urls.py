@@ -17,5 +17,11 @@ urlpatterns = [
     path('Usuarios/', views.Usuarios, name='Usuarios'),
     path('logout/', LogoutView.as_view(next_page='home'), name='logout'),
     path('administración', views.administración, name='administración'),
+    path('bodeguero', views.bodeguero, name='bodeguero'),
+    path('inventario', views.inventario, name='inventario'),
+    path('productos/registrar/', views.registrar_producto, name='registrar_producto'),
+    path('producto/eliminar/<int:sku>/', views.eliminar_producto, name='producto_eliminar'),
+    path('productos/editar/<int:sku>/', views.editar_producto, name='producto_editar'),
+
 ]
 

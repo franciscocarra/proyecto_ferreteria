@@ -5,7 +5,10 @@ from django.contrib.auth.models import Group
 from django.contrib.auth import authenticate, login, logout
 import random
 from django.utils.crypto import get_random_string
-
+from .models import Producto
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib.auth.decorators import permission_required
+from django.db.models import Q
 
 def home(request):
     return render(request, 'core/home.html')
@@ -27,7 +30,11 @@ def iniciar_session(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('home')  # O donde quieras que vaya
+            # Verifica si el usuario es admin (superuser o tiene permisos específicos)
+            if user.is_superuser:
+                return redirect('administración')  # Asegúrate de que esta URL exista
+            else:
+                return redirect('home')
         else:
             form.add_error(None, "Usuario o contraseña incorrectos.")
     return render(request, 'core/iniciar_session.html', {'form': form})
@@ -133,4 +140,48 @@ def Usuarios(request):
 def administración(request):
     return render(request, 'core/A_dmin/administración.html')
 
+def bodeguero(request):
+    return render(request, 'core/bodeguero/bode.html')
+
+def inventario(request):
+    query = request.GET.get('q')
+    if query:
+        productos = Producto.objects.filter(
+            Q(nombre_producto__icontains=query) |
+            Q(marca__icontains=query) |
+            Q(descripcion__icontains=query)
+        )
+    else:
+        productos = Producto.objects.all()
+    
+    return render(request, 'core/bodeguero/inventario.html', {'lista_productos': productos})
+
+def registrar_producto(request):
+    if request.method == 'POST':
+        form = ProductoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('inventario')  # Cambia por la url de tu lista
+    else:
+        form = ProductoForm()
+
+    return render(request, 'core/bodeguero/crear_p.html', {'form': form})
+
+def eliminar_producto(request, sku):
+    producto = get_object_or_404(Producto, sku=sku)
+    producto.delete()
+    return redirect('inventario')
+
+def editar_producto(request, sku):
+    producto = get_object_or_404(Producto, sku=sku)
+    
+    if request.method == 'POST':
+        form = ProductoForm(request.POST, instance=producto)
+        if form.is_valid():
+            form.save()
+            return redirect('inventario')
+    else:
+        form = ProductoForm(instance=producto)
+
+    return render(request, 'core/bodeguero/editar_p.html', {'form': form, 'producto': producto})
 

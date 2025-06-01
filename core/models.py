@@ -33,3 +33,15 @@ class Usuario(models.Model):
 
     def __str__(self):
         return self.rut
+    
+class Producto(models.Model):
+    sku = models.AutoField(primary_key=True)  # ID autoincremental
+    nombre_producto = models.CharField(max_length=100)
+    marca = models.CharField(max_length=100)
+    descripcion = models.CharField(max_length=255, blank=True, null=True)
+    precio = models.DecimalField(max_digits=10, decimal_places=2)
+    stock = models.PositiveIntegerField()
+    estado_producto = models.CharField(max_length=10)
+
+    def __str__(self):
+        return f"{self.nombre_producto} ({self.marca})"

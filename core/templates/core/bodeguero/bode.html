@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <title>Panel del Bodeguero</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap CSS + Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Tu CSS -->
+    <link rel="stylesheet" href="{% static 'core/css/admini.css' %}">
+</head>
+<body>
+
+<div class="d-flex">
+    <!-- Sidebar -->
+    <div class="sidebar p-3">
+        <h4 class="text-center py-3">🏬 Bodega</h4>
+        <a href="#"><i class="bi bi-speedometer2"></i> Panel</a>
+        <a href="#"><i class="bi bi-boxes"></i> Inventario</a>
+        <a href="#"><i class="bi bi-truck"></i> Entradas</a>
+        <a href="#"><i class="bi bi-box-arrow-in-down"></i> Salidas</a>
+        <a href="#"><i class="bi bi-tools"></i> Configuración</a>
+        <hr>
+        <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">
+            <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+        </button>
+        </form>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content flex-grow-1">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 id="titulo-seccion">Panel del Bodeguero</h2>
+        <div>
+            <i class="bi bi-bell me-3"></i>
+            <i class="bi bi-person-circle"></i>
+        </div>
+    </div>
+
+    <!-- Contenido del Panel -->
+    <div id="bodega-section">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <div class="card border-0 shadow" onclick="mostrarSeccion('inventario')">
+                    <div class="card-header bg-success text-white text-center">
+                        <h5>Inventario</h5>
+                    </div>
+                    <div class="card-body text-center">
+                        <p>Revisa y actualiza los productos almacenados.</p>
+                        <a href="{% url 'inventario' %}"><button class="btn btn-success">Ver Inventario</button></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card border-0 shadow" onclick="mostrarSeccion('entradas')">
+                    <div class="card-header bg-info text-white text-center">
+                        <h5>Entradas</h5>
+                    </div>
+                    <div class="card-body text-center">
+                        <p>Gestiona las nuevas entradas de productos.</p>
+                        <button class="btn btn-info">Ver Entradas</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card border-0 shadow" onclick="mostrarSeccion('salidas')">
+                    <div class="card-header bg-warning text-white text-center">
+                        <h5>Salidas</h5>
+                    </div>
+                    <div class="card-body text-center">
+                        <p>Controla las salidas de productos del almacén.</p>
+                        <button class="btn btn-warning">Ver Salidas</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

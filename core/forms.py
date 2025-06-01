@@ -3,6 +3,7 @@ from .models import *
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django import forms
+from .models import Producto
 
 class CustomUserCreationForm(UserCreationForm):
     class Meta:
@@ -49,3 +50,17 @@ class AdminUserCreationForm(UserCreationForm):
             'tipo': self.cleaned_data['tipo']
         }
         return user
+    
+
+class ProductoForm(forms.ModelForm):
+    class Meta:
+        model = Producto
+        fields = ['nombre_producto', 'marca', 'descripcion', 'precio', 'stock', 'estado_producto']
+        widgets = {
+            'nombre_producto': forms.TextInput(attrs={'class': 'form-control'}),
+            'marca': forms.TextInput(attrs={'class': 'form-control'}),
+            'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'precio': forms.NumberInput(attrs={'class': 'form-control'}),
+            'stock': forms.NumberInput(attrs={'class': 'form-control'}),
+            'estado_producto': forms.TextInput(attrs={'class': 'form-control'}),
+        }
