@@ -224,6 +224,7 @@ def Clientes(request):
 
     return render(request, 'core/A_dmin/Cliente/lista_c.html', aux)
 
+<<<<<<< HEAD
 def eliminar_usuario(request, id):
     # Obtener el objeto usuario con el id proporcionado
     usuario = get_object_or_404(Usuario, id=id)
@@ -234,4 +235,6 @@ def eliminar_usuario(request, id):
     # Redirigir a la lista de usuarios
     return redirect('Clientes')
 
+=======
+>>>>>>> 49c5846f5e31eb06b804fe7bd6da4cc78a916c63
 

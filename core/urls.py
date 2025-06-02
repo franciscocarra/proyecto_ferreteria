@@ -25,7 +25,10 @@ urlpatterns = [
     path('empleados/', views.listar_empleados, name='lista_empleados'),
     path('registro_empleado/', views.registro_empleado, name='registro_empleado'),
     path('Clientes/', views.Clientes, name='Clientes'),
+<<<<<<< HEAD
     path('eliminar_usuario/<int:id>/', views.eliminar_usuario, name='eliminar_usuario'),
+=======
+>>>>>>> 49c5846f5e31eb06b804fe7bd6da4cc78a916c63
     path('editar_producto_api/<str:sku>/', views.editar_producto_api, name='editar_producto_api'),
     
 
