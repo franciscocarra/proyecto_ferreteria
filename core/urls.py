@@ -24,5 +24,8 @@ urlpatterns = [
     path('productos/editar/<int:sku>/', views.editar_producto, name='producto_editar'),
     path('empleados/', views.listar_empleados, name='lista_empleados'),
     path('Clientes/', views.Clientes, name='Clientes'),
+    path('editar_producto_api/<str:sku>/', views.editar_producto_api, name='editar_producto_api'),
+    
+
 ]
 
