@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ferretería Rinco Del Herrero - Menú</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'core/css/carousel.css' %}">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.dataTables.min.css">
+</head>
+<body class="bg-gray-100 text-gray-900">
+    <header class="bg-dark text-white py-4">
+    <div class="container mx-auto flex justify-between items-center">
+        <h1 class="text-2xl font-bold"><a href="{% url 'home' %}">Ferretería Rinco Del Herrero</a></h1>
+        <nav>
+            <ul class="flex space-x-4">
+                <li><a href="{% url 'home' %}" class="hover:underline">Inicio</a></li>
+                <li><a href="{% url 'productos' %}" class="hover:underline">Productos</a></li>
+                <!-- CAMBIO: botón para mostrar categorías -->
+                <li><button onclick="toggleCategorias()" class="hover:underline focus:outline-none">Categorías</button></li>
+                <li><a href="#promociones" class="hover:underline">Promociones</a></li>
+                <li><a href="{% url 'contacto' %}" class="hover:underline">Contacto</a></li>
+                {% if user.is_authenticated %}
+                <li class="relative">
+                    <div id="userMenuButton" class="flex items-center space-x-2 cursor-pointer">
+                        <img src="{% static 'core/img/usuario/usuario.png' %}" alt="Perfil" class="w-8 h-8 rounded-full">
+                        <span>{{ user.username }}</span>
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M6 9l6 6 6-6"></path>
+                        </svg>
+                    </div>
+                
+                    <div id="userMenuDropdown" class="absolute hidden flex-col bg-white text-black right-0 mt-2 py-2 w-48 rounded shadow-lg z-50">
+                        <a href="#" class="px-4 py-2 hover:bg-gray-200">Mi perfil</a>
+                        {% if user.is_staff %}
+                            {% if perms.core.view_empleado %}
+                                <a href="{% url 'home' %}" class="px-4 py-2 hover:bg-gray-200">Configuración</a>
+                            {% endif %}
+                            <a href="/admin" class="px-4 py-2 hover:bg-gray-200">Administración</a>
+                        {% endif %}
+                        <form action="{% url 'logout' %}" method="post" class="px-4 py-2">
+                            {% csrf_token %}
+                            <button type="submit" class="w-full text-left hover:bg-gray-200">Cerrar sesión</button>
+                        </form>
+                    </div>
+                </li>
+                {% else %}
+                <li><a href="{% url 'iniciar_session' %}" class="hover:underline">Iniciar sesión</a></li>
+                {% endif %}
+                <li>
+                    <a href="{% url 'carrito' %}" class="relative inline-block w-8 h-8">
+                        <div class="absolute bottom-0 left-0 w-8 h-5 border-2 border-white rounded-sm"></div>
+                        <div class="absolute bottom-5 left-1 w-6 h-2 border-2 border-white border-b-0 rounded-t-sm"></div>
+                        <div class="absolute bottom-1 left-1 w-1 h-1 bg-white rounded-full"></div>
+                        <div class="absolute bottom-1 right-1 w-1 h-1 bg-white rounded-full"></div>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<!-- SIDEBAR DE CATEGORÍAS -->
+<div id="categoriasSidebar" class="fixed top-0 left-0 w-80 h-full bg-white shadow-lg z-50 transform -translate-x-full transition-transform duration-300 ease-in-out overflow-y-auto">
+    <div class="flex items-center justify-between px-4 py-3 border-b">
+        <h2 class="text-lg font-bold text-gray-800">Categorías</h2>
+        <button onclick="toggleCategorias()" class="text-xl font-bold text-gray-600 hover:text-black">&times;</button>
+    </div>
+    <ul class="p-4 space-y-2 text-gray-700">
+        <li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Aseo Industrial</li>
+        <li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Ropa de Seguridad y Protección Personal</li>
+        <li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Materiales de Construcción</li>
+        <li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Techos y Aislantes</li>
+        <li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Herramientas y máquinas</li>
+        <li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Fijaciones</li>
+        <li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Pintura</li>
+        <li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Maderas y tableros</li>
+        <li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Tensores</li>
+    </ul>
+</div>
+
+
+        <div class="card bg-dark text-white">
+        <div class="card-header">
+            Lista de Usuarios
+        </div>
+        <div class="card-body">
+            <table class="table table-striped table-dark">
+                <thead>
+                    <tr>
+                        <th>Rut</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Edad</th>
+                        <th>Dirección</th>
+                        <th>Teléfono</th>
+                        <th>Género</th>
+                        <th>Tipo</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for aux in lista %}
+                        <tr>
+                            <td>{{ aux.rut }}</td>
+                            <td>{{ aux.nombre }}</td>
+                            <td>{{ aux.apellido }}</td>
+                            <td>{{ aux.edad }}</td>
+                            <td>{{ aux.direccion }}</td>
+                            <td>{{ aux.telefono }}</td>
+                            <td>{{ aux.genero }}</td>
+                            <td>{{ aux.tipo }}</td>
+                            <td>
+                                {% if perms.core.change_empleado %}
+                                <div class="dropdown">
+                                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton{{ aux.id }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Opciones
+                                    </button>
+                                    
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ aux.id }}">
+                                        <a class="dropdown-item" href="#">Editar</a>
+                                    <!--<a class="dropdown-item" onclick="confirmarDelete({{aux.id}})">Eliminar</a>-->
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    <footer class="bg-black text-white py-10 mt-16">
+        <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-5 gap-8 text-sm">
+            <!-- Logo y contacto -->
+            <div>
+                <div class="flex items-center mb-4">
+                    <div class="bg-warning text-white font-bold text-lg px-2 py-1 mr-2">RDH</div>
+                    <span class="font-bold text-xl">Ferretería Rinco Del Herrero</span>
+                </div>
+                <p class="font-semibold">Casa Matriz</p>
+                <p>Av. Américo Vespucio 1252, Pudahuel, Región Metropolitana</p>
+                <div class="flex items-center mt-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10l1.5-1.5M21 10l-1.5-1.5M9 16h6M10 12h4m-1 8v-8m-4 4h8" /></svg>
+                    <span>+56 9 4722 9108</span>
+                </div>
+                <button class="mt-4 bg-white text-red-600 font-bold py-2 px-4 rounded"><a href="{% url 'contacto' %}">Contáctanos</a></button>
+            </div>
+    
+            <!-- Nosotros -->
+            <div>
+                <h3 class="font-semibold mb-2">Nosotros</h3>
+                <ul class="space-y-1">
+                    <li><a href="#" class="hover:underline">Quiénes Somos</a></li>
+                    <li><a href="#" class="hover:underline">Tiendas</a></li>
+                    <li><a href="#" class="hover:underline">Canal de Denuncias</a></li>
+                </ul>
+            </div>
+    
+            <!-- Ayuda -->
+            <div>
+                <h3 class="font-semibold mb-2">Ayuda</h3>
+                <ul class="space-y-1">
+                    <li><a href="#" class="hover:underline">FAQ</a></li>
+                    <li><a href="#" class="hover:underline">¿Cómo Comprar?</a></li>
+                    <li><a href="#" class="hover:underline">Condiciones de despacho</a></li>
+                    <li><a href="#" class="hover:underline">Seguimiento de Compra</a></li>
+                </ul>
+            </div>
+    
+            <!-- Categorías -->
+            <div>
+                <h3 class="font-semibold mb-2">Categorías</h3>
+                <ul class="space-y-1">
+                    <li><a href="#" class="hover:underline">Herramientas de Construcción</a></li>
+                    <li><a href="#" class="hover:underline">Herramientas de Aseo y Jardín</a></li>
+                    <li><a href="#" class="hover:underline">Insumos y Accesorios</a></li>
+                    <li><a href="#" class="hover:underline">Pinturas</a></li>
+                </ul>
+            </div>
+    
+            <!-- Legal -->
+            <div>
+                <h3 class="font-semibold mb-2">Legal</h3>
+                <ul class="space-y-1">
+                    <li><a href="#" class="hover:underline">Términos y condiciones</a></li>
+                    <li><a href="#" class="hover:underline">Política de garantía y devoluciones</a></li>
+                    <li><a href="#" class="hover:underline">Políticas de cookies</a></li>
+                    <li><a href="#" class="hover:underline">Políticas de privacidad</a></li>
+                </ul>
+            </div>
+            </div>
+        </div>
+    </footer>
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'core/js/menu_categoria.js' %}"></script>
+    <script src="{% static 'core/js/lista.js' %}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="{% static 'core/js/icono.js' %}"></script>
+</body>
+
+
+</html>

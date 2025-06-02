@@ -117,3 +117,55 @@ class ProductoForm(forms.ModelForm):
             'stock': forms.NumberInput(attrs={'class': 'form-control'}),
             'estado_producto': forms.TextInput(attrs={'class': 'form-control'}),
         }
+
+class EmpleadoUserCreationForm(forms.ModelForm):
+    username = forms.CharField(max_length=150)
+    password1 = forms.CharField(label="Contraseña", widget=forms.PasswordInput)
+    password2 = forms.CharField(label="Confirmar contraseña", widget=forms.PasswordInput)
+
+    fec_nac = forms.DateField(
+        input_formats=['%d/%m/%Y'],
+        widget=DateInput(format='%d/%m/%Y', attrs={'placeholder': 'DD/MM/AAAA', 'type': 'text'}),
+        label='Fecha de nacimiento'
+    )
+
+    class Meta:
+        model = Usuario
+        fields = [
+            'rut', 'nombre', 'appaterno', 'apmaterno', 'correo',
+            'genero', 'fec_nac', 'telefono', 'direccion'
+        ]
+
+    def clean(self):
+        cleaned_data = super().clean()
+        p1 = cleaned_data.get('password1')
+        p2 = cleaned_data.get('password2')
+        if p1 and p2 and p1 != p2:
+            raise forms.ValidationError("Las contraseñas no coinciden")
+        return cleaned_data
+
+    def save(self, commit=True):
+        user = User.objects.create_user(
+            username=self.cleaned_data['username'],
+            password=self.cleaned_data['password1'],
+            email=self.cleaned_data['correo'],
+            first_name=self.cleaned_data['nombre'],
+            last_name=f"{self.cleaned_data['appaterno']} {self.cleaned_data['apmaterno']}"
+        )
+
+        empleado_tipo, _ = TipoUsuario.objects.get_or_create(descripcion='empleado')
+
+        usuario = super().save(commit=False)
+        usuario.tipo = empleado_tipo
+        usuario.habilitado = True
+        usuario.correo = self.cleaned_data['correo']
+        usuario.save()
+
+        from django.contrib.auth.models import Group
+        group, _ = Group.objects.get_or_create(name='empleado')
+        user.groups.add(group)
+
+        if commit:
+            usuario.save()
+
+        return usuario

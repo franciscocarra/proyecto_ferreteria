@@ -40,6 +40,10 @@
             <input type="text" name="q" class="form-control form-control-sm me-2" placeholder="Buscar..." value="{{ request.GET.q }}">
             <button type="submit" class="btn btn-outline-light btn-sm"><i class="bi bi-search"></i></button>
         </form>
+
+        <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#modalAgregar">
+            <i class="bi bi-plus-lg"></i> Agregar Producto
+        </button>
         <a href="{% url 'registrar_producto' %}" class="btn btn-success btn-sm" title="Agregar Producto">
             <i class="bi bi-plus-lg"></i>
         </a>
@@ -56,48 +60,198 @@
                     <th>Precio</th>
                     <th>Stock</th>
                     <th>Estado</th>
-                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
-                {% for producto in lista_productos %}
-                    <tr>
-                        <td>{{ producto.sku }}</td>
-                        <td>{{ producto.nombre_producto }}</td>
-                        <td>{{ producto.marca }}</td>
-                        <td>{{ producto.descripcion }}</td>
-                        <td>${{ producto.precio }}</td>
-                        <td>{{ producto.stock }}</td>
-                        <td>{{ producto.estado_producto }}</td>
-                        <td>
+{% for producto in lista_productos %}
+<tr>
+    <td>{{ producto.sku }}</td>
+    <td>{{ producto.nombre_producto }}</td>
+    <td>{{ producto.marca }}</td>
+    <td>{{ producto.descripcion }}</td>
+    <td>${{ producto.precio }}</td>
+    <td>{{ producto.stock }}</td>
+    <td>{{ producto.estado_producto }}</td>
+    <td>
+        <td>
     <div class="dropdown">
-        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton{{ producto.sku }}" data-bs-toggle="dropdown" aria-expanded="false">
+        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
             Opciones
         </button>
-        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ producto.sku }}">
-            <li><a class="dropdown-item" href="{% url 'producto_editar' producto.sku %}">Editar</a></li>
-            <li>
-                <a class="dropdown-item text-danger" href="{% url 'producto_eliminar' producto.sku %}"
-                   onclick="return confirm('¿Estás seguro de que deseas eliminar este producto?');">
-                    Eliminar
-                </a>
-            </li>
+        <ul class="dropdown-menu">
+            <li><button class="dropdown-item btn-editar" data-sku="{{ producto.sku }}">Editar</button></li>
+            <li><button class="dropdown-item text-danger btn-eliminar" data-sku="{{ producto.sku }}">Eliminar</button></li>
         </ul>
     </div>
 </td>
-                    </tr>
-                {% empty %}
-                    <tr>
-                        <td colspan="8" class="text-center">No hay productos disponibles</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
+    </td>
+</tr>
+{% empty %}
+<tr>
+    <td colspan="8" class="text-center">No hay productos disponibles</td>
+</tr>
+{% endfor %}
+</tbody>
         </table>
     </div>
 </div>
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Eliminar producto
+    document.querySelectorAll('.btn-eliminar').forEach(button => {
+        button.addEventListener('click', async function() {
+            const sku = this.dataset.sku;
+            const confirmar = confirm(`¿Estás seguro de eliminar el producto SKU ${sku}?`);
+            if (!confirmar) return;
+
+            try {
+                const respuesta = await fetch(`http://127.0.0.1:8001/productos/${sku}`, {
+                    method: 'DELETE'
+                });
+
+                if (respuesta.ok) {
+                    alert("Producto eliminado con éxito");
+                    location.reload();  // recarga para actualizar la tabla
+                } else {
+                    const data = await respuesta.json();
+                    alert("Error al eliminar: " + data.detail);
+                }
+            } catch (error) {
+                alert("Error de conexión con la API");
+                console.error(error);
+            }
+        });
+    });
+
+    // Editar producto
+            document.querySelectorAll('.btn-editar').forEach(button => {
+            button.addEventListener('click', function () {
+        const sku = this.dataset.sku;
+        window.location.href = `/editar_producto_api/${sku}/`;
+    });
+});
+});
+</script>
+
+
+<!-- Modal “Agregar Producto” -->
+<div class="modal fade" id="modalAgregar" tabindex="-1" aria-labelledby="modalAgregarLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content bg-dark text-white">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalAgregarLabel">Agregar Producto Nuevo</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <form id="formAgregarProducto">
+          <!-- Nombre -->
+          <div class="mb-3">
+            <label for="agregar_nombre" class="form-label">Nombre del Producto</label>
+            <input type="text" class="form-control" id="agregar_nombre" name="nombre_producto" required>
+          </div>
+          <!-- Marca -->
+          <div class="mb-3">
+            <label for="agregar_marca" class="form-label">Marca</label>
+            <input type="text" class="form-control" id="agregar_marca" name="marca" required>
+          </div>
+          <!-- Descripción -->
+          <div class="mb-3">
+            <label for="agregar_descripcion" class="form-label">Descripción</label>
+            <textarea class="form-control" id="agregar_descripcion" name="descripcion" rows="2" required></textarea>
+          </div>
+          <div class="row">
+            <!-- Precio -->
+            <div class="col-md-4 mb-3">
+              <label for="agregar_precio" class="form-label">Precio</label>
+              <input type="number" step="0.01" class="form-control" id="agregar_precio" name="precio" required>
+            </div>
+            <!-- Stock -->
+            <div class="col-md-4 mb-3">
+              <label for="agregar_stock" class="form-label">Stock</label>
+              <input type="number" class="form-control" id="agregar_stock" name="stock" required>
+            </div>
+            <!-- Estado -->
+            <div class="col-md-4 mb-3">
+              <label for="agregar_estado" class="form-label">Estado</label>
+              <select class="form-select" id="agregar_estado" name="estado_producto" required>
+                <option value="Activo">Activo</option>
+                <option value="Inactivo">Inactivo</option>
+              </select>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" id="btnGuardarAgregar">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const btnGuardar = document.getElementById("btnGuardarAgregar");
+
+    btnGuardar.addEventListener("click", async function() {
+        // Recolectar datos del formulario
+        const nombre = document.getElementById("agregar_nombre").value.trim();
+        const marca = document.getElementById("agregar_marca").value.trim();
+        const descripcion = document.getElementById("agregar_descripcion").value.trim();
+        const precio = document.getElementById("agregar_precio").value;
+        const stock = document.getElementById("agregar_stock").value;
+        const estado = document.getElementById("agregar_estado").value;
+
+        // Validamos que no esté vacío
+        if (!nombre || !marca || !descripcion || precio === "" || stock === "" || !estado) {
+            alert("Todos los campos son obligatorios.");
+            return;
+        }
+
+        // Construir los query params (FastAPI espera params en POST)
+        const params = new URLSearchParams({
+            nombre_producto: nombre,
+            marca: marca,
+            descripcion: descripcion,
+            precio: precio,
+            stock: stock,
+            estado_producto: estado
+        });
+
+        try {
+            // Hacer POST a la API
+            const respuesta = await fetch(`http://127.0.0.1:8001/productos?${params.toString()}`, {
+                method: "POST"
+            });
+
+            if (respuesta.ok) {
+                alert("Producto agregado con éxito");
+                // Cerrar el modal
+                const modalEl = document.getElementById("modalAgregar");
+                const modal = bootstrap.Modal.getInstance(modalEl);
+                modal.hide();
+
+                // Limpiar el formulario
+                document.getElementById("formAgregarProducto").reset();
+
+                // Recargar la página para actualizar la tabla
+                location.reload();
+            } else {
+                const errorData = await respuesta.json();
+                alert("Error al agregar: " + (errorData.detail || JSON.stringify(errorData)));
+            }
+        } catch (error) {
+            alert("Error de conexión con la API");
+            console.error(error);
+        }
+    });
+});
+</script>
+
 
 </body>
 </html>

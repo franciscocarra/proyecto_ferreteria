@@ -10,6 +10,11 @@ from django.shortcuts import get_object_or_404, redirect
 from django.contrib.auth.decorators import permission_required
 from django.db.models import Q
 from .models import Usuario, TipoUsuario
+import requests
+from django.views.decorators.csrf import csrf_exempt
+from django.http import HttpResponse
+
+API_URL = "http://127.0.0.1:8001/productos"
 
 def home(request):
     return render(request, 'core/home.html')
@@ -83,16 +88,22 @@ def bodeguero(request):
 
 def inventario(request):
     query = request.GET.get('q')
-    if query:
-        productos = Producto.objects.filter(
-            Q(nombre_producto__icontains=query) |
-            Q(marca__icontains=query) |
-            Q(descripcion__icontains=query)
-        )
-    else:
-        productos = Producto.objects.all()
+    try:
+        response = requests.get('http://127.0.0.1:8001/productos/')
+        response.raise_for_status()
+        productos = response.json()
+
+        # Filtro local con "q", si existe
+        if query:
+            productos = [p for p in productos if query.lower() in p['nombre_producto'].lower()]
+    except requests.exceptions.RequestException:
+        productos = []
     
     return render(request, 'core/bodeguero/inventario.html', {'lista_productos': productos})
+
+
+
+
 
 def registrar_producto(request):
     if request.method == 'POST':
@@ -109,6 +120,70 @@ def eliminar_producto(request, sku):
     producto = get_object_or_404(Producto, sku=sku)
     producto.delete()
     return redirect('inventario')
+
+def editar_producto_api(request, sku):
+    """
+    1) En GET: obtiene los datos del producto desde la API y los muestra en editar_p.html.
+    2) En POST: toma los campos del formulario, arma los query params (incluyendo sku)
+       y hace PUT a http://127.0.0.1:8001/productos?sku=...&nombre_producto=... etc.
+    """
+
+    # URL base de tu API (sin el SKU en la ruta)
+    api_base = 'http://127.0.0.1:8001/productos'
+
+    if request.method == 'POST':
+        # Recolectamos todos los campos del formulario
+        nombre = request.POST.get('nombre_producto')
+        marca = request.POST.get('marca')
+        descripcion = request.POST.get('descripcion')
+        precio = request.POST.get('precio')
+        stock = request.POST.get('stock')
+        estado = request.POST.get('estado_producto')
+
+        # Aquí armamos el dict que irá en params (query string)
+        data = {
+            'sku': sku,
+            'nombre_producto': nombre,
+            'marca': marca,
+            'descripcion': descripcion,
+            'precio': precio,
+            'stock': stock,
+            'estado_producto': estado,
+        }
+
+        # Hacemos PUT enviando todo como query params
+        try:
+            respuesta = requests.put(f"{api_base}/{sku}", params=data)
+        except requests.RequestException as e:
+            return HttpResponse(f"Error de conexión con la API: {e}")
+
+        if respuesta.status_code in (200, 204):
+            # Actualización exitosa, volvemos al inventario
+            return redirect('inventario')
+        else:
+            # API devolvió error, mostramos el texto que venga
+            return render(request, 'core/bodeguero/editar_p.html', {
+                'producto': data,  # para rellenar el formulario con lo que intentó guardarse
+                'error': f"Error al actualizar desde la API: {respuesta.text}"
+            })
+
+    else:  # GET
+        # Obtiene el producto desde la API para llenar el formulario
+        try:
+            respuesta = requests.get(f"{api_base}/{sku}")
+        except requests.RequestException:
+            return HttpResponse("Error de conexión al obtener datos del producto.")
+
+        if respuesta.status_code == 200:
+            producto = respuesta.json()
+            return render(request, 'core/bodeguero/editar_p.html', {
+                'producto': producto
+            })
+        else:
+            return render(request, 'core/bodeguero/editar_p.html', {
+                'error': "Producto no encontrado en la API."
+            })
+
 
 def editar_producto(request, sku):
     producto = get_object_or_404(Producto, sku=sku)
@@ -129,6 +204,18 @@ def listar_empleados(request):
     empleados = Usuario.objects.filter(tipo__in=tipos_empleado)
     return render(request, 'core/A_dmin/empleados/lista_e.html', {'lista_empleados': empleados})
 
+
+def registro_empleado(request):
+    if request.method == 'POST':
+        formulario = EmpleadoUserCreationForm(request.POST)
+        if formulario.is_valid():
+            formulario.save()
+            return redirect('Clientes')  # Redirige donde tú quieras
+    else:
+        formulario = EmpleadoUserCreationForm()
+
+    return render(request, 'core/A_dmin/empleados/crear_e.html', {'form': formulario})
+
 def Clientes(request):
     Usuarios = Usuario.objects.all()
     aux = {
@@ -136,3 +223,15 @@ def Clientes(request):
     }
 
     return render(request, 'core/A_dmin/Cliente/lista_c.html', aux)
+
+def eliminar_usuario(request, id):
+    # Obtener el objeto usuario con el id proporcionado
+    usuario = get_object_or_404(Usuario, id=id)
+
+    # Eliminar el usuario
+    usuario.delete()
+
+    # Redirigir a la lista de usuarios
+    return redirect('Clientes')
+
+

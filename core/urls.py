@@ -23,6 +23,11 @@ urlpatterns = [
     path('producto/eliminar/<int:sku>/', views.eliminar_producto, name='producto_eliminar'),
     path('productos/editar/<int:sku>/', views.editar_producto, name='producto_editar'),
     path('empleados/', views.listar_empleados, name='lista_empleados'),
+    path('registro_empleado/', views.registro_empleado, name='registro_empleado'),
     path('Clientes/', views.Clientes, name='Clientes'),
+    path('eliminar_usuario/<int:id>/', views.eliminar_usuario, name='eliminar_usuario'),
+    path('editar_producto_api/<str:sku>/', views.editar_producto_api, name='editar_producto_api'),
+    
+
 ]
 

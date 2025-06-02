@@ -34,7 +34,11 @@
     <div class="flex-grow-1 card bg-dark text-white m-3">
         <div class="card-header d-flex justify-content-between align-items-center">
             Lista de clientes
+            <a href="{% url 'registro_empleado' %}" class="btn btn-success btn-sm" title="Agregar Producto">
+            <i class="bi bi-plus-lg"></i>
+        </a>
         </div>
+        
         <div class="card-body">
             <table class="table table-striped table-dark">
                 <thead>
@@ -66,8 +70,23 @@
             <td>{{ aux.direccion }}</td>
             <td>{{ aux.tipo }}</td>
             <td>
-                <!-- botones o acciones -->
-            </td>
+    <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+            Opciones
+        </button>
+        <ul class="dropdown-menu">
+            <li><button class="dropdown-item btn-editar" data-id="{{ aux.id }}">Editar</button></li>
+            <li>
+                <form method="post" action="{% url 'eliminar_usuario' aux.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="dropdown-item text-danger">
+                        Eliminar
+                    </button>
+                </form>
+            </li>
+        </ul>
+    </div>
+</td>
         </tr>
     {% endfor %}
 </tbody>
