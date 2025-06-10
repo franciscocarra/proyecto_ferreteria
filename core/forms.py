@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django import forms
 from .models import Producto
 from django.forms.widgets import DateInput
+import random
 
 class CustomUserCreationForm(forms.ModelForm):
     username = forms.CharField(max_length=150)
@@ -153,7 +154,7 @@ class EmpleadoUserCreationForm(forms.ModelForm):
             last_name=f"{self.cleaned_data['appaterno']} {self.cleaned_data['apmaterno']}"
         )
 
-        empleado_tipo, _ = TipoUsuario.objects.get_or_create(descripcion='empleado')
+        empleado_tipo, _ = TipoUsuario.objects.get_or_create(descripcion=random.choice(['bodeguero', 'vendedor']))
 
         usuario = super().save(commit=False)
         usuario.tipo = empleado_tipo

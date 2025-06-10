@@ -36,11 +36,24 @@ def iniciar_session(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            # Verifica si el usuario es admin (superuser o tiene permisos específicos)
             if user.is_superuser:
-                return redirect('administración')  # Asegúrate de que esta URL exista
+                return redirect('administración')
+
+            # Buscar el usuario personalizado para obtener el tipo
+            tipo = None
+            try:
+                usuario_personalizado = Usuario.objects.get(correo=user.email)
+                tipo = usuario_personalizado.tipo.descripcion
+            except Usuario.DoesNotExist:
+                tipo = None
+
+            if tipo == 'bodeguero':
+                return redirect('bodeguero')
+            elif tipo == 'vendedor':
+                return redirect('home')
             else:
                 return redirect('home')
+
         else:
             form.add_error(None, "Usuario o contraseña incorrectos.")
     return render(request, 'core/iniciar_session.html', {'form': form})
@@ -224,7 +237,6 @@ def Clientes(request):
 
     return render(request, 'core/A_dmin/Cliente/lista_c.html', aux)
 
-<<<<<<< HEAD
 def eliminar_usuario(request, id):
     # Obtener el objeto usuario con el id proporcionado
     usuario = get_object_or_404(Usuario, id=id)
@@ -235,6 +247,5 @@ def eliminar_usuario(request, id):
     # Redirigir a la lista de usuarios
     return redirect('Clientes')
 
-=======
->>>>>>> 49c5846f5e31eb06b804fe7bd6da4cc78a916c63
+
 

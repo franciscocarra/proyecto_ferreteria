@@ -57,3 +57,5 @@ class Producto(models.Model):
         return f"{self.nombre_producto} ({self.marca})"
     
 
+    
+
