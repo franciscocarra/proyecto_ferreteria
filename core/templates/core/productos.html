@@ -216,13 +216,18 @@
                 </div>
 
                 <!-- Producto 7 -->
-                <div class="bg-white p-4 rounded shadow text-center border">
+<div class="bg-white p-4 rounded shadow text-center border">Add commentMore actions
                     <img src="{% static 'core/img/productos/producto_7.webp' %}" alt="Producto 7" class="h-30 w-full object-contain mb-2" />
                     <p class="text-sm text-gray-500">mamut</p>
                     <h4 class="text-base font-medium mb-1 leading-tight">
                         Tornillo Autoperforante Cabeza Phillips Yeso-Cartón 2 " 6 mm 400 Unidades
                     </h4>
                     <p class="text-lg font-bold text-green-700 mb-3">$5.990</p>
+                    
+                    <!-- Precio original y valor en dólares -->
+                    <p class="text-lg font-bold text-green-700 mb-1">$5.990 CLP</p>
+                    <p class="text-sm text-blue-600 mb-3" id="dolar-value">Calculando valor en dólares...</p>
+                    
                     <div class="flex items-center justify-center gap-2 mb-3">
                         <button class="px-2 py-1 border rounded text-lg">-</button>
                         <input type="text" value="1" class="w-10 text-center border rounded" />
@@ -232,10 +237,36 @@
                         🛒
                     </button>
                 </div>
+                
+                <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const productPrice = 5990; // Precio en CLP
+                    
+                    fetch('https://mindicador.cl/api')
+                        .then(response => {
+                            if (!response.ok) throw new Error('Error en la red');
+                            return response.json();
+                        })
+                        .then(data => {
+                            const dolarValue = data.dolar.valor;
+                            const priceInDollars = (productPrice / dolarValue).toFixed(2);
+                            
+                            // Mostrar valor del dólar y conversión
+                            document.getElementById('dolar-value').innerHTML = `
+                                <span class="font-medium">Dólar hoy: $${dolarValue} CLP</span><br>
+                                <span>Equivale a $${priceInDollars} USD</span>
+                            `;
+                        })
+                        .catch(error => {
+                            console.error('Error al obtener dólar:', error);
+                            document.getElementById('dolar-value').textContent = 'Valor en dólares no disponible';
+                        });
+                });
+                </script>
 
                 <!-- Producto 8 -->
                 <div class="bg-white p-4 rounded shadow text-center border">
-                    <img src="{% static 'core/img/productos/producto_8.webp' %}" alt="Producto 8" class="h-30 w-full object-contain mb-2" />
+                    <img src="{% static 'core/img/productos/producto_8.webp' %}" alt="Producto 8" class="h-30 w-full object-contain mb-2" />  <!--<button class="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600">-->
                     <p class="text-sm text-gray-500">teamgraff</p>
                     <h4 class="text-base font-medium mb-1 leading-tight">
                         Overol de Trabajo Actium Canvas
