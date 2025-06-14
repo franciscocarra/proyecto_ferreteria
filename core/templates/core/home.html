@@ -17,10 +17,10 @@
         <h1 class="text-2xl font-bold"><a href="{% url 'home' %}">Ferretería Rinco Del Herrero</a></h1>
         <nav>
             <ul class="flex space-x-4 items-center">
-                <li><a href="#inicio" class="hover:underline">Inicio</a></li>
+                <li><a href="{% url 'home' %}" class="hover:underline">Inicio</a></li>
                 <li><a href="{% url 'productos' %}" class="hover:underline">Productos</a></li>
                 <li><button onclick="toggleCategorias()" class="hover:underline focus:outline-none">Categorías</button></li>
-                <li><a href="#promociones" class="hover:underline">Promociones</a></li>
+                <li><a href="{% url 'error_producto' %}" class="hover:underline">Promociones</a></li>
                 <li><a href="{% url 'contacto' %}" class="hover:underline">Contacto</a></li>
                 {% if user.is_authenticated %}
                 <li class="relative">
@@ -227,10 +227,10 @@
             <div>
                 <h3 class="font-semibold mb-2">Categorías</h3>
                 <ul class="space-y-1">
-                    <li><a href="#" class="hover:underline">Herramientas de Construcción</a></li>
-                    <li><a href="#" class="hover:underline">Herramientas de Aseo y Jardín</a></li>
-                    <li><a href="#" class="hover:underline">Insumos y Accesorios</a></li>
-                    <li><a href="#" class="hover:underline">Pinturas</a></li>
+                    <li><a href="{% url 'herramientas' %}" class="hover:underline">Herramientas de Construcción</a></li>
+                    <li><a href="{% url 'error_producto' %}" class="hover:underline">Herramientas de Aseo y Jardín</a></li>
+                    <li><a href="{% url 'error_producto' %}" class="hover:underline">Insumos y Accesorios</a></li>
+                    <li><a href="{% url 'pintura' %}" class="hover:underline">Pinturas</a></li>
                 </ul>
             </div>
     

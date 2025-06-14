@@ -80,28 +80,54 @@
 
 
 <section class="bg-gray-100 py-12 flex justify-center">
-  <div class="bg-white rounded-2xl shadow-md p-8 flex flex-col items-center max-w-xl w-full text-center">
-    
-  <h2 class="text-2xl font-bold mb-4">Tu carrito</h2>
-
-  <h2 class="text-2xl font-semibold mb-2">Tu Carro está vacío</h2>
-
-{% if not user.is_authenticated %}
-    <!-- Subtítulo -->
-    <p class="text-gray-600 mb-4">Inicia sesión para ver los productos que habías guardado en tu Carro.</p>
-
-    <!-- Botón Iniciar Sesión -->
-    <a href="{% url 'iniciar_session' %}" class="bg-gray-800 text-white rounded-full px-6 py-2 mb-2 hover:bg-gray-900 transition inline-block">
-      Iniciar sesión
-    </a>
-
-    <!-- Enlace a registro -->
-    <p class="text-sm text-gray-600">
-      ¿No tienes cuenta? <a href="{% url 'registro' %}" class="text-blue-600 hover:underline">Regístrate</a>
-    </p>
-    {% endif %}
-  </div>
+    <div id="empty-cart-message" class="empty-cart-message chakra-card__body css-1cm1juy">
+        <div class="content chakra-stack css-1q6pec8">
+            {% if user.is_authenticated %}
+            <div class="chakra-stack css-1y6aw5c">
+                <h1>Carrito de Compra</h1>
+                {% if cart_items %}
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Precio</th>
+                            <th>Cantidad</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in cart_items %}
+                        <tr>
+                            <td>{{ item.producto.type }}</td>
+                            <td>${{ item.producto.price }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>
+                                <form action="#" method="post">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <a href="#" class="btn btn-primary">Proceder al pago</a>
+                {% else %}
+                <h2 class="chakra-heading css-1u6upbv">Tu Carro está vacío</h2>
+                {% endif %}
+            </div>
+            {% else %}
+            <div class="chakra-stack css-1y6aw5c">
+                <h2 class="chakra-heading css-1u6upbv">Tu Carro está vacío</h2>
+                <p class="chakra-text css-ttb4y">Inicia sesión para ver los productos que habías guardado en tu Carro.</p>
+                <a href="{% url 'iniciar_session' %}" class="btn btn-primary chakra-button css-1cmlw5v">Iniciar sesión</a>
+                <p class="chakra-text css-1q6pec8">¿No tienes cuenta? <a href="{% url 'registro' %}" class="chakra-link css-1n12wwe">Regístrate</a></p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
 </section>
+
 
 
     <footer class="container-fluid bg-black text-white py-10 mt-16">
@@ -173,6 +199,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{% static 'core/js/menu_categoria.js' %}"></script>
     <script src="{% static 'core/js/icono.js' %}"></script>
+    <script src="{% static 'core/js/carrito.js' %}"></script>
 </body>
 
 

@@ -20,7 +20,7 @@
                 <li><a href="{% url 'productos' %}" class="hover:underline">Productos</a></li>
                 <!-- CAMBIO: botón para mostrar categorías -->
                 <li><button onclick="toggleCategorias()" class="hover:underline focus:outline-none">Categorías</button></li>
-                <li><a href="#promociones" class="hover:underline">Promociones</a></li>
+                <li><a href="{% url 'error_producto' %}" class="hover:underline">Promociones</a></li>
                 <li><a href="{% url 'contacto' %}" class="hover:underline">Contacto</a></li>
                 {% if user.is_authenticated %}
                 <li class="relative">
@@ -69,15 +69,13 @@
         <button onclick="toggleCategorias()" class="text-xl font-bold text-gray-600 hover:text-black">&times;</button>
     </div>
     <ul class="p-4 space-y-2 text-gray-700">
-        <li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Aseo Industrial</li>
-        <li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Ropa de Seguridad y Protección Personal</li>
-        <li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Materiales de Construcción</li>
-        <li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Techos y Aislantes</li>
-        <li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Herramientas y máquinas</li>
-        <li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Fijaciones</li>
-        <li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Pintura</li>
-        <li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Maderas y tableros</li>
-        <li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Tensores</li>
+        <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Aseo Industrial</li></a>
+        <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Ropa de Seguridad y Protección Personal</li></a>
+        <a href="{% url 'materiales' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Materiales de Construcción</li></a>
+        <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">máquinas</li></a>
+        <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Fijaciones</li></a>
+        <a href="{% url 'pintura' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Pintura</li></a>
+        <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Tensores</li></a>
     </ul>
 </div>
 

@@ -107,3 +107,16 @@ function clearCart() {
     updateCart();
     saveCart();
 }
+
+//funcion de descuento
+function descuento(productos, cartCantidad) {
+    let total_suma = productos.precio * 2;  // Asumes dos productos iguales
+    let descuento = 0.1;
+    let total;
+    if (cartCantidad > 4) {
+        total = total_suma - (total_suma * descuento);
+    } else {
+        total = total_suma;
+    }
+    return total;
+}
