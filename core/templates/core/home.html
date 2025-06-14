@@ -70,9 +70,9 @@
     </div>
     <ul class="p-4 space-y-2 text-gray-700">
         <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Aseo Industrial</li></a>
-        <a href=""><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Ropa de Seguridad y Protección Personal</li></a>
+        <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Ropa de Seguridad y Protección Personal</li></a>
         <a href="{% url 'materiales' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Materiales de Construcción</li></a>
-        <a href=""><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">máquinas</li></a>
+        <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">máquinas</li></a>
         <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Fijaciones</li></a>
         <a href="{% url 'pintura' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Pintura</li></a>
         <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Tensores</li></a>
@@ -150,29 +150,37 @@
                 <a href="#" class="border border-orange-500 text-orange-500 px-4 py-2 rounded hover:bg-orange-500 hover:text-white transition">VER TODO</a>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-                <div class="bg-white p-4 shadow rounded text-center">
-                    <img src="{% static 'core/img/Martillo_Carpintero_16.png' %}" alt="Ladrillo Fiscal" class="mx-auto mb-3 h-32 object-contain">
-                    <h3 class="font-bold text-gray-800">Martillo Carpintero 16 Oz Uyustools</h3>
-                    <h3 class="text-center font-bold text-gray-800">$8.990 c/u</h3>
-                </div>
-                <div class="bg-white p-4 shadow rounded text-center">
-                    <img src="{% static 'core/img/Ladrillo_princesa_9.webp' %}" alt="Ladrillo Princesa 9" class="mx-auto mb-3 h-32 object-contain">
-                    <h3 class="font-bold text-gray-800">Ladrillo princesa 9 (29X14X9.4)</h3>
-                    <h3 class="text-center font-bold text-gray-800">$990 c/u</h3>
-                </div>
+                <a href="{% url 'error_producto' %}">
+                    <div class="bg-white p-4 shadow rounded text-center">
+                        <img src="{% static 'core/img/Martillo_Carpintero_16.png' %}" alt="Ladrillo Fiscal" class="mx-auto mb-3 h-32 object-contain">
+                        <h3 class="font-bold text-gray-800">Martillo Carpintero 16 Oz Uyustools</h3>
+                        <h3 class="text-center font-bold text-gray-800">$8.990 c/u</h3>
+                    </div>
+                </a>
+                <a href="{% url 'error_producto' %}">
+                    <div class="bg-white p-4 shadow rounded text-center">
+                        <img src="{% static 'core/img/Ladrillo_princesa_9.webp' %}" alt="Ladrillo Princesa 9" class="mx-auto mb-3 h-32 object-contain">
+                        <h3 class="font-bold text-gray-800">Ladrillo princesa 9 (29X14X9.4)</h3>
+                        <h3 class="text-center font-bold text-gray-800">$990 c/u</h3>
+                    </div>
+                </a>
                 <!-- Producto 3 -->
-                <div class="bg-white p-4 shadow rounded text-center relative">
-                    <img src="{% static 'core/img/huincha.jpg' %}" alt="OSB Techshield" class="mx-auto mb-3 h-32 object-contain">
-                    <span class="absolute top-2 right-2 bg-blue-600 text-white text-xs px-2 py-1 rounded">AGOTADO</span>
-                    <h3 class="font-bold text-gray-800">Huincha de medir 10M X 32MM contra impacto</h3>
-                    <h3 class="text-center font-bold text-gray-800">$17.440 c/u</h3>
-                </div>
+                <a href="{% url 'error_producto' %}">
+                    <div class="bg-white p-4 shadow rounded text-center relative">
+                        <img src="{% static 'core/img/huincha.jpg' %}" alt="OSB Techshield" class="mx-auto mb-3 h-32 object-contain">
+                        <span class="absolute top-2 right-2 bg-blue-600 text-white text-xs px-2 py-1 rounded">AGOTADO</span>
+                        <h3 class="font-bold text-gray-800">Huincha de medir 10M X 32MM contra impacto</h3>
+                        <h3 class="text-center font-bold text-gray-800">$17.440 c/u</h3>
+                    </div>
+                </a>
                 <!-- Producto 4 -->
-                <div class="bg-white p-4 shadow rounded text-center">
-                    <img src="{% static 'core/img/clavos.webp' %}" alt="Ladrillo Princesa 7" class="mx-auto mb-3 h-32 object-contain">
-                    <h3 class="font-bold text-gray-800">Clavo Corriente 2" x 12 Bolsa 1 KG </h3>
-                    <h3 class="text-center font-bold text-gray-800">$1.810 c/u</h3>
-                </div>
+                 <a href="{% url 'error_producto' %}">
+                    <div class="bg-white p-4 shadow rounded text-center">
+                        <img src="{% static 'core/img/clavos.webp' %}" alt="Ladrillo Princesa 7" class="mx-auto mb-3 h-32 object-contain">
+                        <h3 class="font-bold text-gray-800">Clavo Corriente 2" x 12 Bolsa 1 KG </h3>
+                        <h3 class="text-center font-bold text-gray-800">$1.810 c/u</h3>
+                    </div>
+                </a>
             </div>
         </div>
     </section>

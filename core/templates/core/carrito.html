@@ -81,31 +81,11 @@
 
 <section class="bg-gray-100 py-12 flex justify-center">
   <div class="bg-white rounded-2xl shadow-md p-8 flex flex-col items-center max-w-xl w-full text-center">
-    <!-- Icono del carrito vacío -->
-    <!-- Puedes poner aquí un SVG o ícono si lo necesitas -->
-
-    <!-- Título -->
-    {% if items %}
+    
   <h2 class="text-2xl font-bold mb-4">Tu carrito</h2>
-  <ul class="space-y-4 w-full">
-    {% for item in items %}
-    <li class="flex justify-between items-center border-b pb-2">
-      <div>
-        <p class="font-medium">{{ item.producto.nombre_producto }} ({{ item.producto.marca }})</p>
-        <p class="text-sm text-gray-500">Cantidad: {{ item.cantidad }}</p>
-      </div>
-      <div>
-        <span class="text-green-700 font-bold">${{ item.subtotal }}</span>
-      </div>
-    </li>
-    {% endfor %}
-  </ul>
-  <div class="mt-6 text-xl font-semibold">
-    Total: ${{ total }}
-  </div>
-{% else %}
+
   <h2 class="text-2xl font-semibold mb-2">Tu Carro está vacío</h2>
-{% endif %}
+
 {% if not user.is_authenticated %}
     <!-- Subtítulo -->
     <p class="text-gray-600 mb-4">Inicia sesión para ver los productos que habías guardado en tu Carro.</p>
