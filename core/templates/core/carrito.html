@@ -79,54 +79,82 @@
 </div>
 
 
-<section class="bg-gray-100 py-12 flex justify-center">
-    <div id="empty-cart-message" class="empty-cart-message chakra-card__body css-1cm1juy">
-        <div class="content chakra-stack css-1q6pec8">
-            {% if user.is_authenticated %}
-            <div class="chakra-stack css-1y6aw5c">
-                <h1>Carrito de Compra</h1>
+<section class="py-12">
+            <div class="container mx-auto px-4">
+                <div class="flex justify-between items-center mb-6">
+                    <h1 class="text-3xl font-bold">Carrito de Compra</h1>
+                    {% if cart_items %}
+                    <a href="{% url 'clear_cart' %}" class="text-sm text-red-500 hover:underline">Vaciar Carrito</a>
+                    {% endif %}
+                </div>
+                
                 {% if cart_items %}
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Producto</th>
-                            <th>Precio</th>
-                            <th>Cantidad</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for item in cart_items %}
-                        <tr>
-                            <td>{{ item.producto.type }}</td>
-                            <td>${{ item.producto.price }}</td>
-                            <td>{{ item.quantity }}</td>
-                            <td>
-                                <form action="#" method="post">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
-                                </form>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-                <a href="#" class="btn btn-primary">Proceder al pago</a>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-2 bg-white p-4 rounded-lg shadow">
+                        <table class="w-full text-left">
+                            <thead>
+                                <tr>
+                                    <th class="p-2 font-semibold">Producto</th>
+                                    <th class="p-2 font-semibold">Precio</th>
+                                    <th class="p-2 font-semibold">Cantidad</th>
+                                    <th class="p-2 font-semibold">Total</th>
+                                    <th class="p-2"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in cart_items %}
+                                <tr class="border-b">
+                                    <td class="p-2 flex items-center">
+                                        <span>{{ item.name }}</span>
+                                    </td>
+                                    <td class="p-2">${{ item.price|floatformat:0 }}</td>
+                                    <td class="p-2">
+                                        <form action="{% url 'update_cart' %}" method="post" class="flex items-center">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="sku" value="{{ item.sku }}">
+                                            <input type="number" name="quantity" value="{{ item.quantity }}" min="0" max="{{ item.stock }}"  class="w-16 text-center border rounded">
+                                            <button type="submit" class="ml-2 text-blue-500 hover:underline text-sm">Actualizar</button>
+                                        </form>
+                                    </td>
+                                    <td class="p-2 font-medium">${{ item.total|floatformat:0 }}</td>
+                                    <td class="p-2">
+                                        <a href="{% url 'remove_from_cart' item.sku %}" class="text-gray-500 hover:text-red-500 text-sm">Eliminar</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="lg:col-span-1">
+                        <div class="bg-white p-6 rounded-lg shadow">
+                            <h2 class="text-xl font-semibold mb-4">Resumen de la compra</h2>
+                            <div class="flex justify-between mb-4">
+                                <span>Subtotal</span>
+                                <span>${{ total_cart_price|floatformat:0 }}</span>
+                            </div>
+                            <hr class="my-4">
+                            <div class="flex justify-between font-bold text-lg">
+                                <span>Total</span>
+                                <span>${{ total_cart_price|floatformat:0 }}</span>
+                            </div>
+                            <button class="w-full mt-6 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
+                                Proceder al pago
+                            </button>
+                        </div>
+                    </div>
+                </div>
                 {% else %}
-                <h2 class="chakra-heading css-1u6upbv">Tu Carro está vacío</h2>
+                <div class="text-center bg-white p-10 rounded-lg shadow">
+                    <h2 class="text-2xl font-semibold mb-2">Tu Carro está vacío</h2>
+                    <p class="text-gray-600 mb-6">Aún no tienes productos en tu carro de compras.</p>
+                    <a href="{% url 'productos' %}" class="bg-orange-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-orange-600">
+                        Ver productos
+                    </a>
+                </div>
                 {% endif %}
             </div>
-            {% else %}
-            <div class="chakra-stack css-1y6aw5c">
-                <h2 class="chakra-heading css-1u6upbv">Tu Carro está vacío</h2>
-                <p class="chakra-text css-ttb4y">Inicia sesión para ver los productos que habías guardado en tu Carro.</p>
-                <a href="{% url 'iniciar_session' %}" class="btn btn-primary chakra-button css-1cmlw5v">Iniciar sesión</a>
-                <p class="chakra-text css-1q6pec8">¿No tienes cuenta? <a href="{% url 'registro' %}" class="chakra-link css-1n12wwe">Regístrate</a></p>
-            </div>
-            {% endif %}
-        </div>
-    </div>
-</section>
+        </section>
 
 
 

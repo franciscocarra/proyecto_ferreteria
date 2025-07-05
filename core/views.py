@@ -13,6 +13,8 @@ from .models import Usuario, TipoUsuario
 import requests
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
 API_URL = "http://127.0.0.1:8001/productos"
 
@@ -20,7 +22,17 @@ def home(request):
     return render(request, 'core/home.html')
 
 def producto(request):
-    return render(request, 'core/productos.html')
+    try:
+        # Hacemos una petición a la API para obtener todos los productos
+        response = requests.get('http://127.0.0.1:8001/productos/')
+        response.raise_for_status()  # Lanza un error si la petición falla
+        productos = response.json()
+    except requests.exceptions.RequestException:
+        # Si la API no responde o hay un error, enviamos una lista vacía
+        productos = []
+    
+    # Enviamos la lista de productos al template
+    return render(request, 'core/productos.html', {'lista_productos': productos})
 
 def producto2(request):
     return render(request, 'core/productos_2.html')
@@ -88,7 +100,108 @@ def materiales(request):
     return render(request, 'core/materiales.html')
 
 def carrito(request):
-    return render(request, 'core/carrito.html')
+    cart = request.session.get('cart', {})
+    cart_items = []
+    total_cart_price = 0
+
+    for sku, item_data in cart.items():
+        # --- INICIO DE LA CORRECCIÓN ---
+        # 1. Define la variable 'item_total' al principio del bucle.
+        item_total = item_data['price'] * item_data['quantity']
+
+        # 2. Ahora puedes usar 'item_total' para agregarlo a la lista de items.
+        cart_items.append({
+            'sku': sku,
+            'name': item_data['name'],
+            'price': item_data['price'],
+            'quantity': item_data['quantity'],
+            'image': item_data.get('image', 'core/img/placeholder.png'),
+            'stock': item_data.get('stock', 0),
+            'total': item_total  # Se usa aquí
+        })
+        
+        # 3. Y también puedes usar 'item_total' para sumarlo al total general.
+        total_cart_price += item_total # El error estaba aquí
+        # --- FIN DE LA CORRECCIÓN ---
+    
+    context = {
+        'cart_items': cart_items,
+        'total_cart_price': total_cart_price
+    }
+    return render(request, 'core/carrito.html', context)
+
+@login_required
+def add_to_cart(request, sku):
+    try:
+        response = requests.get(f'http://127.0.0.1:8001/productos/{sku}')
+        response.raise_for_status()
+        producto_data = response.json()
+    except requests.exceptions.RequestException:
+        messages.error(request, 'No se pudo obtener la información del producto.')
+        return redirect('productos')
+
+    if producto_data.get('stock', 0) > 0:
+        cart = request.session.get('cart', {})
+        sku_str = str(sku)
+
+        if sku_str in cart:
+            # ---> INICIO CAMBIO 1 <---
+            # Solo aumenta la cantidad si es menor que el stock
+            if cart[sku_str]['quantity'] < cart[sku_str]['stock']:
+                cart[sku_str]['quantity'] += 1
+            else:
+                messages.warning(request, f"No puedes agregar más unidades de este producto. Stock máximo: {cart[sku_str]['stock']}")
+            # ---> FIN CAMBIO 1 <---
+        else:
+            cart[sku_str] = {
+                'name': producto_data['nombre_producto'],
+                'price': float(producto_data['precio']),
+                'quantity': 1,
+                'image': 'core/img/productos/producto_1.webp',
+                'stock': producto_data['stock'] # <-- AÑADE ESTA LÍNEA
+            }
+        
+        request.session['cart'] = cart
+        return redirect('carrito')
+    else:
+        messages.error(request, 'Este producto no tiene stock disponible.')
+        return redirect('productos')
+
+def remove_from_cart(request, sku):
+    cart = request.session.get('cart', {})
+    sku_str = str(sku)
+    if sku_str in cart:
+        del cart[sku_str]
+        request.session['cart'] = cart
+    return redirect('carrito')
+
+def update_cart(request):
+    if request.method == 'POST':
+        sku = request.POST.get('sku')
+        quantity = int(request.POST.get('quantity', 1))
+        cart = request.session.get('cart', {})
+        
+        if sku in cart:
+            stock_disponible = cart[sku].get('stock', 0)
+
+            # ---> INICIO CAMBIO 2 <---
+            # Limita la cantidad al stock disponible
+            if quantity > stock_disponible:
+                quantity = stock_disponible
+                messages.warning(request, f"La cantidad se ha ajustado al stock máximo disponible: {stock_disponible}")
+
+            if quantity > 0:
+                cart[sku]['quantity'] = quantity
+            else:
+                del cart[sku]
+            # ---> FIN CAMBIO 2 <---
+        
+        request.session['cart'] = cart
+    return redirect('carrito')
+
+def clear_cart(request):
+    request.session['cart'] = {}
+    return redirect('carrito')
 
 def users(request):
     return render(request, 'core/A_dmin/users.html')
