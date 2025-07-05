@@ -79,6 +79,7 @@
 </div>
 
 
+
 <section class="py-12">
             <div class="container mx-auto px-4">
                 <div class="flex justify-between items-center mb-6">
@@ -155,6 +156,57 @@
                 {% endif %}
             </div>
         </section>
+
+
+<section class="bg-gray-100 py-12 flex justify-center">
+    <div id="empty-cart-message" class="empty-cart-message chakra-card__body css-1cm1juy">
+        <div class="content chakra-stack css-1q6pec8">
+            {% if user.is_authenticated %}
+            <div class="chakra-stack css-1y6aw5c">
+                <h1>Carrito de Compra</h1>
+                {% if cart_items %}
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Precio</th>
+                            <th>Cantidad</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in cart_items %}
+                        <tr>
+                            <td>{{ item.producto.type }}</td>
+                            <td>${{ item.producto.price }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>
+                                <form action="#" method="post">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <a href="#" class="btn btn-primary">Proceder al pago</a>
+                {% else %}
+                <h2 class="chakra-heading css-1u6upbv">Tu Carro está vacío</h2>
+                {% endif %}
+            </div>
+            {% else %}
+            <div class="chakra-stack css-1y6aw5c">
+                <h2 class="chakra-heading css-1u6upbv">Tu Carro está vacío</h2>
+                <p class="chakra-text css-ttb4y">Inicia sesión para ver los productos que habías guardado en tu Carro.</p>
+                <a href="{% url 'iniciar_session' %}" class="btn btn-primary chakra-button css-1cmlw5v">Iniciar sesión</a>
+                <p class="chakra-text css-1q6pec8">¿No tienes cuenta? <a href="{% url 'registro' %}" class="chakra-link css-1n12wwe">Regístrate</a></p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
 
 
 
