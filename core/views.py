@@ -213,23 +213,69 @@ def bodeguero(request):
     return render(request, 'core/bodeguero/bode.html')
 
 def inventario(request):
-    query = request.GET.get('q')
     try:
+        # 1. Obtenemos los productos actuales de la API
         response = requests.get('http://127.0.0.1:8001/productos/')
         response.raise_for_status()
-        productos = response.json()
+        productos_api = response.json()
+        
+        # Obtenemos una lista de los SKUs que vienen de la API
+        skus_en_api = {prod_api['sku'] for prod_api in productos_api}
 
-        # Filtro local con "q", si existe
-        if query:
-            productos = [p for p in productos if query.lower() in p['nombre_producto'].lower()]
+        # --- INICIO DE LA NUEVA LÓGICA DE ELIMINACIÓN ---
+        
+        # 2. Obtenemos los SKUs que tenemos en nuestra base de datos local
+        skus_en_db = set(Producto.objects.values_list('sku', flat=True))
+        
+        # 3. Identificamos los SKUs que hay que borrar
+        skus_para_borrar = skus_en_db - skus_en_api
+        
+        if skus_para_borrar:
+            Producto.objects.filter(sku__in=skus_para_borrar).delete()
+            print(f"Productos eliminados: {skus_para_borrar}")
+            
+        # --- FIN DE LA NUEVA LÓGICA DE ELIMINACIÓN ---
+
+        # 4. Sincronizamos (actualizamos o creamos) el resto de los productos
+        for prod_api in productos_api:
+            Producto.objects.update_or_create(
+                sku=prod_api['sku'],
+                defaults={
+                    'nombre_producto': prod_api['nombre_producto'],
+                    'marca': prod_api['marca'],
+                    'descripcion': prod_api.get('descripcion', ''),
+                    'precio': prod_api['precio'],
+                    'stock': prod_api['stock'],
+                    'estado_producto': prod_api.get('estado_producto', 'Activo')
+                }
+            )
+
     except requests.exceptions.RequestException:
-        productos = []
+        print("Error: No se pudo conectar con la API de productos.")
     
-    return render(request, 'core/bodeguero/inventario.html', {'lista_productos': productos})
+    # El resto de la vista sigue igual, obteniendo los datos de la BD local
+    query = request.GET.get('q')
+    lista_productos = Producto.objects.all()
 
+    if query:
+        lista_productos = lista_productos.filter(nombre_producto__icontains=query)
+    
+    return render(request, 'core/bodeguero/inventario.html', {'lista_productos': lista_productos})
 
+def ver_stock_sucursales(request, sku):
+    try:
+        producto = Producto.objects.get(sku=sku)
+        stock_en_sucursales = StockPorSucursal.objects.filter(producto=producto)
+    except Producto.DoesNotExist:
+        producto = {'nombre_producto': 'Producto no encontrado'}
+        stock_en_sucursales = []
 
-
+    context = {
+        'producto': producto,
+        'stock_en_sucursales': stock_en_sucursales
+    }
+    
+    return render(request, 'core/bodeguero/ver_stock_sucursales.html', context)
 
 def registrar_producto(request):
     if request.method == 'POST':

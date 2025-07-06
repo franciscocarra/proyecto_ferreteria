@@ -1,0 +1,77 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Stock por Sucursal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="d-flex vh-100">
+    <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 280px;">
+        <h4 class="text-center py-3">🏬 Bodega</h4>
+        <hr>
+        <ul class="nav nav-pills flex-column mb-auto">
+            <li class="nav-item">
+                <a href="#" class="nav-link text-white">
+                    <i class="bi bi-speedometer2 me-2"></i> Panel
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'inventario' %}" class="nav-link text-white">
+                    <i class="bi bi-boxes me-2"></i> Inventario
+                </a>
+            </li>
+            </ul>
+        <hr>
+        <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger w-100">
+                <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+            </button>
+        </form>
+    </div>
+
+    <div class="flex-grow-1 p-3 bg-light">
+        <div class="card bg-dark text-white h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>Stock para: <strong>{{ producto.nombre_producto }}</strong></span>
+                <a href="{% url 'inventario' %}" class="btn btn-outline-light btn-sm">
+                    <i class="bi bi-arrow-left"></i> Volver al Inventario
+                </a>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-dark">
+                    <thead>
+                        <tr>
+                            <th>Sucursal</th>
+                            <th>Dirección</th>
+                            <th>Cantidad en Stock</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for item in stock_en_sucursales %}
+                    <tr>
+                        <td>{{ item.sucursal.nombre }}</td>
+                        <td>{{ item.sucursal.direccion }}</td>
+                        <td>{{ item.cantidad }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3" class="text-center">No hay información de stock en sucursales para este producto.</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

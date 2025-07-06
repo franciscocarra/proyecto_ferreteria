@@ -73,14 +73,15 @@
     <td>
         <td>
     <div class="dropdown">
-        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-            Opciones
-        </button>
-        <ul class="dropdown-menu">
-            <li><button class="dropdown-item btn-editar" data-sku="{{ producto.sku }}">Editar</button></li>
-            <li><button class="dropdown-item text-danger btn-eliminar" data-sku="{{ producto.sku }}">Eliminar</button></li>
-        </ul>
-    </div>
+    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+        Opciones
+    </button>
+    <ul class="dropdown-menu">
+        <li><button class="dropdown-item btn-editar" data-sku="{{ producto.sku }}">Editar</button></li>
+        <li><button class="dropdown-item text-danger btn-eliminar" data-sku="{{ producto.sku }}">Eliminar</button></li>
+        <li><a class="dropdown-item" href="{% url 'ver_stock_sucursales' producto.sku %}">Sucursales</a></li>
+    </ul>
+</div>
 </td>
     </td>
 </tr>
