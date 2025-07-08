@@ -1,91 +1,176 @@
 <!DOCTYPE html>
 <html lang="es">
-{% load static %}
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ferretería Rinco Del Herrero - Menú</title>
+    <title>Ferretería Rinco Del Herrero - Iniciar Sesión</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'core/css/carousel.css' %}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            color: #333;
+            display: flex;
+            flex-direction: column; /* Allow header/footer to stack */
+            justify-content: space-between; /* Push header/footer to ends */
+            min-height: 100vh;
+            margin: 0;
+        }
+        header, footer {
+            width: 100%;
+        }
+        .login-wrapper {
+            flex-grow: 1; /* Allow login content to take available space */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem; /* Add some padding for smaller screens */
+        }
+        .login-container {
+            max-width: 400px;
+            width: 100%;
+            padding: 2rem;
+            background-color: #ffffff;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #4b5563;
+        }
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+        input[type="email"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+        button {
+            width: 100%;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background-color: #2563eb;
+            color: #ffffff;
+        }
+        button:hover {
+            background-color: #1d4ed8;
+            transform: translateY(-1px);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        .error-message {
+            background-color: #fee2e2;
+            border: 1px solid #ef4444;
+            color: #ef4444;
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            margin-top: 1rem;
+            font-weight: 500;
+            text-align: left;
+            display: none; /* Hidden by default */
+        }
+        .success-message {
+            background-color: #d1fae5;
+            border: 1px solid #10b981;
+            color: #10b981;
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            margin-top: 1rem;
+            font-weight: 500;
+            text-align: left;
+            display: none; /* Hidden by default */
+        }
+    </style>
 </head>
-<body class="bg-gray-100 text-gray-900">
-    <header class="bg-dark text-white py-4">
-    <div class="container mx-auto flex justify-between items-center">
-        <h1 class="text-2xl font-bold"><a href="{% url 'home' %}">Ferretería Rinco Del Herrero</a></h1>
-        <nav>
-            <ul class="flex space-x-4">
-                <li><a href="{% url 'home' %}" class="hover:underline">Inicio</a></li>
-                <li><a href="{% url 'productos' %}" class="hover:underline">Productos</a></li>
-                <!-- CAMBIO: botón para mostrar categorías -->
-                <li><button onclick="toggleCategorias()" class="hover:underline focus:outline-none">Categorías</button></li>
-                <li><a href="{% url 'error_producto' %}" class="hover:underline">Promociones</a></li>
-                <li><a href="{% url 'contacto' %}" class="hover:underline">Contacto</a></li>
-                <li>
-                    <a href="{% url 'carrito' %}" class="relative inline-block w-8 h-8">
-                        <div class="absolute bottom-0 left-0 w-8 h-5 border-2 border-white rounded-sm"></div>
-                        <div class="absolute bottom-5 left-1 w-6 h-2 border-2 border-white border-b-0 rounded-t-sm"></div>
-                        <div class="absolute bottom-1 left-1 w-1 h-1 bg-white rounded-full"></div>
-                        <div class="absolute bottom-1 right-1 w-1 h-1 bg-white rounded-full"></div>
-                    </a>
-                </li>
-            </ul>
-        </nav>
+<body>
+    <header class="bg-dark text-white py-4 w-full">
+        <div class="container mx-auto flex justify-between items-center px-4">
+            <h1 class="text-2xl font-bold"><a href="#">Ferretería Rinco Del Herrero</a></h1>
+            <nav>
+                <ul class="flex space-x-4">
+                    <li><a href="#" class="hover:underline">Inicio</a></li>
+                    <li><a href="#" class="hover:underline">Productos</a></li>
+                    <li><button onclick="toggleCategorias()" class="hover:underline focus:outline-none">Categorías</button></li>
+                    <li><a href="#" class="hover:underline">Promociones</a></li>
+                    <li><a href="#" class="hover:underline">Contacto</a></li>
+                    <li>
+                        <a href="#" class="relative inline-block w-8 h-8">
+                            <div class="absolute bottom-0 left-0 w-8 h-5 border-2 border-white rounded-sm"></div>
+                            <div class="absolute bottom-5 left-1 w-6 h-2 border-2 border-white border-b-0 rounded-t-sm"></div>
+                            <div class="absolute bottom-1 left-1 w-1 h-1 bg-white rounded-full"></div>
+                            <div class="absolute bottom-1 right-1 w-1 h-1 bg-white rounded-full"></div>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- SIDEBAR DE CATEGORÍAS (Se mantiene para la estructura general, pero no funcional en HTML plano sin JS adicional) -->
+    <div id="categoriasSidebar" class="fixed top-0 left-0 w-80 h-full bg-white shadow-lg z-50 transform -translate-x-full transition-transform duration-300 ease-in-out overflow-y-auto">
+        <div class="flex items-center justify-between px-4 py-3 border-b">
+            <h2 class="text-lg font-bold text-gray-800">Categorías</h2>
+            <button onclick="toggleCategorias()" class="text-xl font-bold text-gray-600 hover:text-black">&times;</button>
+        </div>
+        <ul class="p-4 space-y-2 text-gray-700">
+            <a href="#"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Aseo Industrial</li></a>
+            <a href="#"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Ropa de Seguridad y Protección Personal</li></a>
+            <a href="#"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Materiales de Construcción</li></a>
+            <a href="#"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Máquinas</li></a>
+            <a href="#"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Fijaciones</li></a>
+            <a href="#"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Pintura</li></a>
+            <a href="#"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Tensores</li></a>
+        </ul>
     </div>
-</header>
 
-<!-- SIDEBAR DE CATEGORÍAS -->
-<div id="categoriasSidebar" class="fixed top-0 left-0 w-80 h-full bg-white shadow-lg z-50 transform -translate-x-full transition-transform duration-300 ease-in-out overflow-y-auto">
-    <div class="flex items-center justify-between px-4 py-3 border-b">
-        <h2 class="text-lg font-bold text-gray-800">Categorías</h2>
-        <button onclick="toggleCategorias()" class="text-xl font-bold text-gray-600 hover:text-black">&times;</button>
-    </div>
-    <ul class="p-4 space-y-2 text-gray-700">
-        <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Aseo Industrial</li></a>
-        <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Ropa de Seguridad y Protección Personal</li></a>
-        <a href="{% url 'materiales' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Materiales de Construcción</li></a>
-        <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">máquinas</li></a>
-        <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Fijaciones</li></a>
-        <a href="{% url 'pintura' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Pintura</li></a>
-        <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Tensores</li></a>
-    </ul>
-</div>
+    <div class="login-wrapper">
+        <div class="login-container">
+            <h1 class="text-2xl font-bold mb-6 text-gray-800">Iniciar Sesión</h1>
 
+            <div class="error-message" id="errorMessage"></div>
+            <div class="success-message" id="successMessage"></div>
 
-<div class="container-fluid mt-5 pt-3">
-    <div class="row justify-content-center">
-        <div class="col-lg-6">
-            <div class="bg-white border p-4">
-                <div class="section-title mb-4">
-                    <h4 class="m-0 text-uppercase font-weight-bold">Login</h4>
-                </div>
-                <div class="row">
-                    <div class="col-sm-8 offset-sm-2">
-                        {% load crispy_forms_tags %}
-                        <form method="post">
-                            {% csrf_token %}
-                            {{ form|crispy }}
-                            <input type="submit" class="btn btn-primary" value="Ingresar">
-                        </form>
-                    </div>
-                </div>
-                <div class="text-center mt-3">
-                    <small class="text-muted">
-                        ¿No tienes una cuenta? <a href="{% url 'registro' %}">¡Crea una!</a>
-                    </small>
-                    <br>
-                    <small class="text-muted">
-                        ¿Olvidaste tu contraseña? <a href="#">¡Crea una nueva!</a>
-                    </small>
-                </div>
+            <div class="form-group">
+                <label for="email">Correo Electrónico:</label>
+                <input type="email" id="email" placeholder="ej. tu@correo.com" required>
             </div>
+            <div class="form-group">
+                <label for="contrasena">Contraseña:</label>
+                <input type="password" id="contrasena" placeholder="Ingresa tu contraseña" required>
+            </div>
+            <button id="loginButton">Ingresar</button>
+
+            <p class="mt-4 text-sm text-gray-600">
+                ¿No tienes una cuenta? <a href="registro.html" class="text-blue-600 hover:underline">Regístrate aquí</a>
+            </p>
+            <p class="mt-2 text-sm text-gray-600">
+                ¿Olvidaste tu contraseña? <a href="#" class="text-blue-600 hover:underline">¡Crea una nueva!</a>
+            </p>
         </div>
     </div>
-</div>
 
-<footer class="bg-black text-white py-10 mt-16">
+    <footer class="bg-black text-white py-10 mt-16">
         <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-5 gap-8 text-sm">
             <!-- Logo y contacto -->
             <div>
@@ -99,9 +184,9 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10l1.5-1.5M21 10l-1.5-1.5M9 16h6M10 12h4m-1 8v-8m-4 4h8" /></svg>
                     <span>+56 9 4722 9108</span>
                 </div>
-                <button class="mt-4 bg-white text-red-600 font-bold py-2 px-4 rounded"><a href="{% url 'contacto' %}">Contáctanos</a></button>
+                <button class="mt-4 bg-white text-red-600 font-bold py-2 px-4 rounded"><a href="#">Contáctanos</a></button>
             </div>
-    
+            
             <!-- Nosotros -->
             <div>
                 <h3 class="font-semibold mb-2">Nosotros</h3>
@@ -111,7 +196,7 @@
                     <li><a href="#" class="hover:underline">Canal de Denuncias</a></li>
                 </ul>
             </div>
-    
+            
             <!-- Ayuda -->
             <div>
                 <h3 class="font-semibold mb-2">Ayuda</h3>
@@ -122,7 +207,7 @@
                     <li><a href="#" class="hover:underline">Seguimiento de Compra</a></li>
                 </ul>
             </div>
-    
+            
             <!-- Categorías -->
             <div>
                 <h3 class="font-semibold mb-2">Categorías</h3>
@@ -133,7 +218,7 @@
                     <li><a href="#" class="hover:underline">Pinturas</a></li>
                 </ul>
             </div>
-    
+            
             <!-- Legal -->
             <div>
                 <h3 class="font-semibold mb-2">Legal</h3>
@@ -144,16 +229,112 @@
                     <li><a href="#" class="hover:underline">Políticas de privacidad</a></li>
                 </ul>
                 <div class="mt-4">
-                    <img src="{% static 'core/img/ssl.png' %}" alt="SSL" class="h-10">
+                    <img src="https://placehold.co/100x40/000000/FFFFFF?text=SSL" alt="SSL" class="h-10">
                 </div>
             </div>
         </div>
     </footer>
 
-    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{% static 'core/js/menu_categoria.js' %}"></script>
+    <script>
+        // Función para el sidebar de categorías (necesita ser implementada si no usas Django)
+        function toggleCategorias() {
+            const sidebar = document.getElementById('categoriasSidebar');
+            sidebar.classList.toggle('-translate-x-full');
+        }
+
+        const API_BASE_URL = 'http://localhost:3000'; // Asegúrate de que esta URL sea correcta para tu API
+
+        const emailInput = document.getElementById('email');
+        const contrasenaInput = document.getElementById('contrasena');
+        const loginButton = document.getElementById('loginButton');
+        const errorMessageDiv = document.getElementById('errorMessage');
+        const successMessageDiv = document.getElementById('successMessage');
+
+        // Function to display messages
+        function showMessage(element, message) {
+            errorMessageDiv.style.display = 'none';
+            successMessageDiv.style.display = 'none';
+
+            element.textContent = message;
+            element.style.display = 'block';
+        }
+
+        loginButton.addEventListener('click', async () => {
+            const correo = emailInput.value.trim();
+            const contrasena = contrasenaInput.value;
+
+            // Clear previous messages
+            errorMessageDiv.style.display = 'none';
+            successMessageDiv.style.display = 'none';
+
+            if (!correo || !contrasena) {
+                showMessage(errorMessageDiv, 'Por favor, ingresa tu correo y contraseña.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ correo, contrasena })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Store token and user info in localStorage
+                    localStorage.setItem('jwtToken', data.token);
+                    localStorage.setItem('userCorreo', data.user.correo);
+                    localStorage.setItem('userType', data.user.tipo_persona);
+
+                    showMessage(successMessageDiv, data.mensaje);
+
+                    // Simulate redirection based on user type
+                    // Convert both strings to lowercase for case-insensitive comparison
+                    if (data.user.correo.toLowerCase() === 'admin@ferremas.com'.toLowerCase()) { // Updated to .com
+                        alert('¡Inicio de sesión exitoso como Admin! Redirigiendo al panel de administración.');
+                        // En una aplicación real, aquí iría:
+                        // window.location.href = '/admin-dashboard.html';
+                    } else {
+                        alert('¡Inicio de sesión exitoso como Cliente! Redirigiendo a la página principal de cliente.');
+                        // En una aplicación real, aquí iría:
+                        // window.location.href = '/client-dashboard.html';
+                    }
+                    // For demonstration, you might want to clear fields after successful login
+                    emailInput.value = '';
+                    contrasenaInput.value = '';
+
+                } else {
+                    showMessage(errorMessageDiv, data.error || 'Error al iniciar sesión. Inténtalo de nuevo.');
+                }
+            } catch (error) {
+                console.error('Error de red o del servidor:', error);
+                showMessage(errorMessageDiv, 'No se pudo conectar con el servidor. Inténtalo más tarde.');
+            }
+        });
+
+        // Optional: Check if already logged in on page load
+        window.onload = () => {
+            const token = localStorage.getItem('jwtToken');
+            const userCorreo = localStorage.getItem('userCorreo');
+            const userType = localStorage.getItem('userType');
+
+            if (token && userCorreo && userType) {
+                // If already logged in, simulate redirection immediately
+                // Convert both strings to lowercase for case-insensitive comparison
+                if (userCorreo.toLowerCase() === 'admin@ferremas.com'.toLowerCase()) { // Updated to .com
+                    alert('Ya has iniciado sesión como Admin. Redirigiendo al panel de administración.');
+                    // window.location.href = '/admin-dashboard.html';
+                } else {
+                    alert('Ya has iniciado sesión como Cliente. Redirigiendo a la página principal de cliente.');
+                    // window.location.href = '/client-dashboard.html';
+                }
+            }
+        };
+    </script>
+
 </body>
-
-
 </html>

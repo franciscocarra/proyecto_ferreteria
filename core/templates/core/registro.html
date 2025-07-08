@@ -1,82 +1,250 @@
 <!DOCTYPE html>
 <html lang="es">
-{% load static %}
-{% load crispy_forms_tags %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ferretería Rinco Del Herrero - Menú</title>
+    <title>Ferretería Rinco Del Herrero - Registro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'core/css/carousel.css' %}">
+    <!-- Si usas Django, mantén tus enlaces a static files. Si es un HTML plano, estos no funcionarán sin un servidor Django. -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            color: #333;
+        }
+        .container-fluid {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+        .card {
+            background-color: #ffffff;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+        }
+        .card-header {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: #1f2937;
+            text-align: center;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 1rem;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+            text-align: left;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #4b5563;
+        }
+        input[type="text"],
+        input[type="number"],
+        input[type="email"],
+        input[type="date"],
+        input[type="password"],
+        select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        input[type="email"]:focus,
+        input[type="date"]:focus,
+        input[type="password"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+        .btn-primary {
+            background-color: #2563eb;
+            color: #ffffff;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 100%;
+        }
+        .btn-primary:hover {
+            background-color: #1d4ed8;
+            transform: translateY(-1px);
+        }
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+        .error-message {
+            background-color: #fee2e2;
+            border: 1px solid #ef4444;
+            color: #ef4444;
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            margin-top: 1rem;
+            font-weight: 500;
+            text-align: left;
+            display: none; /* Hidden by default */
+        }
+        .success-message {
+            background-color: #d1fae5;
+            border: 1px solid #10b981;
+            color: #10b981;
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            margin-top: 1rem;
+            font-weight: 500;
+            text-align: left;
+            display: none; /* Hidden by default */
+        }
+        .grid-cols-2 {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1rem;
+        }
+        @media (max-width: 768px) {
+            .grid-cols-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body class="bg-gray-100 text-gray-900">
-    <header class="bg-dark text-white py-4">
-    <div class="container mx-auto flex justify-between items-center">
-        <h1 class="text-2xl font-bold"><a href="{% url 'home' %}">Ferretería Rinco Del Herrero</a></h1>
-        <nav>
-            <ul class="flex space-x-4">
-                <li><a href="{% url 'home' %}" class="hover:underline">Inicio</a></li>
-                <li><a href="{% url 'productos' %}" class="hover:underline">Productos</a></li>
-                <!-- CAMBIO: botón para mostrar categorías -->
-                <li><button onclick="toggleCategorias()" class="hover:underline focus:outline-none">Categorías</button></li>
-                <li><a href="{% url 'error_producto' %}" class="hover:underline">Promociones</a></li>
-                <li><a href="{% url 'contacto' %}" class="hover:underline">Contacto</a></li>
-                <li>
-                    <a href="{% url 'carrito' %}" class="relative inline-block w-8 h-8">
-                        <div class="absolute bottom-0 left-0 w-8 h-5 border-2 border-white rounded-sm"></div>
-                        <div class="absolute bottom-5 left-1 w-6 h-2 border-2 border-white border-b-0 rounded-t-sm"></div>
-                        <div class="absolute bottom-1 left-1 w-1 h-1 bg-white rounded-full"></div>
-                        <div class="absolute bottom-1 right-1 w-1 h-1 bg-white rounded-full"></div>
-                    </a>
-                </li>
-            </ul>
-        </nav>
-    </div>
-</header>
+    <header class="bg-dark text-white py-4 w-full">
+        <div class="container mx-auto flex justify-between items-center px-4">
+            <h1 class="text-2xl font-bold"><a href="#">Ferretería Rinco Del Herrero</a></h1>
+            <nav>
+                <ul class="flex space-x-4">
+                    <li><a href="#" class="hover:underline">Inicio</a></li>
+                    <li><a href="#" class="hover:underline">Productos</a></li>
+                    <li><button onclick="toggleCategorias()" class="hover:underline focus:outline-none">Categorías</button></li>
+                    <li><a href="#" class="hover:underline">Promociones</a></li>
+                    <li><a href="#" class="hover:underline">Contacto</a></li>
+                    <li>
+                        <a href="#" class="relative inline-block w-8 h-8">
+                            <div class="absolute bottom-0 left-0 w-8 h-5 border-2 border-white rounded-sm"></div>
+                            <div class="absolute bottom-5 left-1 w-6 h-2 border-2 border-white border-b-0 rounded-t-sm"></div>
+                            <div class="absolute bottom-1 left-1 w-1 h-1 bg-white rounded-full"></div>
+                            <div class="absolute bottom-1 right-1 w-1 h-1 bg-white rounded-full"></div>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
 
-<!-- SIDEBAR DE CATEGORÍAS -->
-<div id="categoriasSidebar" class="fixed top-0 left-0 w-80 h-full bg-white shadow-lg z-50 transform -translate-x-full transition-transform duration-300 ease-in-out overflow-y-auto">
-    <div class="flex items-center justify-between px-4 py-3 border-b">
-        <h2 class="text-lg font-bold text-gray-800">Categorías</h2>
-        <button onclick="toggleCategorias()" class="text-xl font-bold text-gray-600 hover:text-black">&times;</button>
+    <!-- SIDEBAR DE CATEGORÍAS (Se mantiene para la estructura general, pero no funcional en HTML plano sin JS adicional) -->
+    <div id="categoriasSidebar" class="fixed top-0 left-0 w-80 h-full bg-white shadow-lg z-50 transform -translate-x-full transition-transform duration-300 ease-in-out overflow-y-auto">
+        <div class="flex items-center justify-between px-4 py-3 border-b">
+            <h2 class="text-lg font-bold text-gray-800">Categorías</h2>
+            <button onclick="toggleCategorias()" class="text-xl font-bold text-gray-600 hover:text-black">&times;</button>
+        </div>
+        <ul class="p-4 space-y-2 text-gray-700">
+            <a href="#"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Aseo Industrial</li></a>
+            <a href="#"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Ropa de Seguridad y Protección Personal</li></a>
+            <a href="#"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Materiales de Construcción</li></a>
+            <a href="#"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Máquinas</li></a>
+            <a href="#"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Fijaciones</li></a>
+            <a href="#"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Pintura</li></a>
+            <a href="#"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Tensores</li></a>
+        </ul>
     </div>
-    <ul class="p-4 space-y-2 text-gray-700">
-        <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Aseo Industrial</li></a>
-        <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Ropa de Seguridad y Protección Personal</li></a>
-        <a href="{% url 'materiales' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Materiales de Construcción</li></a>
-        <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">máquinas</li></a>
-        <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Fijaciones</li></a>
-        <a href="{% url 'pintura' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Pintura</li></a>
-        <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Tensores</li></a>
-    </ul>
-</div>
 
-<!-- SECCIÓN DE REGISTRO -->
-<div class="card bg-dark text-white">
-    <div class="card-header">
-        Registro de Usuarios
-    </div>
-    <div class="card-body">
-        <div class="row">
-            <div class="col-sm-8 offset-sm-2">
-                <form method="POST">
-                    {% csrf_token %}
-                    {{ form|crispy }}
-                    <div class="form-group">
-                        <input type="submit" class="btn btn-primary" value="Registrarse">
+    <div class="container-fluid mt-5 pt-3">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header">
+                        Registro de Usuarios
                     </div>
-                    <div class="form-group mt-2">
-                        <small class="text-muted">¿Olvidaste tu contraseña? <a href="#">¡Crea una nueva!</a></small>
+                    <div class="card-body">
+                        <div class="error-message" id="errorMessage"></div>
+                        <div class="success-message" id="successMessage"></div>
+
+                        <form id="registroForm">
+                            <div class="grid grid-cols-1 md:grid-cols-2">
+                                <div class="form-group">
+                                    <label for="rut">RUT:</label>
+                                    <input type="text" id="rut" placeholder="Ej: 12345678-9" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="nombre">Nombre:</label>
+                                    <input type="text" id="nombre" placeholder="Ej: Juan" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="appaterno">Apellido Paterno:</label>
+                                    <input type="text" id="appaterno" placeholder="Ej: Pérez" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="apmaterno">Apellido Materno:</label>
+                                    <input type="text" id="apmaterno" placeholder="Ej: González" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="correo">Correo:</label>
+                                    <input type="email" id="correo" placeholder="Ej: tu@correo.com" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="contrasena">Contraseña:</label>
+                                    <input type="password" id="contrasena" placeholder="Ingresa tu contraseña" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="confirmContrasena">Confirmar Contraseña:</label>
+                                    <input type="password" id="confirmContrasena" placeholder="Confirma tu contraseña" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="genero">Género:</label>
+                                    <select id="genero" required>
+                                        <option value="">Selecciona</option>
+                                        <option value="M">Masculino</option>
+                                        <option value="F">Femenino</option>
+                                        <option value="O">Otro</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="fec_nac">Fecha de Nacimiento:</label>
+                                    <input type="date" id="fec_nac" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="telefono">Teléfono:</label>
+                                    <input type="text" id="telefono" placeholder="Ej: 912345678" required>
+                                </div>
+                                <div class="form-group md:col-span-2">
+                                    <label for="direccion">Dirección:</label>
+                                    <input type="text" id="direccion" placeholder="Ej: Calle Falsa 123" required>
+                                </div>
+                                <div class="form-group md:col-span-2">
+                                    <label for="tipo_persona">Tipo de Persona:</label>
+                                    <select id="tipo_persona" required>
+                                        <option value="cliente">Cliente</option>
+                                        <option value="admin">Admin</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group mt-4">
+                                <button type="submit" class="btn btn-primary">Registrarse</button>
+                            </div>
+                            <div class="form-group mt-2 text-center">
+                                <small class="text-muted">¿Ya tienes una cuenta? <a href="login.html" class="text-blue-600 hover:underline">Inicia Sesión</a></small>
+                            </div>
+                            <div class="form-group mt-2 text-center">
+                                <small class="text-muted">¿Olvidaste tu contraseña? <a href="#" class="text-blue-600 hover:underline">¡Crea una nueva!</a></small>
+                            </div>
+                        </form>
                     </div>
-                </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<footer class="bg-black text-white py-10 mt-16">
+    <footer class="bg-black text-white py-10 mt-16">
         <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-5 gap-8 text-sm">
             <!-- Logo y contacto -->
             <div>
@@ -90,9 +258,9 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10l1.5-1.5M21 10l-1.5-1.5M9 16h6M10 12h4m-1 8v-8m-4 4h8" /></svg>
                     <span>+56 9 4722 9108</span>
                 </div>
-                <button class="mt-4 bg-white text-red-600 font-bold py-2 px-4 rounded"><a href="{% url 'contacto' %}">Contáctanos</a></button>
+                <button class="mt-4 bg-white text-red-600 font-bold py-2 px-4 rounded"><a href="#">Contáctanos</a></button>
             </div>
-    
+            
             <!-- Nosotros -->
             <div>
                 <h3 class="font-semibold mb-2">Nosotros</h3>
@@ -102,7 +270,7 @@
                     <li><a href="#" class="hover:underline">Canal de Denuncias</a></li>
                 </ul>
             </div>
-    
+            
             <!-- Ayuda -->
             <div>
                 <h3 class="font-semibold mb-2">Ayuda</h3>
@@ -113,7 +281,7 @@
                     <li><a href="#" class="hover:underline">Seguimiento de Compra</a></li>
                 </ul>
             </div>
-    
+            
             <!-- Categorías -->
             <div>
                 <h3 class="font-semibold mb-2">Categorías</h3>
@@ -124,7 +292,7 @@
                     <li><a href="#" class="hover:underline">Pinturas</a></li>
                 </ul>
             </div>
-    
+            
             <!-- Legal -->
             <div>
                 <h3 class="font-semibold mb-2">Legal</h3>
@@ -135,15 +303,133 @@
                     <li><a href="#" class="hover:underline">Políticas de privacidad</a></li>
                 </ul>
                 <div class="mt-4">
-                    <img src="{% static 'core/img/ssl.png' %}" alt="SSL" class="h-10">
+                    <!-- Placeholder de imagen SSL si no usas Django static files -->
+                    <img src="https://placehold.co/100x40/000000/FFFFFF?text=SSL" alt="SSL" class="h-10">
                 </div>
             </div>
         </div>
     </footer>
 
-    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{% static 'core/js/menu_categoria.js' %}"></script>
-    <script src="{% static 'core/js/fuerza_pass.js' %}"></script>
+    <script>
+        // Función para el sidebar de categorías (necesita ser implementada si no usas Django)
+        function toggleCategorias() {
+            const sidebar = document.getElementById('categoriasSidebar');
+            sidebar.classList.toggle('-translate-x-full');
+        }
+
+        const API_BASE_URL = 'http://localhost:3000'; // Asegúrate de que esta URL sea correcta para tu API
+        const API_KEY_FOR_REGISTRATION = 'Admin1234'; // Tu API Key estática para el registro
+
+        const registroForm = document.getElementById('registroForm');
+        const errorMessageDiv = document.getElementById('errorMessage');
+        const successMessageDiv = document.getElementById('successMessage');
+
+        // Referencias a los campos del formulario
+        const rutInput = document.getElementById('rut');
+        const nombreInput = document.getElementById('nombre');
+        const appaternoInput = document.getElementById('appaterno');
+        const apmaternoInput = document.getElementById('apmaterno');
+        const correoInput = document.getElementById('correo');
+        const contrasenaInput = document.getElementById('contrasena');
+        const confirmContrasenaInput = document.getElementById('confirmContrasena');
+        const generoInput = document.getElementById('genero');
+        const fecNacInput = document.getElementById('fec_nac');
+        const telefonoInput = document.getElementById('telefono');
+        const direccionInput = document.getElementById('direccion');
+        const tipoPersonaInput = document.getElementById('tipo_persona');
+
+        // Función para mostrar mensajes
+        function showMessage(element, message) {
+            errorMessageDiv.style.display = 'none';
+            successMessageDiv.style.display = 'none';
+
+            element.textContent = message;
+            element.style.display = 'block';
+        }
+
+        registroForm.addEventListener('submit', async (event) => {
+            event.preventDefault(); // Evitar el envío predeterminado del formulario
+
+            // Limpiar mensajes anteriores
+            errorMessageDiv.style.display = 'none';
+            successMessageDiv.style.display = 'none';
+
+            // Recolectar datos del formulario
+            const rut = rutInput.value.trim();
+            const nombre = nombreInput.value.trim();
+            const appaterno = appaternoInput.value.trim();
+            const apmaterno = apmaternoInput.value.trim();
+            const correo = correoInput.value.trim();
+            const contrasena = contrasenaInput.value; // No trim password
+            const confirmContrasena = confirmContrasenaInput.value; // No trim password
+            const genero = generoInput.value;
+            const fec_nac = fecNacInput.value;
+            const telefono = telefonoInput.value.trim();
+            const direccion = direccionInput.value.trim();
+            const tipo_persona = tipoPersonaInput.value;
+
+            // Validaciones básicas del lado del cliente
+            if (!rut || !nombre || !appaterno || !apmaterno || !correo || !contrasena || !confirmContrasena || !genero || !fec_nac || !telefono || !direccion || !tipo_persona) {
+                showMessage(errorMessageDiv, 'Por favor, completa todos los campos obligatorios.');
+                return;
+            }
+
+            if (contrasena !== confirmContrasena) {
+                showMessage(errorMessageDiv, 'Las contraseñas no coinciden.');
+                return;
+            }
+
+            // Construir el objeto de datos para la API
+            const personaData = {
+                rut,
+                nombre,
+                appaterno,
+                apmaterno,
+                correo,
+                contrasena, // La API se encargará de hashear esto
+                genero,
+                fec_nac,
+                telefono,
+                direccion,
+                tipo_persona
+            };
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/personas`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': API_KEY_FOR_REGISTRATION // Usar la API Key para autenticar el registro
+                    },
+                    body: JSON.stringify(personaData)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showMessage(successMessageDiv, data.mensaje || 'Registro exitoso.');
+                    registroForm.reset(); // Limpiar el formulario
+                    // Opcional: Redirigir al usuario a la página de inicio de sesión
+                    // setTimeout(() => {
+                    //     window.location.href = 'login.html';
+                    // }, 2000);
+                } else {
+                    showMessage(errorMessageDiv, data.error || data.mensaje || 'Error al registrar usuario.');
+                }
+            } catch (error) {
+                console.error('Error de red o del servidor:', error);
+                showMessage(errorMessageDiv, 'No se pudo conectar con el servidor. Inténtalo más tarde.');
+            }
+        });
+
+        // Simula la función toggleCategorias si no estás usando Django para el sidebar
+        // Si usas el JS de Django, puedes eliminar esta función.
+        // function toggleCategorias() {
+        //     const sidebar = document.getElementById('categoriasSidebar');
+        //     sidebar.classList.toggle('-translate-x-full');
+        // }
+    </script>
+
 </body>
 </html>
