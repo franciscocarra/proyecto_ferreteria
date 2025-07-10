@@ -70,6 +70,7 @@
     <td>${{ producto.precio }}</td>
     <td>{{ producto.stock }}</td>
     <td>{{ producto.estado_producto }}</td>
+    <td>{{ producto.imagen_url }}</td>
     <td>
         <td>
     <div class="dropdown">
@@ -181,6 +182,11 @@ document.addEventListener("DOMContentLoaded", function() {
                 <option value="Inactivo">Inactivo</option>
               </select>
             </div>
+            <div class="mb-3">
+                <label for="agregar_imagen_url" class="form-label">URL de la Imagen</label>
+                <input type="url" class="form-control" id="agregar_imagen_url" name="imagen_url">
+            </div>
+
           </div>
         </form>
       </div>
@@ -204,6 +210,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const precio = document.getElementById("agregar_precio").value;
         const stock = document.getElementById("agregar_stock").value;
         const estado = document.getElementById("agregar_estado").value;
+        const imagen_url = document.getElementById("agregar_imagen_url").value.trim();
 
         // Validamos que no esté vacío
         if (!nombre || !marca || !descripcion || precio === "" || stock === "" || !estado) {
@@ -218,7 +225,8 @@ document.addEventListener("DOMContentLoaded", function() {
             descripcion: descripcion,
             precio: precio,
             stock: stock,
-            estado_producto: estado
+            estado_producto: estado,
+            imagen_url: imagen_url
         });
 
         try {
@@ -241,8 +249,13 @@ document.addEventListener("DOMContentLoaded", function() {
                 location.reload();
             } else {
                 const errorData = await respuesta.json();
-                alert("Error al agregar: " + (errorData.detail || JSON.stringify(errorData)));
-            }
+                        
+                // 1. Mostramos el error detallado en la consola del navegador
+                console.error("Detalle del error de la API:", errorData);
+
+                // 2. Mostramos un mensaje más genérico al usuario
+                alert("Error al agregar el producto. Revisa la consola para más detalles (presiona F12).");
+}
         } catch (error) {
             alert("Error de conexión con la API");
             console.error(error);

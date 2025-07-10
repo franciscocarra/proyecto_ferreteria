@@ -51,10 +51,16 @@
                 {% endif %}
                 <li>
                     <a href="{% url 'carrito' %}" class="relative inline-block w-8 h-8">
-                        <div class="absolute bottom-0 left-0 w-8 h-5 border-2 border-white rounded-sm"></div>
-                        <div class="absolute bottom-5 left-1 w-6 h-2 border-2 border-white border-b-0 rounded-t-sm"></div>
-                        <div class="absolute bottom-1 left-1 w-1 h-1 bg-white rounded-full"></div>
-                        <div class="absolute bottom-1 right-1 w-1 h-1 bg-white rounded-full"></div>
+                            <div class="absolute bottom-0 left-0 w-8 h-5 border-2 border-white rounded-sm"></div>
+                            <div class="absolute bottom-5 left-1 w-6 h-2 border-2 border-white border-b-0 rounded-t-sm"></div>
+                            <div class="absolute bottom-1 left-1 w-1 h-1 bg-white rounded-full"></div>
+                            <div class="absolute bottom-1 right-1 w-1 h-1 bg-white rounded-full"></div>
+
+                            {% if cart_item_count > 0 %}
+                            <span class="absolute -top-2 -right-2 flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-600 rounded-full">
+                                {{ cart_item_count }}
+                            </span>
+                            {% endif %}
                     </a>
                 </li>
             </ul>

@@ -129,7 +129,11 @@
             
             <div>
                 <div class="relative">
-                    <img src="#" alt="{{ producto.nombre_producto }}" class="h-48 w-full object-contain rounded-t-md p-4" />
+                    {% if producto.imagen_url %}
+                        <img src="{{ producto.imagen_url }}" alt="{{ producto.nombre_producto }}" class="h-48 w-full object-contain rounded-t-md p-4" />
+                    {% else %}
+                        <img src="{% static 'core/img/placeholder.png' %}" alt="Imagen no disponible" class="h-48 w-full object-contain rounded-t-md p-4" />
+                    {% endif %}
                     
                     <div class="absolute top-2 right-2 flex flex-col items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                         <button class="bg-white rounded-full p-1.5 shadow mb-2 text-gray-600 hover:bg-gray-100">

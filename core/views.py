@@ -83,6 +83,9 @@ def registro(request):
 
     return render(request, 'core/registro.html', {'form': formulario})
 
+def olvidar_contrasena(request):
+    return render(request, 'core/olvidar_contrasena.html')
+
 def logout_view(request):
     logout(request)
     return redirect('home')

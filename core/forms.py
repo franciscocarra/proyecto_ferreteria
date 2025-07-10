@@ -62,7 +62,9 @@ class CustomUserCreationForm(forms.ModelForm):
 
         return usuario
     
-class LoginForm(forms.Form):
+from django.contrib.auth.forms import AuthenticationForm
+
+class LoginForm(AuthenticationForm):
     username = forms.CharField(max_length=150, label="Usuario")
     password = forms.CharField(widget=forms.PasswordInput, label="Contraseña")
 
@@ -109,7 +111,7 @@ class AdminUserCreationForm(UserCreationForm):
 class ProductoForm(forms.ModelForm):
     class Meta:
         model = Producto
-        fields = ['nombre_producto', 'marca', 'descripcion', 'precio', 'stock', 'estado_producto']
+        fields = ['nombre_producto', 'marca', 'descripcion', 'precio', 'stock', 'estado_producto', 'imagen_url']
         widgets = {
             'nombre_producto': forms.TextInput(attrs={'class': 'form-control'}),
             'marca': forms.TextInput(attrs={'class': 'form-control'}),
@@ -117,6 +119,7 @@ class ProductoForm(forms.ModelForm):
             'precio': forms.NumberInput(attrs={'class': 'form-control'}),
             'stock': forms.NumberInput(attrs={'class': 'form-control'}),
             'estado_producto': forms.TextInput(attrs={'class': 'form-control'}),
+            'imagen_url': forms.URLInput(attrs={'class': 'form-control'}),
         }
 
 class EmpleadoUserCreationForm(forms.ModelForm):
@@ -163,6 +166,7 @@ class EmpleadoUserCreationForm(forms.ModelForm):
         usuario.save()
 
         from django.contrib.auth.models import Group
+        from django import forms
         group, _ = Group.objects.get_or_create(name='empleado')
         user.groups.add(group)
 
@@ -170,3 +174,13 @@ class EmpleadoUserCreationForm(forms.ModelForm):
             usuario.save()
 
         return usuario
+
+    # Agrega un formulario simple para el home con enlaces a login y registro
+
+    class HomeForm(forms.Form):
+        pass  # Este formulario puede estar vacío, solo para renderizar el home
+
+    # Puedes usar estos helpers en tu vista/template:
+    # En tu template home.html, agrega:
+    # <a href="{% url 'login' %}">Iniciar sesión</a>
+    # <a href="{% url 'registro' %}">Registrarse</a>

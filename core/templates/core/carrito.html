@@ -49,12 +49,18 @@
                 <li><a href="{% url 'iniciar_session' %}" class="hover:underline">Iniciar sesión</a></li>
                 {% endif %}
                 <li>
-                    <a href="#" class="relative inline-block w-8 h-8">
-                        <div class="absolute bottom-0 left-0 w-8 h-5 border-2 border-white rounded-sm"></div>
-                        <div class="absolute bottom-5 left-1 w-6 h-2 border-2 border-white border-b-0 rounded-t-sm"></div>
-                        <div class="absolute bottom-1 left-1 w-1 h-1 bg-white rounded-full"></div>
-                        <div class="absolute bottom-1 right-1 w-1 h-1 bg-white rounded-full"></div>
-                    </a>
+                    <a href="{% url 'carrito' %}" class="relative inline-block w-8 h-8">
+                            <div class="absolute bottom-0 left-0 w-8 h-5 border-2 border-white rounded-sm"></div>
+                            <div class="absolute bottom-5 left-1 w-6 h-2 border-2 border-white border-b-0 rounded-t-sm"></div>
+                            <div class="absolute bottom-1 left-1 w-1 h-1 bg-white rounded-full"></div>
+                            <div class="absolute bottom-1 right-1 w-1 h-1 bg-white rounded-full"></div>
+
+                            {% if cart_item_count > 0 %}
+                            <span class="absolute -top-2 -right-2 flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-600 rounded-full">
+                                {{ cart_item_count }}
+                            </span>
+                            {% endif %}
+                        </a>
                 </li>
             </ul>
         </nav>
@@ -156,59 +162,6 @@
                 {% endif %}
             </div>
         </section>
-
-
-<section class="bg-gray-100 py-12 flex justify-center">
-    <div id="empty-cart-message" class="empty-cart-message chakra-card__body css-1cm1juy">
-        <div class="content chakra-stack css-1q6pec8">
-            {% if user.is_authenticated %}
-            <div class="chakra-stack css-1y6aw5c">
-                <h1>Carrito de Compra</h1>
-                {% if cart_items %}
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Producto</th>
-                            <th>Precio</th>
-                            <th>Cantidad</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for item in cart_items %}
-                        <tr>
-                            <td>{{ item.producto.type }}</td>
-                            <td>${{ item.producto.price }}</td>
-                            <td>{{ item.quantity }}</td>
-                            <td>
-                                <form action="#" method="post">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
-                                </form>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-                <a href="#" class="btn btn-primary">Proceder al pago</a>
-                {% else %}
-                <h2 class="chakra-heading css-1u6upbv">Tu Carro está vacío</h2>
-                {% endif %}
-            </div>
-            {% else %}
-            <div class="chakra-stack css-1y6aw5c">
-                <h2 class="chakra-heading css-1u6upbv">Tu Carro está vacío</h2>
-                <p class="chakra-text css-ttb4y">Inicia sesión para ver los productos que habías guardado en tu Carro.</p>
-                <a href="{% url 'iniciar_session' %}" class="btn btn-primary chakra-button css-1cmlw5v">Iniciar sesión</a>
-                <p class="chakra-text css-1q6pec8">¿No tienes cuenta? <a href="{% url 'registro' %}" class="chakra-link css-1n12wwe">Regístrate</a></p>
-            </div>
-            {% endif %}
-        </div>
-    </div>
-</section>
-
-
-
 
     <footer class="container-fluid bg-black text-white py-10 mt-16">
         <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-5 gap-8 text-sm">
