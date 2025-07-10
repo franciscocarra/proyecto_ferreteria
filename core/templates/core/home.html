@@ -1,183 +1,221 @@
 <!DOCTYPE html>
 <html lang="es">
-{% load static %}
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ferretería Rinco Del Herrero - Menú</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'core/css/carousel.css' %}">
-    <link rel="stylesheet" href="{% static 'core/css/carrito.css' %}">
+<!-- Removed misplaced JavaScript and <li> from <head> -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px; /* Adjust container width for better aesthetics */
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        .product-card {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+        .carousel-item img {
+            max-height: 500px; /* Limit carousel image height */
+            object-fit: cover;
+        }
+        .section-heading {
+            border-left: 5px solid #f97316; /* Orange border for headings */
+            padding-left: 1rem;
+        }
+        /* Custom styles for user dropdown */
+        .user-dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: white;
+            color: black;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 50;
+            min-width: 150px;
+            display: none; /* Hidden by default */
+            flex-direction: column;
+            padding: 0.5rem 0;
+        }
+        .user-dropdown-menu a, .user-dropdown-menu button {
+            padding: 0.5rem 1rem;
+            text-align: left;
+            width: 100%;
+            display: block;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #333;
+        }
+        .user-dropdown-menu a:hover, .user-dropdown-menu button:hover {
+            background-color: #f3f4f6;
+        }
+        .user-dropdown-menu.show {
+            display: flex;
+        }
+    </style>
 </head>
 <body class="bg-gray-100 text-gray-900">
     <header class="bg-dark text-white py-4">
-    <div class="container mx-auto flex justify-between items-center">
-        <h1 class="text-2xl font-bold"><a href="{% url 'home' %}">Ferretería Rinco Del Herrero</a></h1>
-        <nav>
-            <ul class="flex space-x-4 items-center">
-                <li><a href="{% url 'home' %}" class="hover:underline">Inicio</a></li>
-                <li><a href="{% url 'productos' %}" class="hover:underline">Productos</a></li>
-                <li><button onclick="toggleCategorias()" class="hover:underline focus:outline-none">Categorías</button></li>
-                <li><a href="{% url 'error_producto' %}" class="hover:underline">Promociones</a></li>
-                <li><a href="{% url 'contacto' %}" class="hover:underline">Contacto</a></li>
-                {% if user.is_authenticated %}
-                <li class="relative">
-                    <div id="userMenuButton" class="flex items-center space-x-2 cursor-pointer">
-                        <img src="{% static 'core/img/usuario/usuario.png' %}" alt="Perfil" class="w-8 h-8 rounded-full">
-                        <span>{{ user.username }}</span>
-                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M6 9l6 6 6-6"></path>
-                        </svg>
-                    </div>
-                
-                    <div id="userMenuDropdown" class="absolute hidden flex-col bg-white text-black right-0 mt-2 py-2 w-48 rounded shadow-lg z-50">
-                        <a href="#" class="px-4 py-2 hover:bg-gray-200">Mi perfil</a>
-                        {% if user.is_staff %}
-                            {% if perms.core.view_empleado %}
-                                <a href="{% url 'home' %}" class="px-4 py-2 hover:bg-gray-200">Configuración</a>
-                            {% endif %}
-                            <a href="/admin" class="px-4 py-2 hover:bg-gray-200">Administración</a>
-                        {% endif %}
-                        <form action="{% url 'logout' %}" method="post" class="px-4 py-2">
-                            {% csrf_token %}
-                            <button type="submit" class="w-full text-left hover:bg-gray-200">Cerrar sesión</button>
-                        </form>
-                    </div>
-                </li>
-                {% else %}
-                <li><a href="{% url 'iniciar_session' %}" class="hover:underline">Iniciar sesión</a></li>
-                {% endif %}
-                <li>
-                    <a href="{% url 'carrito' %}" class="relative inline-block w-8 h-8">
-                        <div class="absolute bottom-0 left-0 w-8 h-5 border-2 border-white rounded-sm"></div>
-                        <div class="absolute bottom-5 left-1 w-6 h-2 border-2 border-white border-b-0 rounded-t-sm"></div>
-                        <div class="absolute bottom-1 left-1 w-1 h-1 bg-white rounded-full"></div>
-                        <div class="absolute bottom-1 right-1 w-1 h-1 bg-white rounded-full"></div>
-                    </a>
-                </li>
-            </ul>
-        </nav>
-    </div>
-</header>
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold"><a href="{% url 'home' %}">Ferretería Rinco Del Herrero</a></h1>
+            <nav>
+                <ul class="flex space-x-4 items-center">
+                    <li><a href="{% url 'productos' %}" class="hover:underline">Productos</a></li>
+                    <li><button onclick="toggleCategorias()" class="hover:underline focus:outline-none">Categorías</button></li>
+                    <li><a href="{% url 'error_producto' %}" class="hover:underline">Promociones</a></li>
+                    <li><a href="{% url 'contacto' %}" class="hover:underline">Contacto</a></li>
+                    <li><a href="{% url 'iniciar_session' %}" class="hover:underline">Iniciar sesión</a></li>
+                    <li><a href="{% url 'carrito' %}" class="hover:underline">Carrito</a></li>
 
-<!-- SIDEBAR DE CATEGORÍAS -->
-<div id="categoriasSidebar" class="fixed top-0 left-0 w-80 h-full bg-white shadow-lg z-50 transform -translate-x-full transition-transform duration-300 ease-in-out overflow-y-auto">
-    <div class="flex items-center justify-between px-4 py-3 border-b">
-        <h2 class="text-lg font-bold text-gray-800">Categorías</h2>
-        <button onclick="toggleCategorias()" class="text-xl font-bold text-gray-600 hover:text-black">&times;</button>
-    </div>
-    <ul class="p-4 space-y-2 text-gray-700">
-        <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Aseo Industrial</li></a>
-        <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Ropa de Seguridad y Protección Personal</li></a>
-        <a href="{% url 'materiales' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Materiales de Construcción</li></a>
-        <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">máquinas</li></a>
-        <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Fijaciones</li></a>
-        <a href="{% url 'pintura' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Pintura</li></a>
-        <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Tensores</li></a>
-    </ul>
-</div>
+                    <!-- User authentication section - Dynamically managed by JavaScript -->
+                    <li id="authSection" class="relative">
+                        <!-- Content will be injected here by JavaScript -->
+                    </li>
 
+                    <li>
+                        <a href="carrito.html" class="relative inline-block w-8 h-8">
+                            <div class="absolute bottom-0 left-0 w-8 h-5 border-2 border-white rounded-sm"></div>
+                            <div class="absolute bottom-5 left-1 w-6 h-2 border-2 border-white border-b-0 rounded-t-sm"></div>
+                            <div class="absolute bottom-1 left-1 w-1 h-1 bg-white rounded-full"></div>
+                            <div class="absolute bottom-1 right-1 w-1 h-1 bg-white rounded-full"></div>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- SIDEBAR DE CATEGORÍAS -->
+    <div id="categoriasSidebar" class="fixed top-0 left-0 w-80 h-full bg-white shadow-lg z-50 transform -translate-x-full transition-transform duration-300 ease-in-out overflow-y-auto">
+        <div class="flex items-center justify-between px-4 py-3 border-b">
+            <h2 class="text-lg font-bold text-gray-800">Categorías</h2>
+            <button onclick="toggleCategorias()" class="text-xl font-bold text-gray-600 hover:text-black">&times;</button>
+        </div>
+        <ul class="p-4 space-y-2 text-gray-700">
+            <a href="error_producto.html"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Aseo Industrial</li></a> <!-- Assuming error_producto.html -->
+            <a href="error_producto.html"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Ropa de Seguridad y Protección Personal</li></a> <!-- Assuming error_producto.html -->
+            <a href="materiales.html"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Materiales de Construcción</li></a>
+            <a href="error_producto.html"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Máquinas</li></a> <!-- Assuming error_producto.html -->
+            <a href="error_producto.html"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Fijaciones</li></a> <!-- Assuming error_producto.html -->
+            <a href="pintura.html"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Pintura</li></a>
+            <a href="error_producto.html"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Tensores</li></a> <!-- Assuming error_producto.html -->
+        </ul>
+    </div>
+
+    <!-- Carousel Section -->
     <div id="carouselExample" class="carousel slide" data-bs-ride="carousel">
-        <!-- Indicadores -->
         <div class="carousel-indicators">
-          <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-          <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="1" aria-label="Slide 2"></button>
-          <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="2" aria-label="Slide 3"></button>
+            <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="2" aria-label="Slide 3"></button>
         </div>
-      
-        <!-- Imágenes -->
         <div class="carousel-inner">
-          <div class="carousel-item active">
-            <img src="{% static 'core/img/herramientas_1.jpg' %}" class="d-block w-100" alt="Los Angeles" style="width:100%; height:auto;">
-          </div>
-          <div class="carousel-item">
-            <img src="{% static 'core/img/herramientas_2.jpg' %}" class="d-block w-100" alt="Chicago" style="width:100%; height:auto;">
-          </div>
-          <div class="carousel-item">
-            <img src="{% static 'core/img/herramientas_3.jpg' %}" class="d-block w-100" alt="New York" style="width:100%; height:auto;">
-          </div>
+            <div class="carousel-item active">
+                <img src="https://placehold.co/1200x500/A0A0A0/FFFFFF?text=Herramientas+1" class="d-block w-100" alt="Herramientas 1">
+            </div>
+            <div class="carousel-item">
+                <img src="https://placehold.co/1200x500/B0B0B0/FFFFFF?text=Herramientas+2" class="d-block w-100" alt="Herramientas 2">
+            </div>
+            <div class="carousel-item">
+                <img src="https://placehold.co/1200x500/C0C0C0/FFFFFF?text=Herramientas+3" class="d-block w-100" alt="Herramientas 3">
+            </div>
         </div>
-      
-        <!-- Controles -->
         <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
-          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Anterior</span>
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Anterior</span>
         </button>
         <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
-          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Siguiente</span>
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Siguiente</span>
         </button>
     </div>
 
+    <!-- Product Categories Section -->
     <section class="py-16 bg-white">
         <div class="container mx-auto text-center">
-            <h2 class="text-3xl font-semibold text-gray-800 mb-8">Nuestros Productos</h2>
+            <h2 class="text-3xl font-semibold text-gray-800 mb-8 section-heading">Nuestros Productos</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="bg-gray-100 p-6 rounded-lg shadow-lg">
-                    <a href="{% url 'materiales' %}"><img src="{% static 'core/img/materiales_construccion.jpg' %}" alt="Materiales de construcción" class="w-full h-40 object-cover rounded-t-lg mb-4">
-                    <div class="text-center">
-                        <h3 class="text-xl font-bold text-blue-600 mb-2">MATERIALES DE CONSTRUCCIÓN</h3>
-                        <p class="text-gray-600">Contamos con todos los elementos, productos o materias primas empleados para la construcción de una obra sin importar su composición, forma y método constructivo.</p>
-                    </div></a>
+                <div class="bg-gray-100 p-6 rounded-lg shadow-lg product-card">
+                    <a href="materiales.html">
+                        <img src="https://placehold.co/300x160/D0D0D0/333333?text=Materiales+Construccion" alt="Materiales de construcción" class="w-full h-40 object-cover rounded-t-lg mb-4">
+                        <div class="text-center">
+                            <h3 class="text-xl font-bold text-blue-600 mb-2">MATERIALES DE CONSTRUCCIÓN</h3>
+                            <p class="text-gray-600">Contamos con todos los elementos, productos o materias primas empleados para la construcción de una obra sin importar su composición, forma y método constructivo.</p>
+                        </div>
+                    </a>
                 </div>
-                <div class="bg-gray-100 p-6 rounded-lg shadow-lg">
-                    <a href="{% url 'pintura' %}"><img src="{% static 'core/img/pintura.jpg' %}" alt="Ferretería" class="w-full h-40 object-cover rounded-t-lg mb-4">
-                    <div class="text-center">
-                        <h3 class="text-xl font-bold text-blue-600 mb-2">pintura</h3>
-                        <p class="text-gray-600">Todo lo tipo de pinturas están aquí a igual de brochas y rodillo de pintura.</p>
-                    </div></a>
+                <div class="bg-gray-100 p-6 rounded-lg shadow-lg product-card">
+                    <a href="pintura.html">
+                        <img src="https://placehold.co/300x160/E0E0E0/333333?text=Pintura" alt="Ferretería" class="w-full h-40 object-cover rounded-t-lg mb-4">
+                        <div class="text-center">
+                            <h3 class="text-xl font-bold text-blue-600 mb-2">PINTURA</h3>
+                            <p class="text-gray-600">Todo lo tipo de pinturas están aquí a igual de brochas y rodillo de pintura.</p>
+                        </div>
+                    </a>
                 </div>
-                <div class="bg-gray-100 p-6 rounded-lg shadow-lg">
-                    <a href="{% url 'herramientas' %}"><img src="{% static 'core/img/herramientas_4.jpg' %}" alt="Herramientas" class="w-full h-40 object-cover rounded-t-lg mb-4">
-                    <div class="text-center">
-                        <h3 class="text-xl font-bold text-blue-600 mb-2">HERRAMIENTAS</h3>
-                        <p class="text-gray-600">Tenemos todo tipo de herramientas para construir, reparar y modificar para lograr una gran experiencia.</p>
-                    </div></a>
+                <div class="bg-gray-100 p-6 rounded-lg shadow-lg product-card">
+                    <a href="herramientas.html">
+                        <img src="https://placehold.co/300x160/F0F0F0/333333?text=Herramientas" alt="Herramientas" class="w-full h-40 object-cover rounded-t-lg mb-4">
+                        <div class="text-center">
+                            <h3 class="text-xl font-bold text-blue-600 mb-2">HERRAMIENTAS</h3>
+                            <p class="text-gray-600">Tenemos todo tipo de herramientas para construir, reparar y modificar para lograr una gran experiencia.</p>
+                        </div>
+                    </a>
                 </div>
             </div>
         </div>
     </section>
 
+    <!-- Most Searched Products Section -->
     <section class="py-16 bg-gray-50">
         <div class="container mx-auto px-4">
             <div class="flex items-center justify-between mb-8">
-                <div class="flex items-center">
-                    <div class="w-1 h-6 bg-orange-500 mr-2"></div>
+                <div class="flex items-center section-heading">
                     <h2 class="text-2xl font-bold text-blue-900">LOS MÁS BUSCADOS</h2>
                 </div>
-                <a href="#" class="border border-orange-500 text-orange-500 px-4 py-2 rounded hover:bg-orange-500 hover:text-white transition">VER TODO</a>
+                <a href="productos.html" class="border border-orange-500 text-orange-500 px-4 py-2 rounded hover:bg-orange-500 hover:text-white transition">VER TODO</a>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-                <a href="{% url 'error_producto' %}">
+                <a href="error_producto.html" class="product-card">
                     <div class="bg-white p-4 shadow rounded text-center">
-                        <img src="{% static 'core/img/Martillo_Carpintero_16.png' %}" alt="Ladrillo Fiscal" class="mx-auto mb-3 h-32 object-contain">
+                        <img src="https://placehold.co/150x150/A0A0A0/FFFFFF?text=Martillo" alt="Martillo Carpintero 16 Oz Uyustools" class="mx-auto mb-3 h-32 object-contain">
                         <h3 class="font-bold text-gray-800">Martillo Carpintero 16 Oz Uyustools</h3>
                         <h3 class="text-center font-bold text-gray-800">$8.990 c/u</h3>
                     </div>
                 </a>
-                <a href="{% url 'error_producto' %}">
+                <a href="error_producto.html" class="product-card">
                     <div class="bg-white p-4 shadow rounded text-center">
-                        <img src="{% static 'core/img/Ladrillo_princesa_9.webp' %}" alt="Ladrillo Princesa 9" class="mx-auto mb-3 h-32 object-contain">
+                        <img src="https://placehold.co/150x150/B0B0B0/FFFFFF?text=Ladrillo" alt="Ladrillo Princesa 9" class="mx-auto mb-3 h-32 object-contain">
                         <h3 class="font-bold text-gray-800">Ladrillo princesa 9 (29X14X9.4)</h3>
                         <h3 class="text-center font-bold text-gray-800">$990 c/u</h3>
                     </div>
                 </a>
-                <!-- Producto 3 -->
-                <a href="{% url 'error_producto' %}">
+                <a href="error_producto.html" class="product-card">
                     <div class="bg-white p-4 shadow rounded text-center relative">
-                        <img src="{% static 'core/img/huincha.jpg' %}" alt="OSB Techshield" class="mx-auto mb-3 h-32 object-contain">
+                        <img src="https://placehold.co/150x150/C0C0C0/FFFFFF?text=Huincha" alt="OSB Techshield" class="mx-auto mb-3 h-32 object-contain">
                         <span class="absolute top-2 right-2 bg-blue-600 text-white text-xs px-2 py-1 rounded">AGOTADO</span>
                         <h3 class="font-bold text-gray-800">Huincha de medir 10M X 32MM contra impacto</h3>
                         <h3 class="text-center font-bold text-gray-800">$17.440 c/u</h3>
                     </div>
                 </a>
-                <!-- Producto 4 -->
-                 <a href="{% url 'error_producto' %}">
+                <a href="error_producto.html" class="product-card">
                     <div class="bg-white p-4 shadow rounded text-center">
-                        <img src="{% static 'core/img/clavos.webp' %}" alt="Ladrillo Princesa 7" class="mx-auto mb-3 h-32 object-contain">
-                        <h3 class="font-bold text-gray-800">Clavo Corriente 2" x 12 Bolsa 1 KG </h3>
+                        <img src="https://placehold.co/150x150/D0D0D0/FFFFFF?text=Clavos" alt="Ladrillo Princesa 7" class="mx-auto mb-3 h-32 object-contain">
+                        <h3 class="font-bold text-gray-800">Clavo Corriente 2" x 12 Bolsa 1 KG</h3>
                         <h3 class="text-center font-bold text-gray-800">$1.810 c/u</h3>
                     </div>
                 </a>
@@ -199,9 +237,9 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10l1.5-1.5M21 10l-1.5-1.5M9 16h6M10 12h4m-1 8v-8m-4 4h8" /></svg>
                     <span>+56 9 4722 9108</span>
                 </div>
-                <button class="mt-4 bg-white text-red-600 font-bold py-2 px-4 rounded"><a href="{% url 'contacto' %}">Contáctanos</a></button>                
+                <button class="mt-4 bg-white text-red-600 font-bold py-2 px-4 rounded"><a href="contacto.html">Contáctanos</a></button>
             </div>
-    
+
             <!-- Nosotros -->
             <div>
                 <h3 class="font-semibold mb-2">Nosotros</h3>
@@ -211,7 +249,7 @@
                     <li><a href="#" class="hover:underline">Canal de Denuncias</a></li>
                 </ul>
             </div>
-    
+
             <!-- Ayuda -->
             <div>
                 <h3 class="font-semibold mb-2">Ayuda</h3>
@@ -222,18 +260,18 @@
                     <li><a href="#" class="hover:underline">Seguimiento de Compra</a></li>
                 </ul>
             </div>
-    
+
             <!-- Categorías -->
             <div>
                 <h3 class="font-semibold mb-2">Categorías</h3>
                 <ul class="space-y-1">
-                    <li><a href="{% url 'herramientas' %}" class="hover:underline">Herramientas de Construcción</a></li>
-                    <li><a href="{% url 'error_producto' %}" class="hover:underline">Herramientas de Aseo y Jardín</a></li>
-                    <li><a href="{% url 'error_producto' %}" class="hover:underline">Insumos y Accesorios</a></li>
-                    <li><a href="{% url 'pintura' %}" class="hover:underline">Pinturas</a></li>
+                    <li><a href="herramientas.html" class="hover:underline">Herramientas de Construcción</a></li>
+                    <li><a href="error_producto.html" class="hover:underline">Herramientas de Aseo y Jardín</a></li>
+                    <li><a href="error_producto.html" class="hover:underline">Insumos y Accesorios</a></li>
+                    <li><a href="pintura.html" class="hover:underline">Pinturas</a></li>
                 </ul>
             </div>
-    
+
             <!-- Legal -->
             <div>
                 <h3 class="font-semibold mb-2">Legal</h3>
@@ -244,17 +282,114 @@
                     <li><a href="#" class="hover:underline">Políticas de privacidad</a></li>
                 </ul>
                 <div class="mt-4">
-                    <img src="{% static 'core/img/ssl.png' %}" alt="SSL" class="h-10">
+                    <img src="https://placehold.co/100x40/000000/FFFFFF?text=SSL" alt="SSL" class="h-10">
                 </div>
             </div>
         </div>
     </footer>
 
-    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{% static 'core/js/menu_categoria.js' %}"></script>
-    <script src="{% static 'core/js/icono.js' %}"></script>
+    <script>
+        // Function to toggle the categories sidebar
+        function toggleCategorias() {
+            const sidebar = document.getElementById('categoriasSidebar');
+            sidebar.classList.toggle('-translate-x-full');
+        }
+
+        // Function to update the header based on login status
+        function updateAuthSection() {
+            const authSection = document.getElementById('authSection');
+            const userCorreo = localStorage.getItem('userCorreo');
+            const userType = localStorage.getItem('userType');
+
+            authSection.innerHTML = ''; // Clear existing content
+
+            if (userCorreo && userType) {
+                // User is logged in
+                const dropdownHtml = `
+                    <div id="userMenuButton" class="flex items-center space-x-2 cursor-pointer">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span>${userCorreo}</span>
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M6 9l6 6 6-6"></path>
+                        </svg>
+                    </div>
+                    <div id="userMenuDropdown" class="user-dropdown-menu">
+                        <a href="mi-perfil.html">Mi perfil</a>
+                        ${userType === 'admin' ? `
+                            <a href="admin-dashboard.html" id="adminDashboardLink">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                                Administración
+                            </a>
+                        ` : ''}
+                        <button id="logoutButton">Cerrar sesión</button>
+                    </div>
+                `;
+                authSection.innerHTML = dropdownHtml;
+
+                // Add event listeners for the new elements
+                const userMenuButton = document.getElementById('userMenuButton');
+                const userMenuDropdown = document.getElementById('userMenuDropdown');
+                const logoutButton = document.getElementById('logoutButton');
+
+                userMenuButton.addEventListener('click', (event) => {
+                    event.stopPropagation(); // Prevent click from bubbling to window and closing immediately
+                    userMenuDropdown.classList.toggle('show');
+                });
+
+                logoutButton.addEventListener('click', () => {
+                    localStorage.removeItem('jwtToken');
+                    localStorage.removeItem('userCorreo');
+                    localStorage.removeItem('userType');
+                    updateAuthSection(); // Update UI after logout
+                    alert('Has cerrado sesión.');
+                    window.location.href = "{% url 'iniciar_session' %}"; // Redirect to login page
+                });
+
+            } else {
+                // User is not logged in
+                authSection.innerHTML = `
+                    <li><a href="iniciar_session.html" class="hover:underline">Iniciar sesión</a></li>
+                `;
+            }
+        }
+
+        // Initial call to update the auth section on page load
+        document.addEventListener('DOMContentLoaded', updateAuthSection);
+
+        // Close dropdown if clicked outside
+        window.addEventListener('click', function(event) {
+            const userMenuDropdown = document.getElementById('userMenuDropdown');
+            const userMenuButton = document.getElementById('userMenuButton'); // Get the button element
+            // Check if the dropdown exists and if the click was outside both the button and the dropdown
+            if (userMenuDropdown && userMenuButton && !userMenuButton.contains(event.target) && !userMenuDropdown.contains(event.target)) {
+                userMenuDropdown.classList.remove('show');
+            }
+        });
+
+        // Example placeholder pages (in a real app, these would be separate HTML files)
+        // For demonstration, these alerts simulate redirection.
+        document.addEventListener('click', (event) => {
+            if (event.target.id === 'adminDashboardLink') {
+                event.preventDefault(); // Prevent actual link navigation for simulation
+                alert('Redirigiendo al panel de administración...');
+                // In a real application, you would navigate to the admin dashboard:
+                // window.location.href = 'admin-dashboard.html';
+            }
+            // Add other simulated page navigations here if needed
+            // Example:
+            // if (event.target.href && event.target.href.includes('productos.html')) {
+            //     event.preventDefault();
+            //     alert('Redirigiendo a la página de productos...');
+            //     // window.location.href = 'productos.html';
+            // }
+        });
+    </script>
+
 </body>
-
-
 </html>
