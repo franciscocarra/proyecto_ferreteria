@@ -8,7 +8,7 @@
             "type": "msedge",
             "request": "launch",
             "name": "Open lista_c.html",
-            "file": "c:\\Users\\smons\\Desktop\\proyecto_ferreteria\\core\\templates\\core\\A_dmin\\Cliente\\lista_c.html"
+            "file": "C:\\Users\\Francisco\\Desktop\\proyecto\\proyecto_ferreteria\\core\\templates\\core\\A_dmin\\Cliente\\lista_c.html"
         }
     ]
 }

@@ -94,7 +94,7 @@
             localStorage.removeItem('userCorreo');
             localStorage.removeItem('userType');
             alert('Has cerrado sesión.');
-            window.location.href = 'iniciar_session.html'; // Redirect to login page
+            window.location.href = "{% url 'iniciar_session' %}"; // Redirect to login page
         });
 
         // Function to show/hide sections (example, not fully implemented for all sections)
