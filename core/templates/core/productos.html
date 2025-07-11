@@ -5,10 +5,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ferretería Rinco Del Herrero - Menú</title>
+    <title>Ferretería Rinco Del Herrero - Productos</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'core/css/carousel.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px; /* Adjust container width for better aesthetics */
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        .product-card {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+        /* Custom styles for user dropdown */
+        .user-dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: white;
+            color: black;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 50;
+            min-width: 150px;
+            display: none; /* Hidden by default */
+            flex-direction: column;
+            padding: 0.5rem 0;
+        }
+        .user-dropdown-menu a, .user-dropdown-menu button {
+            padding: 0.5rem 1rem;
+            text-align: left;
+            width: 100%;
+            display: block;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #333;
+        }
+        .user-dropdown-menu a:hover, .user-dropdown-menu button:hover {
+            background-color: #f3f4f6;
+        }
+        .user-dropdown-menu.show {
+            display: flex;
+        }
+
+        /* Modal styles (kept for reference, but not used for dolar value anymore) */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 400px;
+            position: relative;
+            text-align: center;
+        }
+        .modal-close-button {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: #666;
+        }
+    </style>
 </head>
 <body class="bg-gray-100 text-gray-900">
     {% if messages %}
@@ -19,196 +104,218 @@
             </div>
         {% endfor %}
     </div>
-{% endif %}
+    {% endif %}
     <header class="bg-dark text-white py-4">
-    <div class="container mx-auto flex justify-between items-center">
-        <h1 class="text-2xl font-bold"><a href="{% url 'home' %}">Ferretería Rinco Del Herrero</a></h1>
-        <nav>
-            <ul class="flex space-x-4">
-                <li><a href="{% url 'home' %}" class="hover:underline">Inicio</a></li>
-                <li><a href="{% url 'productos' %}" class="hover:underline">Productos</a></li>
-                <!-- CAMBIO: botón para mostrar categorías -->
-                <li><button onclick="toggleCategorias()" class="hover:underline focus:outline-none">Categorías</button></li>
-                <li><a href="{% url 'error_producto' %}" class="hover:underline">Promociones</a></li>
-                <li><a href="{% url 'contacto' %}" class="hover:underline">Contacto</a></li>
-                {% if user.is_authenticated %}
-                <li class="relative">
-                    <div id="userMenuButton" class="flex items-center space-x-2 cursor-pointer">
-                        <img src="{% static 'core/img/usuario/usuario.png' %}" alt="Perfil" class="w-8 h-8 rounded-full">
-                        <span>{{ user.username }}</span>
-                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M6 9l6 6 6-6"></path>
-                        </svg>
-                    </div>
-                
-                    <div id="userMenuDropdown" class="absolute hidden flex-col bg-white text-black right-0 mt-2 py-2 w-48 rounded shadow-lg z-50">
-                        <a href="#" class="px-4 py-2 hover:bg-gray-200">Mi perfil</a>
-                        {% if user.is_staff %}
-                            {% if perms.core.view_empleado %}
-                                <a href="{% url 'home' %}" class="px-4 py-2 hover:bg-gray-200">Configuración</a>
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold"><a href="{% url 'home' %}">Ferretería Rinco Del Herrero</a></h1>
+            <nav>
+                <ul class="flex space-x-4 items-center">
+                    <li><a href="{% url 'home' %}" class="hover:underline">Inicio</a></li>
+                    <li><a href="{% url 'productos' %}" class="hover:underline">Productos</a></li>
+                    <!-- CAMBIO: botón para mostrar categorías -->
+                    <li><button onclick="toggleCategorias()" class="hover:underline focus:outline-none">Categorías</button></li>
+                    <li><a href="{% url 'error_producto' %}" class="hover:underline">Promociones</a></li>
+                    <li><a href="{% url 'contacto' %}" class="hover:underline">Contacto</a></li>
+                    {% if user.is_authenticated %}
+                    <li class="relative">
+                        <div id="userMenuButton" class="flex items-center space-x-2 cursor-pointer">
+                            <img src="{% static 'core/img/usuario/usuario.png' %}" alt="Perfil" class="w-8 h-8 rounded-full">
+                            <span>{{ user.username }}</span>
+                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M6 9l6 6 6-6"></path>
+                            </svg>
+                        </div>
+                    
+                        <div id="userMenuDropdown" class="absolute hidden flex-col bg-white text-black right-0 mt-2 py-2 w-48 rounded shadow-lg z-50">
+                            <a href="#" class="px-4 py-2 hover:bg-gray-200">Mi perfil</a>
+                            {% if user.is_staff %}
+                                {% if perms.core.view_empleado %}
+                                    <a href="{% url 'home' %}" class="px-4 py-2 hover:bg-gray-200">Configuración</a>
+                                {% endif %}
+                                <a href="/admin" class="px-4 py-2 hover:bg-gray-200">Administración</a>
                             {% endif %}
-                            <a href="/admin" class="px-4 py-2 hover:bg-gray-200">Administración</a>
-                        {% endif %}
-                        <form action="{% url 'logout' %}" method="post" class="px-4 py-2">
-                            {% csrf_token %}
-                            <button type="submit" class="w-full text-left hover:bg-gray-200">Cerrar sesión</button>
-                        </form>
-                    </div>
-                </li>
-                {% else %}
-                <li><a href="{% url 'iniciar_session' %}" class="hover:underline">Iniciar sesión</a></li>
-                {% endif %}
-                <li>
-    <a href="{% url 'carrito' %}" class="relative inline-block w-8 h-8">
-        <div class="absolute bottom-0 left-0 w-8 h-5 border-2 border-white rounded-sm"></div>
-        <div class="absolute bottom-5 left-1 w-6 h-2 border-2 border-white border-b-0 rounded-t-sm"></div>
-        <div class="absolute bottom-1 left-1 w-1 h-1 bg-white rounded-full"></div>
-        <div class="absolute bottom-1 right-1 w-1 h-1 bg-white rounded-full"></div>
-        
-        {% if cart_item_count > 0 %}
-        <span class="absolute -top-2 -right-2 flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-600 rounded-full">
-            {{ cart_item_count }}
-        </span>
-        {% endif %}
-    </a>
-</li>
-            </ul>
-        </nav>
-    </div>
-</header>
-
-<!-- SIDEBAR DE CATEGORÍAS -->
-<div id="categoriasSidebar" class="fixed top-0 left-0 w-80 h-full bg-white shadow-lg z-50 transform -translate-x-full transition-transform duration-300 ease-in-out overflow-y-auto">
-    <div class="flex items-center justify-between px-4 py-3 border-b">
-        <h2 class="text-lg font-bold text-gray-800">Categorías</h2>
-        <button onclick="toggleCategorias()" class="text-xl font-bold text-gray-600 hover:text-black">&times;</button>
-    </div>
-    <ul class="p-4 space-y-2 text-gray-700">
-        <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Aseo Industrial</li></a>
-        <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Ropa de Seguridad y Protección Personal</li></a>
-        <a href="{% url 'materiales' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Materiales de Construcción</li></a>git push --help
-        <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">máquinas</li></a>
-        <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Fijaciones</li></a>
-        <a href="{% url 'pintura' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Pintura</li></a>
-        <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Tensores</li></a>
-    </ul>
-</div>
-
-
-<section class="bg-white py-8">
-    <div class="container mx-auto px-4">
-        <h2 class="text-2xl font-bold text-gray-800 mb-6">PRODUCTOS<span class="text-sm text-gray-500"></span></h2>
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <!-- Filtros -->
-            <aside class="col-span-1">
-                <h3 class="font-semibold text-lg text-gray-800 mb-4">Categorías</h3>
-                <ul class="space-y-2">
-                    <li class="hover:text-blue-600 cursor-pointer">Accesorio Herramienta</li>
-                    <li class="hover:text-blue-600 cursor-pointer">Aislados 1000V</li>
-                    <li class="hover:text-blue-600 cursor-pointer">Alicates</li>
-                    <li class="hover:text-blue-600 cursor-pointer">Arcos de Sierra</li>
-                    <!-- Añade más categorías -->
+                            <form action="{% url 'logout' %}" method="post" class="px-4 py-2">
+                                {% csrf_token %}
+                                <button type="submit" class="w-full text-left hover:bg-gray-200">Cerrar sesión</button>
+                            </form>
+                        </div>
+                    </li>
+                    {% else %}
+                    <li><a href="{% url 'iniciar_session' %}" class="hover:underline">Iniciar sesión</a></li>
+                    {% endif %}
+                    <li>
+                        <a href="{% url 'carrito' %}" class="relative inline-block w-8 h-8">
+                            <div class="absolute bottom-0 left-0 w-8 h-5 border-2 border-white rounded-sm"></div>
+                            <div class="absolute bottom-5 left-1 w-6 h-2 border-2 border-white border-b-0 rounded-t-sm"></div>
+                            <div class="absolute bottom-1 left-1 w-1 h-1 bg-white rounded-full"></div>
+                            <div class="absolute bottom-1 right-1 w-1 h-1 bg-white rounded-full"></div>
+                            
+                            {% if cart_item_count > 0 %}
+                            <span class="absolute -top-2 -right-2 flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-600 rounded-full">
+                                {{ cart_item_count }}
+                            </span>
+                            {% endif %}
+                        </a>
+                    </li>
                 </ul>
-                <h3 class="font-semibold text-lg text-gray-800 mt-6 mb-4">Marcas</h3>
-                <ul class="space-y-2">
-                    <li class="hover:text-blue-600 cursor-pointer">Bahco</li>
-                    <li class="hover:text-blue-600 cursor-pointer">DeWalt</li>
-                    <li class="hover:text-blue-600 cursor-pointer">Irwin</li>
-                    <!-- Añade más marcas -->
-                </ul>
-                <button class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                    Ver Solo Ofertas
+            </nav>
+        </div>
+    </header>
+
+    <!-- SIDEBAR DE CATEGORÍAS -->
+    <div id="categoriasSidebar" class="fixed top-0 left-0 w-80 h-full bg-white shadow-lg z-50 transform -translate-x-full transition-transform duration-300 ease-in-out overflow-y-auto">
+        <div class="flex items-center justify-between px-4 py-3 border-b">
+            <h2 class="text-lg font-bold text-gray-800">Categorías</h2>
+            <button onclick="toggleCategorias()" class="text-xl font-bold text-gray-600 hover:text-black">&times;</button>
+        </div>
+        <ul class="p-4 space-y-2 text-gray-700">
+            <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Aseo Industrial</li></a>
+            <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Ropa de Seguridad y Protección Personal</li></a>
+            <a href="{% url 'materiales' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Materiales de Construcción</li></a>
+            <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Máquinas</li></a>
+            <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Fijaciones</li></a>
+            <a href="{% url 'pintura' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Pintura</li></a>
+            <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Tensores</li></a>
+        </ul>
+    </div>
+
+    <section class="bg-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800">PRODUCTOS</h2>
+                <!-- Nuevo botón para ver el valor del dólar -->
+                <button id="toggleDolarPricesButton" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 font-bold transition-colors">
+                    Ver Precios en Dólar
                 </button>
-            </aside>
-
-            <div class="col-span-3">
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        
-        {% for producto in lista_productos %}
-        <div class="bg-white rounded-md shadow-sm border border-gray-200 flex flex-col justify-between group">
+            </div>
             
-            <div>
-                <div class="relative">
-                    {% if producto.imagen_url %}
-                        <img src="{{ producto.imagen_url }}" alt="{{ producto.nombre_producto }}" class="h-48 w-full object-contain rounded-t-md p-4" />
-                    {% else %}
-                        <img src="{% static 'core/img/placeholder.png' %}" alt="Imagen no disponible" class="h-48 w-full object-contain rounded-t-md p-4" />
-                    {% endif %}
-                    
-                    <div class="absolute top-2 right-2 flex flex-col items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <button class="bg-white rounded-full p-1.5 shadow mb-2 text-gray-600 hover:bg-gray-100">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                        </button>
-                        <button class="bg-white rounded-full p-1.5 shadow text-gray-600 hover:bg-gray-100">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 116.364 6.364L12 20.364l-7.682-7.682a4.5 4.5 0 010-6.364z"></path></svg>
-                        </button>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <!-- Filtros -->
+                <aside class="col-span-1">
+                    <h3 class="font-semibold text-lg text-gray-800 mb-4">Categorías</h3>
+                    <ul class="space-y-2">
+                        <li class="hover:text-blue-600 cursor-pointer">Accesorio Herramienta</li>
+                        <li class="hover:text-blue-600 cursor-pointer">Aislados 1000V</li>
+                        <li class="hover:text-blue-600 cursor-pointer">Alicates</li>
+                        <li class="hover:text-blue-600 cursor-pointer">Arcos de Sierra</li>
+                        <!-- Añade más categorías -->
+                    </ul>
+                    <h3 class="font-semibold text-lg text-gray-800 mt-6 mb-4">Marcas</h3>
+                    <ul class="space-y-2">
+                        <li class="hover:text-blue-600 cursor-pointer">Bahco</li>
+                        <li class="hover:text-blue-600 cursor-pointer">DeWalt</li>
+                        <li class="hover:text-blue-600 cursor-pointer">Irwin</li>
+                        <!-- Añade más marcas -->
+                    </ul>
+                    <button class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                        Ver Solo Ofertas
+                    </button>
+                </aside>
+
+                <div class="col-span-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        
+                        {% for producto in lista_productos %}
+                        <div class="bg-white rounded-md shadow-sm border border-gray-200 flex flex-col justify-between group">
+                            
+                            <div>
+                                <div class="relative">
+                                    {% if producto.imagen_url %}
+                                        <img src="{{ producto.imagen_url }}" alt="{{ producto.nombre_producto }}" class="h-48 w-full object-contain rounded-t-md p-4" />
+                                    {% else %}
+                                        <img src="{% static 'core/img/placeholder.png' %}" alt="Imagen no disponible" class="h-48 w-full object-contain rounded-t-md p-4" />
+                                    {% endif %}
+                                    
+                                    <div class="absolute top-2 right-2 flex flex-col items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                        <button class="bg-white rounded-full p-1.5 shadow mb-2 text-gray-600 hover:bg-gray-100">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                                        </button>
+                                        <button class="bg-white rounded-full p-1.5 shadow text-gray-600 hover:bg-gray-100">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 116.364 6.364L12 20.364l-7.682-7.682a4.5 4.5 0 010-6.364z"></path></svg>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="p-4">
+                                    <h4 class="text-sm font-semibold mb-2 leading-tight text-gray-800 hover:text-orange-500 transition-colors truncate">
+                                        {{ producto.nombre_producto|upper }}
+                                    </h4>
+                                    
+                                    <p class="text-xs text-gray-400 truncate mb-2">
+                                        {{ producto.marca }}
+                                    </p>
+                                    
+                                    {% if producto.stock > 0 %}
+                                    <p class="text-sm text-green-600 mb-2 flex items-center">
+                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                                        In stock
+                                    </p>
+                                    {% else %}
+                                    <p class="text-sm text-red-600 mb-2">Agotado</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="p-4 pt-0">
+                                <!-- Added data-price-clp attribute to store original price -->
+                                <p class="product-price text-xl font-bold text-gray-900 mb-3" data-price-clp="{{ producto.precio }}">
+                                    ${{ producto.precio }} <span class="text-sm font-normal text-gray-500">+ IVA</span>
+                                </p>
+
+                                {% if user.is_authenticated %}
+                                    {% if producto.stock > 0 %}
+                                        <form action="{% url 'add_to_cart' producto.sku %}" method="post">
+                                            {% csrf_token %}
+                                            <button type="submit" class="w-full bg-orange-500 text-white py-2 rounded-md hover:bg-orange-600 font-bold transition-colors">
+                                                Añadir Al Carrito
+                                            </button>
+                                        </form>
+                                    {% else %}
+                                        <button disabled class="w-full bg-gray-400 text-white py-2 rounded-md font-bold cursor-not-allowed">
+                                            Sin Stock
+                                        </button>
+                                    {% endif %}
+                                    
+                                {% else %}                                        
+                                    <a href="{% url 'iniciar_session' %}" class="w-full block text-center bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 font-bold transition-colors">
+                                        Iniciar Sesión para Comprar
+                                    </a>
+                                {% endif %}
+                                <p class="text-xs text-gray-500 mt-2">SKU: {{ producto.sku }}</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+
                     </div>
                 </div>
-
-                <div class="p-4">
-                    <h4 class="text-sm font-semibold mb-2 leading-tight text-gray-800 hover:text-orange-500 transition-colors truncate">
-                        {{ producto.nombre_producto|upper }}
-                    </h4>
-                    
-                    <p class="text-xs text-gray-400 truncate mb-2">
-                        {{ producto.marca }}
-                    </p>
-                    
-                    {% if producto.stock > 0 %}
-                    <p class="text-sm text-green-600 mb-2 flex items-center">
-                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
-                        In stock
-                    </p>
-                    {% else %}
-                    <p class="text-sm text-red-600 mb-2">Agotado</p>
-                    {% endif %}
-                </div>
+            <div id="cuadroDolar" class="fixed top-4 right-4 bg-white shadow-md rounded-lg p-4 z-50 border border-gray-200">
+                <h4 class="text-sm font-semibold text-gray-700 mb-1">Valor Dólar Hoy</h4>
+                <p id="valorDolarDisplay" class="text-lg font-bold text-green-600">Cargando...</p>
             </div>
-            <div class="p-4 pt-0">
-                <p class="text-xl font-bold text-gray-900 mb-3">${{ producto.precio }} <span class="text-sm font-normal text-gray-500">+ IVA</span></p>
-
-                {% if user.is_authenticated %}
-    
-                    {% if producto.stock > 0 %}
-                        <form action="{% url 'add_to_cart' producto.sku %}" method="post">
-                            {% csrf_token %}
-                            <button type="submit" class="w-full bg-orange-500 text-white py-2 rounded-md hover:bg-orange-600 font-bold transition-colors">
-                                Añadir Al Carrito
-                            </button>
-                        </form>
-                    {% else %}
-                        <button disabled class="w-full bg-gray-400 text-white py-2 rounded-md font-bold cursor-not-allowed">
-                            Sin Stock
-                        </button>
-                    {% endif %}
-                    
-                {% else %}                        
-                    <a href="{% url 'iniciar_session' %}" class="w-full block text-center bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 font-bold transition-colors">
-                        Iniciar Sesión para Comprar
-                    </a>
-                
-                {% endif %}
-                <p class="text-xs text-gray-500 mt-2">SKU: {{ producto.sku }}</p>
+                        
+            </div>
+            <div class="container mt-3 d-flex flex-column align-items-right">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                    <li class="page-item active"><a class="page-link" href="{% url 'productos' %}">1</a></li>
+                    <li class="page-item "><a class="page-link" href="{% url 'productos_2' %}">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                </ul>
             </div>
         </div>
-        {% endfor %}
+    </section>
 
-    </div>
-</div>
-                
-        </div>
-        <div class="container mt-3 d-flex flex-column align-items-right">
-            <ul class="pagination justify-content-center">
-                <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                <li class="page-item active"><a class="page-link" href="{% url 'productos' %}">1</a></li>
-                <li class="page-item "><a class="page-link" href="{% url 'productos_2' %}">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">Next</a></li>
-            </ul>
+    <!-- Modal para el valor del Dólar (REMOVED - Not used for this functionality anymore) -->
+    <!--
+    <div id="dolarModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <button class="modal-close-button" id="closeDolarModal">&times;</button>
+            <h3 class="text-xl font-bold mb-4">Valor Actual del Dólar</h3>
+            <p class="text-3xl font-semibold text-green-700 mb-2" id="dolarValueDisplay">Cargando...</p>
+            <p class="text-sm text-gray-500" id="dolarDateDisplay"></p>
+            <p class="text-sm text-gray-600 mt-4">Fuente: mindicador.cl</p>
         </div>
     </div>
-</section>
-
-
+    -->
 
     <footer class="bg-black text-white py-10 mt-16">
         <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-5 gap-8 text-sm">
@@ -226,7 +333,7 @@
                 </div>
                 <button class="mt-4 bg-white text-red-600 font-bold py-2 px-4 rounded"><a href="{% url 'contacto' %}">Contáctanos</a></button>
             </div>
-    
+            
             <!-- Nosotros -->
             <div>
                 <h3 class="font-semibold mb-2">Nosotros</h3>
@@ -236,7 +343,7 @@
                     <li><a href="#" class="hover:underline">Canal de Denuncias</a></li>
                 </ul>
             </div>
-    
+            
             <!-- Ayuda -->
             <div>
                 <h3 class="font-semibold mb-2">Ayuda</h3>
@@ -247,7 +354,7 @@
                     <li><a href="#" class="hover:underline">Seguimiento de Compra</a></li>
                 </ul>
             </div>
-    
+            
             <!-- Categorías -->
             <div>
                 <h3 class="font-semibold mb-2">Categorías</h3>
@@ -258,7 +365,7 @@
                     <li><a href="#" class="hover:underline">Pinturas</a></li>
                 </ul>
             </div>
-    
+            
             <!-- Legal -->
             <div>
                 <h3 class="font-semibold mb-2">Legal</h3>
@@ -268,7 +375,6 @@
                     <li><a href="#" class="hover:underline">Políticas de cookies</a></li>
                     <li><a href="#" class="hover:underline">Políticas de privacidad</a></li>
                 </ul>
-            </div>
             </div>
         </div>
     </footer>
@@ -281,40 +387,64 @@
 
 
     <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        let dolarValor = null;
+   document.addEventListener('DOMContentLoaded', function () {
+    const toggleDolarPricesButton = document.getElementById('toggleDolarPricesButton');
+    const productPriceElements = document.querySelectorAll('.product-price');
+    const API_DOLAR_URL = 'https://mindicador.cl/api/dolar';
+    let isShowingUSD = false;
+    let dolarValue = null;
 
-        // Obtener valor del dólar una sola vez
-        fetch('https://mindicador.cl/api')
-            .then(response => response.json())
-            .then(data => {
-                dolarValor = data.dolar.valor;
-            })
-            .catch(error => {
-                console.error('No se pudo obtener el valor del dólar:', error);
-            });
+    async function fetchDolarValue() {
+        if (dolarValue === null) {
+            try {
+                const response = await fetch(API_DOLAR_URL);
+                if (!response.ok) {
+                    throw new Error(`Error HTTP: ${response.status}`);
+                }
+                const data = await response.json();
+                dolarValue = data.serie[0].valor;
 
-        document.querySelectorAll('.toggle-usd').forEach(button => {
-            button.addEventListener('click', function () {
-                const priceElement = this.previousElementSibling.previousElementSibling; // <p class="price-clp">
-                const usdElement = this.previousElementSibling; // <p class="price-usd">
-
-                if (!dolarValor) {
-                    usdElement.textContent = 'Valor en USD no disponible';
-                    usdElement.classList.remove('hidden');
-                    return;
+                // MOSTRAR EN EL CUADRO SUPERIOR DERECHO
+                const valorDolarDisplay = document.getElementById('valorDolarDisplay');
+                if (valorDolarDisplay) {
+                    valorDolarDisplay.textContent = `$${dolarValue.toLocaleString('es-CL', { minimumFractionDigits: 2 })} CLP`;
                 }
 
-                const priceclp = parseFloat(priceElement.dataset.price);
-                const priceUsd = (producto.precio / dolarValor).toFixed(2);
-                usdElement.innerHTML = `≈ <strong>$${priceUsd} USD</strong> (Dólar: $${dolarValor})`;
-                usdElement.classList.toggle('hidden');
-            });
-        });
-    });
-    </script>
+            } catch (error) {
+                console.error('Error al obtener el valor del dólar:', error);
+                alert('No se pudo obtener el valor del dólar. Intente más tarde.');
+                return null;
+            }
+        }
+        return dolarValue;
+    }
 
+    toggleDolarPricesButton.addEventListener('click', async function () {
+        const dolarActual = await fetchDolarValue();
+        if (dolarActual === null) return;
+
+        if (!isShowingUSD) {
+            productPriceElements.forEach(el => {
+                const clp = parseFloat(el.dataset.priceClp);
+                const usd = (clp / dolarActual).toFixed(2);
+                el.innerHTML = `$${clp} CLP <span class="text-sm font-normal text-gray-500">+ IVA</span><br><span class="text-base font-semibold text-blue-600">(${usd} USD)</span>`;
+            });
+            toggleDolarPricesButton.textContent = 'Ver Precios en CLP';
+            isShowingUSD = true;
+        } else {
+            productPriceElements.forEach(el => {
+                const clp = parseFloat(el.dataset.priceClp);
+                el.innerHTML = `$${clp} <span class="text-sm font-normal text-gray-500">+ IVA</span>`;
+            });
+            toggleDolarPricesButton.textContent = 'Ver Precios en Dólar';
+            isShowingUSD = false;
+        }
+    });
+
+    // Llamamos a la función para mostrar el valor del dólar al cargar la página
+    fetchDolarValue();
+});
+</script>
 
 </body>
-
 </html>
