@@ -40,6 +40,9 @@ def producto2(request):
 def contacto(request):
     return render(request, 'core/contacto.html')
 
+def ventas(request):
+    return render(request, 'contador/ventas.html')
+
 def iniciar_session(request):
     form = LoginForm(request.POST or None)
     if request.method == 'POST' and form.is_valid():
@@ -58,11 +61,17 @@ def iniciar_session(request):
                 tipo = usuario_personalizado.tipo.descripcion
             except Usuario.DoesNotExist:
                 tipo = None
-
+          
+            
             if tipo == 'bodeguero':
+                print('bodeguero')
                 return redirect('bodeguero')
             elif tipo == 'vendedor':
                 return redirect('home')
+            elif tipo == 'contador':
+                print('contador')
+                return redirect('/contador')
+                
             else:
                 return redirect('home')
 
@@ -214,6 +223,9 @@ def administración(request):
 
 def bodeguero(request):
     return render(request, 'core/bodeguero/bode.html')
+
+def contador(request):
+    return render(request, 'core/contador/contador.html')
 
 def inventario(request):
     try:

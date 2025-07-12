@@ -23,6 +23,7 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(next_page='home'), name='logout'),
     path('administración', views.administración, name='administración'),
     path('bodeguero', views.bodeguero, name='bodeguero'),
+    path('contador/', views.contador, name='contador'),
     path('inventario', views.inventario, name='inventario'),
     path('producto/<int:sku>/sucursales/', views.ver_stock_sucursales, name='ver_stock_sucursales'),
     path('productos/registrar/', views.registrar_producto, name='registrar_producto'),
@@ -33,6 +34,9 @@ urlpatterns = [
     path('Clientes/', views.Clientes, name='Clientes'),
     path('eliminar_usuario/<int:id>/', views.eliminar_usuario, name='eliminar_usuario'),
     path('editar_producto_api/<str:sku>/', views.editar_producto_api, name='editar_producto_api'),
+    path('contador/ventas/', views.ventas, name='ventas'),
+
+
 
 
 ]

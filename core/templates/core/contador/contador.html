@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <title>Panel del Contador</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'core/css/admini.css' %}">
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <h4 class="text-center">📊 Panel Contador</h4>
+    <a href="contador.html"><i class="bi bi-speedometer2"></i> Panel</a>
+    <a href="ventas.html"><i class="bi bi-cash-coin"></i> Ventas</a>
+    <a href="#"><i class="bi bi-graph-up-arrow"></i> Reportes</a>
+    <a href="#"><i class="bi bi-bar-chart-line"></i> Estadísticas</a>
+    <hr>
+    <button type="button" id="logoutButton" class="btn btn-danger w-100">
+        <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+    </button>
+</div>
+
+<!-- Main content -->
+<div class="content flex-grow-1">
+    <div class="header-bar">
+        <h2 id="titulo-seccion">Panel del Contador</h2>
+        <div class="user-info">
+            <span id="loggedInAdminEmail"></span>
+            <i class="bi bi-person-circle"></i>
+        </div>
+    </div>
+
+    <!-- Panel de inicio -->
+    <div id="dashboard-section">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <div class="card shadow" onclick="window.location.href='ventas.html'">
+                    <div class="card-header">
+                        <h5>Ventas</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>Visualiza y administra los ingresos por ventas.</p>
+                        <a href="{% url 'ventas' %}">Ir a ventas</a>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const loggedInAdminEmail = document.getElementById('loggedInAdminEmail');
+        const logoutButton = document.getElementById('logoutButton');
+
+        const userCorreo = localStorage.getItem('userCorreo');
+        const userType = localStorage.getItem('userType');
+
+        if (!userCorreo || userType !== 'contador') {
+            alert('Acceso denegado. Por favor, inicie sesión como contador.');
+            window.location.href = "{% url 'iniciar_session' %}";
+            return;
+        }
+
+        loggedInAdminEmail.textContent = userCorreo;
+
+        logoutButton.addEventListener('click', () => {
+            localStorage.clear();
+            alert('Has cerrado sesión.');
+            window.location.href = "{% url 'iniciar_session' %}";
+        });
+    });
+</script>
+
+</body>
+</html>

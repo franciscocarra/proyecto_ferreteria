@@ -307,7 +307,9 @@
                         window.location.href = "{% url 'administración' %}";
                     } else if (tipo === 'bodeguero') {
                         window.location.href = "{% url 'bodeguero' %}";
-                    } else if (tipo === 'vendedor' || tipo === 'contador') {
+                    } else if (tipo === 'contador') {
+                        window.location.href = "{% url 'contador' %}";
+                    } else if (tipo === 'vendedor') {
                         window.location.href = "{% url 'home' %}"; // Puedes cambiar esto si tienes vistas para ellos
                     } else {
                         // Default redirection for other types or if type is not recognized
@@ -340,9 +342,12 @@
                 if (tipo === 'admin') {
                     window.location.href = "{% url 'administración' %}";
                 } else if (tipo === 'bodeguero') {
+                    
                     window.location.href = "{% url 'bodeguero' %}";
-                } else if (tipo === 'vendedor' || tipo === 'contador') {
-                    window.location.href = "{% url 'home' %}";
+                } else if (tipo === 'contador') {
+                   
+                    window.location.href = "{% url 'contador' %}";
+   
                 } else {
                     window.location.href = "{% url 'home' %}";
                 }
