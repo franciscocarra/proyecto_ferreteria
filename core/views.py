@@ -81,7 +81,7 @@ def iniciar_session(request):
 
                 # Comprobamos si es admin por su tipo en la tabla O si es superuser de Django
                 if tipo == 'admin' or user.is_superuser:
-                    redirect_url = 'administración'
+                    redirect_url = 'administracion'
                 elif tipo == 'bodeguero':
                     redirect_url = 'bodeguero'
                 elif tipo == 'contador':
