@@ -1,16 +1,10 @@
 from django.contrib import admin
 from django.contrib.auth.models import User
-from .models import Usuario, Genero, TipoUsuario, Producto, Sucursal, StockPorSucursal
+# La corrección está aquí: Eliminamos 'Usuario' de la importación.
+from .models import Genero, TipoUsuario, Producto, Sucursal, StockPorSucursal
 
-
-@admin.register(Usuario)
-class UsuarioAdmin(admin.ModelAdmin):
-    list_display = ['rut', 'nombre', 'apellido_completo', 'tipo', 'habilitado']
-    list_filter = ['tipo', 'habilitado']
-
-    def apellido_completo(self, obj):
-        return f"{obj.appaterno} {obj.apmaterno}"
-    apellido_completo.short_description = 'Apellido'
+# El registro de Usuario/Persona se mantiene comentado, ya que no es necesario
+# para que la autenticación funcione.
 
 class ProductoAdmin(admin.ModelAdmin):
     list_display = ('sku', 'nombre_producto', 'marca', 'stock')
@@ -31,5 +25,6 @@ admin.site.register(Producto, ProductoAdmin)
 admin.site.register(Sucursal, SucursalAdmin)
 admin.site.register(StockPorSucursal)
 
+# Se descomentan estas líneas para que puedas gestionar Género y TipoUsuario desde el admin
 admin.site.register(Genero)
 admin.site.register(TipoUsuario)

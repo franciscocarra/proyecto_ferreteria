@@ -401,6 +401,27 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{% static 'core/js/menu_categoria.js' %}"></script>
     <script src="{% static 'core/js/icono.js' %}"></script>
+    <script>
+        // Lógica para el menú desplegable del header
+        document.addEventListener('DOMContentLoaded', function() {
+            const userMenuButton = document.getElementById('user-menu-button');
+            const userMenuDropdown = document.getElementById('user-menu-dropdown');
+            if (userMenuButton) {
+                userMenuButton.addEventListener('click', function() { userMenuDropdown.classList.toggle('hidden'); });
+                window.addEventListener('click', function(e) {
+                    if (userMenuButton && userMenuDropdown && !userMenuButton.contains(e.target) && !userMenuDropdown.contains(e.target)) {
+                        userMenuDropdown.classList.add('hidden');
+                    }
+                });
+            }
+        });
+
+        // Lógica para el sidebar de categorías
+        function toggleCategorias() {
+            const sidebar = document.getElementById('categoriasSidebar');
+            sidebar.classList.toggle('-translate-x-full');
+        }
+    </script>
 </body>
 
 

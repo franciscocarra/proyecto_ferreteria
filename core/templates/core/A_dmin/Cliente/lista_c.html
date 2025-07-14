@@ -3,49 +3,44 @@
 {% load static %}
 <head>
     <meta charset="UTF-8">
-    <title>Gestión de Clientes</title>
+    <title>Gestión de Usuarios</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Bootstrap CSS + Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-    <!-- Google Fonts (Inter) for consistency -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
     <link rel="stylesheet" href="{% static 'core/css/lista_u.css' %}">
-
 </head>
 <body>
 
 <div class="sidebar">
     <h4 class="text-center">💼 Ferretería</h4>
-    <a href="index.html"><i class="bi bi-house-door-fill"></i> Inicio</a>
-    <a href="productos.html"><i class="bi bi-box-seam"></i> Productos</a>
-    <a href="carrito.html"><i class="bi bi-cart-fill"></i> Carrito</a>
-    <a href="contacto.html"><i class="bi bi-envelope-fill"></i> Contacto</a>
+    <a href="{% url 'home' %}"><i class="bi bi-house-door-fill"></i> Inicio</a>
+    <a href="{% url 'productos' %}"><i class="bi bi-box-seam"></i> Productos</a>
+    <a href="{% url 'carrito' %}"><i class="bi bi-cart-fill"></i> Carrito</a>
+    <a href="{% url 'contacto' %}"><i class="bi bi-envelope-fill"></i> Contacto</a>
     <hr>
-    <button type="button" id="logoutButton" class="btn btn-danger w-100">
-        <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
-    </button>
+    <form action="{% url 'logout' %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger w-100">
+            <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+        </button>
+    </form>
 </div>
 
 <div class="content flex-grow-1">
     <div class="header-bar">
-        <h2 id="titulo-seccion">Gestión de Clientes</h2>
+        <h2>Gestión de Usuarios</h2>
         <div class="user-info">
-            <span id="loggedInUserEmail"></span>
+            <span>{{ request.user.email }}</span>
             <i class="bi bi-person-circle"></i>
         </div>
     </div>
 
     <div class="card shadow">
-        <div class="card-header">
-            Lista de Clientes
-            <!-- Add Client button - assuming a registration page for clients -->
-            <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#modalAgregarCliente" title="Agregar Cliente">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            Lista de Usuarios
+            <a href="{% url 'agregar_usuario' %}" class="btn btn-success btn-sm" title="Agregar Usuario">
                <i class="bi bi-plus-lg"></i>
-            </button>
+            </a>
         </div>
         
         <div class="card-body">
@@ -66,300 +61,30 @@
                             <th>Acciones</th>
                         </tr>
                     </thead>
-                    <tbody id="clientesTableBody">
-                        <!-- Client data will be loaded here by JavaScript -->
+                    <tbody>
+                        {% for usuario in usuarios %}
+                        <tr>
+                            <td>{{ usuario.rut }}</td>
+                            <td>{{ usuario.nombre }}</td>
+                            <td>{{ usuario.appaterno }}</td>
+                            <td>{{ usuario.apmaterno }}</td>
+                            <td>{{ usuario.correo }}</td>
+                            <td>{{ usuario.genero }}</td>
+                            <td>{{ usuario.fec_nac|date:"d/m/Y" }}</td> <td>{{ usuario.telefono }}</td>
+                            <td>{{ usuario.direccion }}</td>
+                            <td>{{ usuario.tipo_persona }}</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary btn-editar" data-rut="{{ usuario.rut }}">Editar</button>
+                                <button class="btn btn-sm btn-danger btn-eliminar" data-rut="{{ usuario.rut }}">Eliminar</button>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="11" class="text-center py-4 text-muted">No hay usuarios para mostrar.</td>
+                        </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
-            </div>
-            <p id="noClientsMessage" class="text-center text-gray-500 mt-4" style="display:none;">No hay clientes para mostrar.</p>
-        </div>
-    </div>
-</div>
-
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    const API_BASE_URL = 'http://localhost:3000';
-    const API_KEY_FOR_REGISTRATION = 'Admin1234';
-
-    document.addEventListener('DOMContentLoaded', () => {
-        // --- INICIALIZACIÓN DE ELEMENTOS ---
-        const clientesTableBody = document.getElementById('clientesTableBody');
-        const noClientsMessage = document.getElementById('noClientsMessage');
-        const jwtToken = localStorage.getItem('jwtToken');
-        
-        // Modales de Bootstrap
-        const agregarModal = new bootstrap.Modal(document.getElementById('modalAgregarCliente'));
-        const editarModal = new bootstrap.Modal(document.getElementById('modalEditar'));
-
-        // --- VERIFICACIÓN DE LOGIN ---
-        if (!jwtToken) {
-            alert('Acceso denegado. Por favor, inicie sesión.');
-            window.location.href = 'iniciar_session.html'; // Ajusta esta URL a tu URL de Django si es necesario
-            return;
-        }
-        document.getElementById('loggedInUserEmail').textContent = localStorage.getItem('userCorreo');
-
-        // --- LÓGICA DE LOGOUT ---
-        document.getElementById('logoutButton').addEventListener('click', () => {
-            localStorage.clear();
-            alert('Has cerrado sesión.');
-            window.location.href = 'iniciar_session.html'; // Ajusta esta URL a tu URL de Django si es necesario
-        });
-
-        // --- LÓGICA PARA GUARDAR NUEVO EMPLEADO (MODAL AGREGAR) ---
-        document.getElementById('btnGuardarCliente').addEventListener('click', async () => {
-            const formData = {
-                rut: document.getElementById('rut').value.trim(),
-                nombre: document.getElementById('nombre').value.trim(),
-                appaterno: document.getElementById('appaterno').value.trim(),
-                apmaterno: document.getElementById('apmaterno').value.trim(),
-                correo: document.getElementById('correo').value.trim(),
-                contrasena: document.getElementById('contrasena').value,
-                genero: document.getElementById('genero').value,
-                fec_nac: document.getElementById('fec_nac').value,
-                telefono: document.getElementById('telefono').value.trim(),
-                direccion: document.getElementById('direccion').value.trim(),
-                tipo_persona: document.getElementById('tipo_persona').value
-            };
-
-            if (formData.contrasena !== document.getElementById('confirmContrasena').value) {
-                return alert('Las contraseñas no coinciden.');
-            }
-
-            try {
-                const response = await fetch(`${API_BASE_URL}/personas`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'x-api-key': API_KEY_FOR_REGISTRATION },
-                    body: JSON.stringify(formData)
-                });
-                const data = await response.json();
-                if (!response.ok) throw new Error(data.error || 'No se pudo agregar el empleado.');
-
-                alert('Empleado agregado exitosamente.');
-                document.getElementById('formAgregarCliente').reset();
-                agregarModal.hide();
-                fetchAndDisplayUsers();
-            } catch (error) {
-                alert(`Error: ${error.message}`);
-            }
-        });
-
-        // --- LÓGICA PARA GUARDAR CAMBIOS (MODAL EDITAR) ---
-        document.getElementById('btnGuardarCambios').addEventListener('click', async () => {
-            const rutOriginal = document.getElementById('edit_rut_original').value;
-            const dataActualizada = {
-                nombre: document.getElementById('edit_nombre').value,
-                appaterno: document.getElementById('edit_appaterno').value,
-                apmaterno: document.getElementById('edit_apmaterno').value,
-                correo: document.getElementById('edit_correo').value,
-                telefono: document.getElementById('edit_telefono').value,
-                direccion: document.getElementById('edit_direccion').value,
-                genero: document.getElementById('edit_genero').value,
-                fec_nac: document.getElementById('edit_fec_nac').value,
-                tipo_persona: document.getElementById('edit_tipo_persona').value
-            };
-
-            try {
-                const response = await fetch(`${API_BASE_URL}/personas/${rutOriginal}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${jwtToken}` },
-                    body: JSON.stringify(dataActualizada)
-                });
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.error || 'Error al actualizar');
-                }
-
-                alert('Usuario actualizado con éxito.');
-                editarModal.hide();
-                fetchAndDisplayUsers();
-            } catch (error) {
-                alert(`No se pudo actualizar el usuario: ${error.message}`);
-            }
-        });
-
-        // --- FUNCIÓN PARA "ACTIVAR" LOS BOTONES DE LA TABLA ---
-        function addEventListenersToTableButtons() {
-            // Activar botones de Editar
-            document.querySelectorAll('.btn-editar').forEach(button => {
-                button.addEventListener('click', async (event) => {
-                    const rut = event.currentTarget.dataset.rut;
-                    try {
-                        const response = await fetch(`${API_BASE_URL}/personas/${rut}`, {
-                            headers: { 'Authorization': `Bearer ${jwtToken}` }
-                        });
-                        if (!response.ok) throw new Error('Usuario no encontrado');
-                        
-                        const usuario = await response.json();
-                        
-                        document.getElementById('edit_rut_original').value = usuario.rut;
-                        document.getElementById('edit_rut').value = usuario.rut;
-                        document.getElementById('edit_nombre').value = usuario.nombre;
-                        document.getElementById('edit_appaterno').value = usuario.appaterno;
-                        document.getElementById('edit_apmaterno').value = usuario.apmaterno;
-                        document.getElementById('edit_correo').value = usuario.correo;
-                        document.getElementById('edit_telefono').value = usuario.telefono || '';
-                        document.getElementById('edit_direccion').value = usuario.direccion || '';
-                        document.getElementById('edit_fec_nac').value = usuario.fec_nac ? new Date(usuario.fec_nac).toISOString().split('T')[0] : '';
-                        document.getElementById('edit_genero').value = usuario.genero;
-                        document.getElementById('edit_tipo_persona').value = usuario.tipo_persona;
-                        
-                        editarModal.show();
-                    } catch (error) {
-                        alert(`Error al cargar datos del usuario: ${error.message}`);
-                    }
-                });
-            });
-
-            // Activar botones de Eliminar
-            document.querySelectorAll('.btn-eliminar').forEach(button => {
-                button.addEventListener('click', async (event) => {
-                    const rut = event.currentTarget.dataset.rut;
-                    if (confirm(`¿Estás seguro de que quieres eliminar al usuario con RUT: ${rut}?`)) {
-                        try {
-                            const deleteResponse = await fetch(`${API_BASE_URL}/personas/${rut}`, {
-                                method: 'DELETE',
-                                headers: { 'Authorization': `Bearer ${jwtToken}` }
-                            });
-                            if (!deleteResponse.ok) {
-                                const errorData = await deleteResponse.json();
-                                throw new Error(errorData.error || 'No se pudo eliminar al cliente');
-                            }
-                            
-                            alert(`Usuario con RUT: ${rut} eliminado exitosamente.`);
-                            fetchAndDisplayUsers();
-                        } catch (error) {
-                            alert(`Error al eliminar usuario: ${error.message}`);
-                        }
-                    }
-                });
-            });
-        }
-
-        // --- FUNCIÓN PRINCIPAL PARA OBTENER Y MOSTRAR USUARIOS ---
-        async function fetchAndDisplayUsers() {
-            try {
-                const response = await fetch(`${API_BASE_URL}/personas`, {
-                    headers: { 'Authorization': `Bearer ${jwtToken}` }
-                });
-                if (!response.ok) throw new Error('No se pudo obtener la lista de usuarios');
-                
-                const personas = await response.json();
-                const usuarios = personas.filter(usuario => usuario.tipo_persona !== 'admin');
-                
-                clientesTableBody.innerHTML = '';
-
-                if (usuarios.length === 0) {
-                    noClientsMessage.style.display = 'block';
-                } else {
-                    noClientsMessage.style.display = 'none';
-                    usuarios.forEach(usuario => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${usuario.rut}</td><td>${usuario.nombre}</td><td>${usuario.appaterno}</td>
-                            <td>${usuario.apmaterno}</td><td>${usuario.correo}</td><td>${usuario.genero}</td>
-                            <td>${usuario.fec_nac ? new Date(usuario.fec_nac).toLocaleDateString() : 'N/A'}</td>
-                            <td>${usuario.telefono || 'N/A'}</td><td>${usuario.direccion || 'N/A'}</td>
-                            <td>${usuario.tipo_persona}</td>
-                            <td>
-                                <div class="dropdown">
-                                    <button class="btn btn-secondary dropdown-toggle btn-sm" type="button" data-bs-toggle="dropdown">Opciones</button>
-                                    <ul class="dropdown-menu">
-                                        <li><button class="dropdown-item btn-editar" data-rut="${usuario.rut}">Editar</button></li>
-                                        <li><button class="dropdown-item text-danger btn-eliminar" data-rut="${usuario.rut}">Eliminar</button></li>
-                                    </ul>
-                                </div>
-                            </td>
-                        `;
-                        clientesTableBody.appendChild(row);
-                    });
-
-                    addEventListenersToTableButtons();
-                }
-            } catch (error) {
-                console.error('Error fetching users:', error);
-                clientesTableBody.innerHTML = `<tr><td colspan="11" class="text-center text-danger">Error al cargar usuarios.</td></tr>`;
-            }
-        }
-
-        // --- LLAMADA INICIAL ---
-        fetchAndDisplayUsers();
-    });
-</script>
-<div class="modal fade" id="modalAgregarCliente" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Agregar Nuevo Cliente</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-            </div>
-            <div class="modal-body">
-                <form id="formAgregarCliente">
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="rut" class="form-label">RUT:</label>
-                            <input type="text" class="form-control" id="rut" placeholder="Ej: 12345678-9" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="nombre" class="form-label">Nombre:</label>
-                            <input type="text" class="form-control" id="nombre" placeholder="Ej: Juan" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="appaterno" class="form-label">Apellido Paterno:</label>
-                            <input type="text" class="form-control" id="appaterno" placeholder="Ej: Pérez" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="apmaterno" class="form-label">Apellido Materno:</label>
-                            <input type="text" class="form-control" id="apmaterno" placeholder="Ej: González" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="correo" class="form-label">Correo:</label>
-                            <input type="email" class="form-control" id="correo" placeholder="Ej: tu@correo.com" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="telefono" class="form-label">Teléfono:</label>
-                            <input type="text" class="form-control" id="telefono" placeholder="Ej: 912345678" required>
-                        </div>
-                        <div class="col-md-12 mb-3">
-                            <label for="direccion" class="form-label">Dirección:</label>
-                            <input type="text" class="form-control" id="direccion" placeholder="Ej: Calle Falsa 123" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="contrasena" class="form-label">Contraseña:</label>
-                            <input type="password" class="form-control" id="contrasena" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="confirmContrasena" class="form-label">Confirmar Contraseña:</label>
-                            <input type="password" class="form-control" id="confirmContrasena" required>
-                        </div>
-                         <div class="col-md-6 mb-3">
-                            <label for="genero" class="form-label">Género:</label>
-                            <select id="genero" class="form-select" required>
-                                <option value="">Selecciona</option>
-                                <option value="M">Masculino</option>
-                                <option value="F">Femenino</option>
-                                <option value="O">Otro</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="fec_nac" class="form-label">Fecha de Nacimiento:</label>
-                            <input type="date" class="form-control" id="fec_nac" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="tipo_persona" class="form-label">Tipo de Empleado:</label>
-                            <select id="tipo_persona" class="form-select" required>
-                                <option value="vendedor">Vendedor</option>
-                                <option value="bodeguero">Bodeguero</option>
-                                <option value="contador">Contador</option>
-                            </select>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary" id="btnGuardarCliente">Guardar Cliente</button>
             </div>
         </div>
     </div>
@@ -407,19 +132,19 @@
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="edit_fec_nac" class="form-label">Fecha de Nacimiento</label>
-                            <input type="date" class="form-control" id="edit_fec_nac" name="fec_nac">
+                            <input type="date" class="form-control" id="edit_fec_nac">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="edit_genero" class="form-label">Género</label>
-                            <select id="edit_genero" name="genero" class="form-select">
+                            <select id="edit_genero" class="form-select">
                                 <option value="M">Masculino</option>
                                 <option value="F">Femenino</option>
                                 <option value="O">Otro</option>
                             </select>
                         </div>
-                         <div class="col-md-6 mb-3">
+                        <div class="col-md-6 mb-3">
                             <label for="edit_tipo_persona" class="form-label">Tipo de Persona</label>
-                            <select id="edit_tipo_persona" name="tipo_persona" class="form-select">
+                            <select id="edit_tipo_persona" class="form-select">
                                 <option value="cliente">Cliente</option>
                                 <option value="vendedor">Vendedor</option>
                                 <option value="bodeguero">Bodeguero</option>
@@ -436,6 +161,126 @@
         </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const API_BASE_URL = 'http://localhost:3000';
+    const API_KEY = 'Admin1234';
+
+    // Se inicializan los modales UNA SOLA VEZ
+    const agregarModalElement = document.getElementById('modalAgregarCliente');
+    const editarModalElement = document.getElementById('modalEditar');
+
+    // Comprobamos que existan antes de inicializarlos
+    const agregarModal = agregarModalElement ? new bootstrap.Modal(agregarModalElement) : null;
+    const editarModal = editarModalElement ? new bootstrap.Modal(editarModalElement) : null;
+
+
+    // --- LÓGICA PARA AGREGAR NUEVO USUARIO ---
+    const btnGuardarCliente = document.getElementById('btnGuardarCliente');
+    if (btnGuardarCliente) {
+        btnGuardarCliente.addEventListener('click', async () => {
+            // Lógica para agregar que ya funciona...
+        });
+    }
+
+    // --- LÓGICA PARA ELIMINAR USUARIO ---
+    document.querySelectorAll('.btn-eliminar').forEach(button => {
+        button.addEventListener('click', async (event) => {
+            const rut = event.currentTarget.dataset.rut;
+            if (confirm(`¿Estás seguro de que quieres eliminar al usuario con RUT: ${rut}?`)) {
+                try {
+                    const response = await fetch(`${API_BASE_URL}/personas/${rut}`, {
+                        method: 'DELETE',
+                        headers: { 'x-api-key': API_KEY }
+                    });
+                    if (!response.ok) throw new Error('No se pudo eliminar al usuario.');
+                    
+                    alert('Usuario eliminado exitosamente.');
+                    window.location.reload();
+                } catch (error) {
+                    alert(`Error al eliminar: ${error.message}`);
+                }
+            }
+        });
+    });
+
+    // --- LÓGICA PARA EDITAR (PARTE 1: Cargar datos en el modal) ---
+    document.querySelectorAll('.btn-editar').forEach(button => {
+        button.addEventListener('click', async (event) => {
+            if (!editarModal) return; // No hacer nada si el modal no se inicializó
+
+            const rut = event.currentTarget.dataset.rut;
+            try {
+                const response = await fetch(`${API_BASE_URL}/personas/${rut}`, {
+                    headers: { 'x-api-key': API_KEY }
+                });
+                if (!response.ok) throw new Error('Usuario no encontrado.');
+                
+                const usuario = await response.json();
+                
+                // Llenamos el formulario de edición
+                document.getElementById('edit_rut_original').value = usuario.rut;
+                document.getElementById('edit_rut').value = usuario.rut;
+                document.getElementById('edit_nombre').value = usuario.nombre;
+                document.getElementById('edit_appaterno').value = usuario.appaterno;
+                document.getElementById('edit_apmaterno').value = usuario.apmaterno;
+                document.getElementById('edit_correo').value = usuario.correo;
+                document.getElementById('edit_telefono').value = usuario.telefono || '';
+                document.getElementById('edit_direccion').value = usuario.direccion || '';
+                document.getElementById('edit_genero').value = usuario.genero;
+                document.getElementById('edit_fec_nac').value = usuario.fec_nac ? new Date(usuario.fec_nac).toISOString().split('T')[0] : '';
+                document.getElementById('edit_tipo_persona').value = usuario.tipo_persona;
+
+                editarModal.show(); 
+            } catch (error) {
+                alert(`Error al cargar datos del usuario: ${error.message}`);
+            }
+        });
+    });
+
+    // --- LÓGICA PARA EDITAR (PARTE 2: Guardar los cambios) ---
+    const btnGuardarCambios = document.getElementById('btnGuardarCambios');
+    if (btnGuardarCambios) {
+        btnGuardarCambios.addEventListener('click', async () => {
+            if (!editarModal) return;
+
+            const rutOriginal = document.getElementById('edit_rut_original').value;
+            const dataActualizada = {
+                nombre: document.getElementById('edit_nombre').value,
+                appaterno: document.getElementById('edit_appaterno').value,
+                apmaterno: document.getElementById('edit_apmaterno').value,
+                correo: document.getElementById('edit_correo').value,
+                telefono: document.getElementById('edit_telefono').value,
+                direccion: document.getElementById('edit_direccion').value,
+                genero: document.getElementById('edit_genero').value,
+                fec_nac: document.getElementById('edit_fec_nac').value,
+                tipo_persona: document.getElementById('edit_tipo_persona').value
+            };
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/personas/${rutOriginal}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': API_KEY
+                    },
+                    body: JSON.stringify(dataActualizada)
+                });
+                if (!response.ok) throw new Error('Error al actualizar.');
+
+                alert('Usuario actualizado con éxito.');
+                editarModal.hide();
+                window.location.reload();
+            } catch (error) {
+                alert(`No se pudo actualizar el usuario: ${error.message}`);
+            }
+        });
+    }
+});
+</script>   
+
 
 </body>
 </html>

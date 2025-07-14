@@ -1,3 +1,7 @@
-pip install django-crispy-forms
-pip install crispy-bootstrap5
-pip install requests
+django-crispy-forms
+crispy-bootstrap5
+requests
+django 
+oracledb
+transbank-sdk
+bcrypt

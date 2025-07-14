@@ -9,12 +9,27 @@ from .models import Producto
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib.auth.decorators import permission_required
 from django.db.models import Q
-from .models import Usuario, TipoUsuario
+from .models import Persona, TipoUsuario
 import requests
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+import json
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
+import bcrypt
+from django.conf import settings
+from django.urls import reverse
+from transbank.webpay.webpay_plus.transaction import Transaction
+from transbank.common.options import WebpayOptions
+from transbank.common.integration_commerce_codes import IntegrationCommerceCodes
+from transbank.common.integration_api_keys import IntegrationApiKeys
+from transbank.common.integration_type import IntegrationType
+import uuid # Para generar IDs únicos
+import time
 
 API_URL = "http://127.0.0.1:8001/productos"
 
@@ -40,55 +55,70 @@ def producto2(request):
 def contacto(request):
     return render(request, 'core/contacto.html')
 
+@csrf_exempt
 def iniciar_session(request):
-    form = LoginForm(request.POST or None)
-    if request.method == 'POST' and form.is_valid():
-        username = form.cleaned_data.get('username')
-        password = form.cleaned_data.get('password')
-        user = authenticate(request, username=username, password=password)
+    # --- Lógica para procesar el login (POST) ---
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            email = data.get('correo')
+            password = data.get('contrasena')
+        except (json.JSONDecodeError, AttributeError):
+            return JsonResponse({'success': False, 'error': 'Datos inválidos.'}, status=400)
+
+        user = authenticate(request, username=email, password=password)
+
         if user is not None:
             login(request, user)
-            if user.is_superuser:
-                return redirect('administración')
-
-            # Buscar el usuario personalizado para obtener el tipo
-            tipo = None
+            
+            redirect_url = 'home' # URL por defecto para clientes, vendedores, etc.
+            
+            # Lógica de redirección mejorada
             try:
-                usuario_personalizado = Usuario.objects.get(correo=user.email)
-                tipo = usuario_personalizado.tipo.descripcion
-            except Usuario.DoesNotExist:
-                tipo = None
+                # Buscamos en la tabla 'persona' para obtener el tipo
+                persona = Persona.objects.get(correo=user.email)
+                tipo = persona.tipo_persona.lower()
 
-            if tipo == 'bodeguero':
-                return redirect('bodeguero')
-            elif tipo == 'vendedor':
-                return redirect('home')
-            else:
-                return redirect('home')
+                # Comprobamos si es admin por su tipo en la tabla O si es superuser de Django
+                if tipo == 'admin' or user.is_superuser:
+                    redirect_url = 'administración'
+                elif tipo == 'bodeguero':
+                    redirect_url = 'bodeguero'
+                elif tipo == 'contador':
+                    redirect_url = 'contador'
+                
+            except Persona.DoesNotExist:
+                # Si es un superuser de Django pero no está en la tabla Persona,
+                # también debe ir al panel de administración.
+                if user.is_superuser:
+                    redirect_url = 'administración'
 
+            return JsonResponse({
+                'success': True,
+                'message': 'Inicio de sesión exitoso.',
+                'redirect_url_name': redirect_url
+            })
         else:
-            form.add_error(None, "Usuario o contraseña incorrectos.")
-    return render(request, 'core/iniciar_session.html', {'form': form})
-
-
+            return JsonResponse({'success': False, 'error': 'Correo o contraseña incorrectos.'}, status=401)
+    
+    # --- Lógica para mostrar la página (GET) ---
+    else:
+        # Si el usuario ya está logueado, lo redirigimos a la página de inicio
+        if request.user.is_authenticated:
+            return redirect('home')
+        
+        # Si no está autenticado, le mostramos la página de login
+        return render(request, 'core/iniciar_session.html')
 
 def registro(request):
-    if request.method == 'POST':
-        formulario = CustomUserCreationForm(request.POST)
-        if formulario.is_valid():
-            formulario.save()
-            return redirect('iniciar_session')
-    else:
-        formulario = CustomUserCreationForm()
+    # Ya no se necesita el formulario de Django aquí, porque la página usa
+    # una API externa. Simplemente mostramos el HTML.
+    return render(request, 'core/registro.html') 
 
     return render(request, 'core/registro.html', {'form': formulario})
 
 def olvidar_contrasena(request):
     return render(request, 'core/olvidar_contrasena.html')
-
-def logout_view(request):
-    logout(request)
-    return redirect('home')
 
 def pintura(request):
     return render(request, 'core/pintura.html')
@@ -133,7 +163,7 @@ def carrito(request):
     }
     return render(request, 'core/carrito.html', context)
 
-@login_required
+
 def add_to_cart(request, sku):
     try:
         response = requests.get(f'http://127.0.0.1:8001/productos/{sku}')
@@ -206,11 +236,110 @@ def clear_cart(request):
     request.session['cart'] = {}
     return redirect('carrito')
 
+@login_required
+def iniciar_pago(request):
+    print("\n--- 1. Entrando a la vista iniciar_pago ---")
+    cart = request.session.get('cart', {})
+    if not cart:
+        print("--- ERROR: El carrito está vacío. Redirigiendo. ---")
+        messages.error(request, "Tu carrito está vacío.")
+        return redirect('carrito')
+
+    total = sum(item['price'] * item['quantity'] for item in cart.values())
+    buy_order = str(request.user.id) + "_" + str(int(time.time()))
+    session_id = request.session.session_key
+    amount = int(total)
+    return_url = request.build_absolute_uri(reverse('confirmar_pago'))
+    
+    print(f"--- 2. Datos de la transacción listos ---")
+    print(f"   - Orden de Compra: {buy_order}")
+    print(f"   - Monto: {amount}")
+    print(f"   - URL de Retorno: {return_url}")
+
+    try:
+        tx = Transaction(WebpayOptions(IntegrationCommerceCodes.WEBPAY_PLUS, IntegrationApiKeys.WEBPAY, IntegrationType.TEST))
+        print("--- 3. Objeto de transacción de Transbank creado ---")
+        
+        response = tx.create(buy_order, session_id, amount, return_url)
+        print("--- 4. Transacción creada en Transbank con éxito ---")
+        print("   - Respuesta de Transbank:", response)
+        
+        # Leemos la respuesta como un diccionario
+        url_transbank = response['url']
+        token_transbank = response['token']
+        
+        print("   - URL de Redirección:", url_transbank)
+        print("   - Token:", token_transbank)
+        
+        return redirect(url_transbank + '?token_ws=' + token_transbank)
+
+    except Exception as e:
+        print(f"--- 5. ERROR: La llamada a Transbank falló ---")
+        print(f"   - Excepción: {e}")
+        messages.error(request, f"Error al iniciar la transacción con Transbank.")
+        return redirect('carrito')
+    
+def confirmar_pago(request):
+    token = request.POST.get('token_ws') or request.GET.get('token_ws')
+    
+    if not token:
+        messages.info(request, "Has cancelado la compra o ha ocurrido un error.")
+        return redirect('carrito')
+
+    try:
+        tx = Transaction(WebpayOptions(IntegrationCommerceCodes.WEBPAY_PLUS, IntegrationApiKeys.WEBPAY, IntegrationType.TEST))
+        response = tx.commit(token)
+
+        if response.status == 'AUTHORIZED' and response.response_code == 0:
+            # ¡PAGO APROBADO!
+            
+            # --- INICIO DE LA CORRECCIÓN FINAL ---
+            # Verificamos si 'cart' existe en la sesión antes de intentar borrarlo
+            if 'cart' in request.session:
+                # Usamos 'del' para una eliminación explícita y segura del carrito
+                del request.session['cart']
+            # --- FIN DE LA CORRECCIÓN FINAL ---
+
+            messages.success(request, "¡Tu compra ha sido realizada con éxito!")
+            context = {'response': response}
+            return render(request, 'core/pago_exitoso.html', context)
+        else:
+            # PAGO RECHAZADO
+            messages.error(request, "Tu pago fue rechazado. Inténtalo de nuevo.")
+            context = {'response': response}
+            return render(request, 'core/pago_fallido.html', context)
+
+    except Exception as e:
+        messages.error(request, f"Error al confirmar la transacción: {e}")
+        return redirect('carrito')
+
+
 def users(request):
     return render(request, 'core/A_dmin/users.html')
 
-def administración(request):
-    return render(request, 'core/A_dmin/administración.html')
+@login_required
+def administracion(request):
+    # Asumimos que no es admin hasta que se demuestre lo contrario
+    es_admin = False
+    
+    if request.user.is_superuser:
+        es_admin = True
+    else:
+        try:
+            # Usamos .strip() y .lower() para limpiar los datos y evitar errores
+            persona = Persona.objects.get(correo=request.user.email)
+            if persona.tipo_persona.strip().lower() == 'admin':
+                es_admin = True
+        except Persona.DoesNotExist:
+            es_admin = False # No está en la tabla Persona, no puede ser nuestro admin
+    
+    if not es_admin:
+        messages.error(request, 'No tienes permiso para acceder a esta página.')
+        return redirect('home')
+
+    # Si llegamos aquí, es un admin. Mostramos la página.
+    # Le pasamos el usuario a la plantilla para mostrar su email.
+    return render(request, 'core/administración.html', {'user': request.user})
 
 def bodeguero(request):
     return render(request, 'core/bodeguero/bode.html')
@@ -314,6 +443,7 @@ def editar_producto_api(request, sku):
         precio = request.POST.get('precio')
         stock = request.POST.get('stock')
         estado = request.POST.get('estado_producto')
+        imagen_url = request.POST.get('imagen_url')
 
         # Aquí armamos el dict que irá en params (query string)
         data = {
@@ -324,6 +454,7 @@ def editar_producto_api(request, sku):
             'precio': precio,
             'stock': stock,
             'estado_producto': estado,
+            'imagen_url' : imagen_url,
         }
 
         # Hacemos PUT enviando todo como query params
@@ -376,32 +507,29 @@ def editar_producto(request, sku):
 
 def listar_empleados(request):
     tipos_empleado = TipoUsuario.objects.filter(descripcion__in=['vendedor', 'bodeguero'])
-    empleados = Usuario.objects.filter(tipo__in=tipos_empleado)
+    empleados = Persona.objects.filter(tipo__in=tipos_empleado)
     return render(request, 'core/A_dmin/empleados/lista_e.html', {'lista_empleados': empleados})
 
 
-def registro_empleado(request):
-    if request.method == 'POST':
-        formulario = EmpleadoUserCreationForm(request.POST)
-        if formulario.is_valid():
-            formulario.save()
-            return redirect('Clientes')  # Redirige donde tú quieras
-    else:
-        formulario = EmpleadoUserCreationForm()
-
-    return render(request, 'core/A_dmin/empleados/crear_e.html', {'form': formulario})
-
-def Clientes(request):
-    Usuarios = Usuario.objects.all()
-    aux = {
-        'lista' : Usuarios
+@login_required
+def lista_usuarios(request): # <-- Renombrada para mayor claridad
+    # La lógica se mantiene: obtiene todos los registros de la tabla Persona que no son 'admin'
+    usuarios = Persona.objects.exclude(tipo_persona__iexact='admin') # <-- Renombrada
+    
+    context = {
+        'usuarios': usuarios # <-- Renombrada
     }
+    return render(request, 'core/A_dmin/Cliente/lista_c.html', context)
 
-    return render(request, 'core/A_dmin/Cliente/lista_c.html', aux)
+@login_required
+def agregar_usuario(request):
+    # Esta vista no necesita lógica de formulario, solo muestra la página HTML.
+    # La lógica real estará en el JavaScript de la plantilla.
+    return render(request, 'core/A_dmin/Cliente/agregar_usuario.html')
 
 def eliminar_usuario(request, id):
     # Obtener el objeto usuario con el id proporcionado
-    usuario = get_object_or_404(Usuario, id=id)
+    usuario = get_object_or_404(Persona, id=id)
 
     # Eliminar el usuario
     usuario.delete()
@@ -409,5 +537,36 @@ def eliminar_usuario(request, id):
     # Redirigir a la lista de usuarios
     return redirect('Clientes')
 
+@login_required # 1. Solo usuarios logueados pueden acceder
+def ventas(request):
+    # 2. Verificamos si el usuario es un contador
+    try:
+        persona = Persona.objects.get(correo=request.user.email)
+        if persona.tipo_persona.lower() != 'contador' and not request.user.is_superuser:
+            messages.error(request, 'Acceso denegado. No tienes permisos de contador.')
+            return redirect('home')
+    except Persona.DoesNotExist:
+        if not request.user.is_superuser:
+            messages.error(request, 'Acceso denegado.')
+            return redirect('home')
 
+    # 3. Si tiene permiso, le mostramos la página de ventas
+    # En el futuro, aquí podrías obtener los datos de las ventas de la base de datos
+    return render(request, 'core/contador/ventas.html')
+
+@login_required # 1. Solo usuarios logueados pueden acceder
+def contador(request):
+    # 2. Verificamos si el usuario es un contador
+    try:
+        persona = Persona.objects.get(correo=request.user.email)
+        if persona.tipo_persona.lower() != 'contador' and not request.user.is_superuser:
+            messages.error(request, 'Acceso denegado. No tienes permisos de contador.')
+            return redirect('home')
+    except Persona.DoesNotExist:
+        if not request.user.is_superuser: # Permitir acceso a superusuarios por si acaso
+            messages.error(request, 'Acceso denegado.')
+            return redirect('home')
+        
+    # 3. Si tiene permiso, le mostramos la página del panel
+    return render(request, 'core/contador/contador.html')
 

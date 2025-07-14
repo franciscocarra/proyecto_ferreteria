@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregar Nuevo Empleado</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f0f2f5; }
+        .form-container { max-width: 800px; margin: 4rem auto; }
+    </style>
+</head>
+<body>
+
+<div class="container form-container">
+    <div class="card shadow-lg border-0">
+        <div class="card-body p-5">
+            <h2 class="card-title text-center mb-4">Registro de Empleado</h2>
+            
+            <form id="formAgregarUsuario">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="rut" class="form-label">RUT:</label>
+                        <input type="text" id="rut" class="form-control" placeholder="Ej: 12345678-9" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="nombre" class="form-label">Nombre:</label>
+                        <input type="text" id="nombre" class="form-control" placeholder="Ej: Juan" required>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="appaterno" class="form-label">Apellido Paterno:</label>
+                        <input type="text" id="appaterno" class="form-control" placeholder="Ej: Pérez" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="apmaterno" class="form-label">Apellido Materno:</label>
+                        <input type="text" id="apmaterno" class="form-control" placeholder="Ej: González" required>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="correo" class="form-label">Correo:</label>
+                        <input type="email" id="correo" class="form-control" placeholder="Ej: tu@correo.com" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="telefono" class="form-label">Teléfono:</label>
+                        <input type="text" id="telefono" class="form-control" placeholder="Ej: 912345678" required>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="contrasena" class="form-label">Contraseña:</label>
+                        <input type="password" id="contrasena" class="form-control" placeholder="Ingresa tu contraseña" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="confirmContrasena" class="form-label">Confirmar Contraseña:</label>
+                        <input type="password" id="confirmContrasena" class="form-control" placeholder="Confirma tu contraseña" required>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="genero" class="form-label">Género:</label>
+                        <select id="genero" class="form-select" required>
+                            <option value="" disabled selected>Selecciona</option>
+                            <option value="M">Masculino</option>
+                            <option value="F">Femenino</option>
+                            <option value="O">Otro</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="fec_nac" class="form-label">Fecha de Nacimiento:</label>
+                        <input type="date" id="fec_nac" class="form-control" required>
+                    </div>
+
+                    <div class="col-12 mb-3">
+                        <label for="direccion" class="form-label">Dirección:</label>
+                        <input type="text" id="direccion" class="form-control" placeholder="Ej: Calle Falsa 123" required>
+                    </div>
+
+                    <div class="col-12 mb-4">
+                        <label for="tipo_persona" class="form-label">Tipo de Empleado:</label>
+                        <select id="tipo_persona" class="form-select" required>
+                            <option value="vendedor">Vendedor</option>
+                            <option value="bodeguero">Bodeguero</option>
+                            <option value="contador">Contador</option>
+                        </select>
+                    </div>
+
+                    <div class="col-12 text-center">
+                        <button type="submit" class="btn btn-primary w-100 py-2">Registrar Empleado</button>
+                        <a href="{% url 'lista_usuarios' %}" class="btn btn-secondary w-100 py-2 mt-2">Cancelar</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('formAgregarUsuario').addEventListener('submit', async function(event) {
+        event.preventDefault(); // Evita que el formulario se envíe de forma tradicional
+
+        const contrasena = document.getElementById('contrasena').value;
+        const confirmContrasena = document.getElementById('confirmContrasena').value;
+
+        if (contrasena !== confirmContrasena) {
+            alert('Las contraseñas no coinciden.');
+            return;
+        }
+
+        const API_BASE_URL = 'http://localhost:3000';
+        const API_KEY = 'Admin1234';
+
+        // Recolecta todos los datos del formulario
+        const formData = {
+            rut: document.getElementById('rut').value,
+            nombre: document.getElementById('nombre').value,
+            appaterno: document.getElementById('appaterno').value,
+            apmaterno: document.getElementById('apmaterno').value,
+            correo: document.getElementById('correo').value,
+            contrasena: contrasena, // Usa la variable que ya validamos
+            genero: document.getElementById('genero').value,
+            fec_nac: document.getElementById('fec_nac').value,
+            telefono: document.getElementById('telefono').value,
+            direccion: document.getElementById('direccion').value,
+            tipo_persona: document.getElementById('tipo_persona').value,
+        };
+
+        try {
+            // Llamada a la API de Node.js para crear el usuario
+            const response = await fetch(`${API_BASE_URL}/personas`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-api-key': API_KEY
+                },
+                body: JSON.stringify(formData)
+            });
+
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.error || 'No se pudo agregar el usuario.');
+            }
+
+            alert('Empleado agregado con éxito.');
+            // Redirige a la lista de usuarios para ver el nuevo registro
+            window.location.href = "{% url 'lista_usuarios' %}";
+
+        } catch (error) {
+            alert(`Error: ${error.message}`);
+        }
+    });
+</script>
+
+</body>
+</html>

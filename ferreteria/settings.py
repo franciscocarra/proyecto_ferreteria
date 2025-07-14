@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -60,7 +61,7 @@ ROOT_URLCONF = 'ferreteria.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'core', 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -82,11 +83,12 @@ WSGI_APPLICATION = 'ferreteria.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.oracle',
+        'NAME': 'localhost/orcl',
+        'USER': 'my_ferre',
+        'PASSWORD': 'my_ferre',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -128,3 +130,15 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTHENTICATION_BACKENDS = [
+    'core.auth_backends.PersonaAuthBackend', # La ruta a tu nueva clase
+    'django.contrib.auth.backends.ModelBackend',    # Mantenemos el backend por defecto como respaldo
+]
+
+LOGOUT_REDIRECT_URL = 'home'
+
+# --- CONFIGURACIÓN DE TRANSBANK ---
+TRANSBANK_WEBPAY_PLUS_COMMERCE_CODE = '597055555532'
+TRANSBANK_WEBPAY_PLUS_API_KEY = '579B532A7440BB0C9079DED94D31EA16'
+TRANSBANK_ENVIRONMENT = 'INTEGRACION' # Usa 'PRODUCCION' cuando pases a real

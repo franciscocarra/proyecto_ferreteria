@@ -11,7 +11,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
     <!-- Tu CSS personalizado -->
-    <link rel="stylesheet" href="{% static 'core/css/admini.css' %}">
+    <link rel="stylesheet" href="{% static 'core/css/bodeguero.css' %}">
 </head>
 <body class="bg-dark text-white">
 
@@ -80,6 +80,10 @@
                         <option value="Activo"   {% if producto.estado_producto == 'Activo'   %}selected{% endif %}>Activo</option>
                         <option value="Inactivo" {% if producto.estado_producto == 'Inactivo' %}selected{% endif %}>Inactivo</option>
                     </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">URL de la Imagen</label>
+                    <input type="url" name="imagen_url" class="form-control" value="{{ producto.imagen_url}}">
                 </div>
 
                 <div class="d-flex justify-content-between">

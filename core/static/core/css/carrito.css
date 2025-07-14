@@ -1,39 +1,22 @@
-.chakra-stack {
+html {
+    height: 100%;
+}
+
+body {
+    min-height: 100vh; /* Asegura que el body ocupe al menos el 100% de la altura del viewport */
     display: flex;
     flex-direction: column;
-    align-items: center;
+    margin: 0;
+    padding: 0;
 }
 
-.css-5ljqgv, .css-10keghz {
-    margin: 10px;
+/* Clase para el contenido principal que debe empujar el footer */
+.main-content-wrapper {
+    flex-grow: 1; /* Esto hace que el div crezca y empuje el footer */
 }
 
-.chakra-heading {
-    font-size: 24px;
-    font-weight: bold;
-    color: #333; /* Color más oscuro */
-}
-
-.chakra-text {
-    font-size: 16px;
-    color: #555; /* Color más oscuro */
-}
-
-.chakra-button {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: #007BFF;
-    color: #FFF;
-    text-decoration: none;
-    border-radius: 5px;
-    margin-top: 10px;
-}
-
-.chakra-link {
-    color: #007BFF;
-    text-decoration: none;
-}
-
-.chakra-link:hover {
-    text-decoration: underline;
+/* El footer solo necesita margin-top: auto para pegarse abajo */
+footer {
+    margin-top: auto; /* Empuja el footer al final del contenedor flex */
+    /* Asegúrate de que no haya un 'flex: 1' u otras propiedades de flex que lo anulen aquí */
 }
