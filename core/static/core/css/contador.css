@@ -1,0 +1,162 @@
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f3f4f6;
+    color: #333;
+    min-height: 100vh;
+    display: flex; /* Use flexbox for sidebar and content layout */
+}
+.sidebar {
+    width: 250px;
+    background-color: #1f2937; /* Darker background for sidebar */
+    color: #ffffff;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    position: sticky; /* Keep sidebar visible on scroll */
+    top: 0;
+    height: 100vh; /* Full height */
+}
+.sidebar h4 {
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: #f97316; /* Orange accent */
+}
+.sidebar a {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    color: #d1d5db;
+    text-decoration: none;
+    border-radius: 0.5rem;
+    margin-bottom: 0.5rem;
+    transition: background-color 0.2s, color 0.2s;
+}
+.sidebar a:hover {
+    background-color: #374151; /* Slightly lighter on hover */
+    color: #ffffff;
+}
+.sidebar a i {
+    margin-right: 0.75rem;
+    font-size: 1.2rem;
+}
+.sidebar hr {
+    border-color: #4b5563;
+    margin: 1.5rem 0;
+}
+.sidebar .btn-danger {
+    background-color: #dc2626;
+    border-color: #dc2626;
+    transition: background-color 0.2s, transform 0.1s;
+}
+.sidebar .btn-danger:hover {
+    background-color: #b91c1c;
+    transform: translateY(-1px);
+}
+.content {
+    flex-grow: 1;
+    padding: 2rem;
+    background-color: #f9fafb;
+}
+.content .header-bar {
+    background-color: #ffffff;
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.content .header-bar h2 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 0;
+}
+.content .header-bar .user-info {
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+    color: #4b5563;
+}
+.content .header-bar .user-info i {
+    font-size: 1.5rem;
+    margin-left: 0.75rem;
+    color: #6b7280;
+}
+.card {
+    border: none;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+/* Estilo para el card-header principal del panel, que puede ser azul */
+.card-header {
+    background-color: #2563eb; /* Primary blue for card headers */
+    color: white; /* Texto blanco para este header azul */
+    font-weight: 600;
+    padding: 1rem;
+    border-bottom: none;
+    text-align: center;
+}
+
+/* --- INICIO DE LA CORRECCIÓN: Estilo específico para los card-header de cada venta --- */
+/* Cuando un card-header está dentro de un .card (que es el caso de cada venta individual) */
+/* y tiene la clase bg-light, su texto debe ser oscuro. */
+.card .card-header.bg-light {
+    background-color: #f8f9fa !important; /* Asegura que el fondo sea claro */
+    color: #333 !important; /* ¡Texto oscuro para que sea visible! */
+    font-weight: 600;
+    padding: 1rem;
+    border-bottom: 1px solid rgba(0,0,0,.125); /* Añadir un borde sutil si lo deseas */
+    text-align: left; /* Alineación a la izquierda para el contenido de la venta */
+}
+
+/* Asegurarse de que los strong y span dentro de estos headers también sean oscuros */
+.card .card-header.bg-light strong,
+.card .card-header.bg-light span {
+    color: #333 !important;
+}
+/* --- FIN DE LA CORRECCIÓN --- */
+
+
+.card-body {
+    padding: 1.5rem;
+    /* text-align: center;  Eliminar esto para alinear el texto a la izquierda en los detalles de venta */
+    background-color: #ffffff;
+}
+.card-body p {
+    color: #6b7280;
+    margin-bottom: 1rem;
+}
+.card-body .btn-primary {
+    background-color: #2563eb;
+    border-color: #2563eb;
+    transition: background-color 0.2s, transform 0.1s;
+}
+.card-body .btn-primary:hover {
+    background-color: #1d4ed8;
+    transform: translateY(-1px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    body {
+        flex-direction: column;
+    }
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .content {
+        padding: 1rem;
+    }
+}

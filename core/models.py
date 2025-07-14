@@ -4,6 +4,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.db import transaction
 import random
+from django.conf import settings
 
 class ExampleModel(models.Model):
     name = models.CharField(max_length=255)
@@ -105,6 +106,43 @@ def distribuir_stock(sender, instance, **kwargs):
                     StockPorSucursal.objects.bulk_create(nuevos_stocks)
         except Exception as e:
             print(f"Error al distribuir el stock: {e}")
+
+class Venta(models.Model):
+    id = models.AutoField(primary_key=True)
+    # Vinculamos la venta al usuario autenticado de Django
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
+    total = models.IntegerField()
+    fecha = models.DateTimeField(auto_now_add=True) # Se guarda la fecha y hora automáticamente
+    
+    # Datos que sacamos de la respuesta de Transbank
+    orden_compra = models.CharField(max_length=100, unique=True, null=True)
+    codigo_autorizacion = models.CharField(max_length=100, null=True)
+    tipo_tarjeta = models.CharField(max_length=50, null=True)
+    ultimos_digitos_tarjeta = models.CharField(max_length=4, null=True)
+
+    def __str__(self):
+        # Aseguramos que el usuario y su persona existan antes de acceder a sus atributos
+        cliente_nombre = "Usuario Desconocido"
+        if self.usuario and hasattr(self.usuario, 'persona'):
+            cliente_nombre = f"{self.usuario.persona.nombre} {self.usuario.persona.appaterno}"
+        elif self.usuario:
+            cliente_nombre = self.usuario.username
+            
+        return f"Venta #{self.id} - Cliente: {cliente_nombre} - Total: ${self.total}"
+
+# --- MODELO PARA CADA LÍNEA DE PRODUCTO DE LA VENTA ---
+class DetalleVenta(models.Model):
+    # Vinculamos el detalle a una Venta específica
+    venta = models.ForeignKey(Venta, related_name='detalles', on_delete=models.CASCADE)
+    # Vinculamos el detalle a un Producto específico
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    cantidad = models.IntegerField()
+    precio_unitario = models.IntegerField() # Guardamos el precio al momento de la compra
+
+    def __str__(self):
+        # Ya incluía el nombre del producto, lo hacemos más explícito
+        producto_nombre = self.producto.nombre_producto if self.producto else "Producto Desconocido"
+        return f"Detalle de Venta #{self.venta.id} - Producto: {producto_nombre} - Cantidad: {self.cantidad}"
 
     
 

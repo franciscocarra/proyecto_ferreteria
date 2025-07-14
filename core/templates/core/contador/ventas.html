@@ -3,11 +3,11 @@
 {% load static %}
 <head>
     <meta charset="UTF-8">
-    <title>Registro de Ventas</title>
+    <title>Reporte de Ventas</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'core/css/admini.css' %}">
+    <link rel="stylesheet" href="{% static 'core/css/contador.css' %}">
 </head>
 <body>
 
@@ -15,8 +15,8 @@
     <div class="sidebar p-3">
         <h4 class="text-center py-3">📊 Panel Contador</h4>
         <a href="{% url 'contador' %}"><i class="bi bi-speedometer2"></i> Panel</a>
-        <a href="{% url 'ventas' %}" class="active"><i class="bi bi-cash-coin"></i> Ventas</a>
-        <a href="#"><i class="bi bi-graph-up-arrow"></i> Reportes</a>
+        <a href="{% url 'ventas' %}"><i class="bi bi-cash-coin"></i> Ventas</a>
+        <a href="{% url 'reporte_ventas' %}" class="active"><i class="bi bi-graph-up-arrow"></i> Reportes</a> {# Activar este enlace #}
         <a href="#"><i class="bi bi-bar-chart-line"></i> Estadísticas</a>
         <hr>
         <form method="post" action="{% url 'logout' %}">
@@ -30,16 +30,99 @@
 
 <div class="content flex-grow-1 p-4">
         <div class="header-bar">
-            <h2>Registro de Ventas</h2>
+            <h2>Reporte de Ventas</h2>
             <div class="user-info">
                 <span>{{ request.user.email }}</span>
                 <i class="bi bi-person-circle"></i>
             </div>
         </div>
 
-        <div class="card shadow-lg p-4">
+        <div class="card shadow mb-4">
+            <div class="card-header bg-light">
+                <h4>Filtros de Reporte</h4>
+            </div>
             <div class="card-body">
-                <p class="text-muted text-center">Aquí aparecerán las ventas registradas.</p>
+                <form id="report-form" method="GET" action="{% url 'reporte_ventas' %}">
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-4">
+                            <label for="fecha_inicio" class="form-label">Fecha Inicio:</label>
+                            <input type="date" class="form-control" id="fecha_inicio" name="fecha_inicio" value="{{ fecha_inicio }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="fecha_fin" class="form-label">Fecha Fin:</label>
+                            <input type="date" class="form-control" id="fecha_fin" name="fecha_fin" value="{{ fecha_fin }}">
+                        </div>
+                        <div class="col-md-4">
+                            <button type="submit" class="btn btn-primary w-100">Generar Reporte</button>
+                        </div>
+                    </div>
+                </form>
+                <div class="row g-3 mt-3">
+                    <div class="col-md-6">
+                        <a href="{% url 'descargar_reporte_pdf' %}{% if fecha_inicio or fecha_fin %}?{% endif %}{% if fecha_inicio %}fecha_inicio={{ fecha_inicio }}{% endif %}{% if fecha_inicio and fecha_fin %}&{% endif %}{% if fecha_fin %}fecha_fin={{ fecha_fin }}{% endif %}" class="btn btn-info w-100" target="_blank">
+                            <i class="bi bi-file-earmark-pdf"></i> Descargar PDF
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="{% url 'descargar_reporte_excel' %}{% if fecha_inicio or fecha_fin %}?{% endif %}{% if fecha_inicio %}fecha_inicio={{ fecha_inicio }}{% endif %}{% if fecha_inicio and fecha_fin %}&{% endif %}{% if fecha_fin %}fecha_fin={{ fecha_fin }}{% endif %}" class="btn btn-success w-100">
+                            <i class="bi bi-file-earmark-excel"></i> Descargar Excel
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow">
+            <div class="card-header bg-light">
+                <h4>Detalle del Reporte</h4>
+            </div>
+            <div class="card-body">
+                {% if ventas %}
+                    <p class="text-end"><strong>Total General de Ventas: ${{ total_general|floatformat:0 }}</strong></p>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>ID Venta</th>
+                                    <th>Fecha</th>
+                                    <th>Cliente</th>
+                                    <th>Orden Compra</th>
+                                    <th>Total Venta</th>
+                                    <th>Método Pago</th>
+                                    <th>Productos</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for venta in ventas %}
+                                <tr>
+                                    <td>{{ venta.id }}</td>
+                                    <td>{{ venta.fecha|date:"d/m/Y H:i" }}</td>
+                                    <td>
+                                        {% if venta.usuario.persona_obj %}
+                                            {{ venta.usuario.persona_obj.nombre }} {{ venta.usuario.persona_obj.appaterno }}
+                                        {% else %}
+                                            Usuario Desconocido
+                                        {% endif %}
+                                        ({{ venta.usuario.email }})
+                                    </td>
+                                    <td>{{ venta.orden_compra }}</td>
+                                    <td>${{ venta.total|floatformat:0 }}</td>
+                                    <td>{{ venta.tipo_tarjeta }} ****{{ venta.ultimos_digitos_tarjeta }}</td>
+                                    <td>
+                                        <ul class="list-unstyled mb-0">
+                                            {% for detalle in venta.detalles.all %}
+                                                <li>{{ detalle.producto.nombre_producto }} (x{{ detalle.cantidad }}) - ${{ detalle.precio_unitario|floatformat:0 }} c/u</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-center text-muted">No hay ventas registradas para los filtros seleccionados.</p>
+                {% endif %}
             </div>
         </div>
     </div>

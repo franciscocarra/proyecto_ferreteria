@@ -37,6 +37,10 @@ urlpatterns = [
     path('editar_producto_api/<str:sku>/', views.editar_producto_api, name='editar_producto_api'),
     path('contador/', views.contador, name='contador'),
     path('contador/ventas/', views.ventas, name='ventas'),
+    path('contador/reportes/ventas/', views.reporte_ventas, name='reporte_ventas'),
+    path('contador/reportes/ventas/pdf/', views.descargar_reporte_pdf, name='descargar_reporte_pdf'),
+    path('contador/reportes/ventas/excel/', views.descargar_reporte_excel, name='descargar_reporte_excel'),
+
     
     
 

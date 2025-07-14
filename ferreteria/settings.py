@@ -85,8 +85,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.oracle',
         'NAME': 'localhost/orcl',
-        'USER': 'user que puesieron',
-        'PASSWORD': 'password que puesieron',
+        'USER': 'my_ferre',
+        'PASSWORD': 'my_ferre',
     }
 }
 
@@ -139,6 +139,6 @@ AUTHENTICATION_BACKENDS = [
 LOGOUT_REDIRECT_URL = 'home'
 
 # --- CONFIGURACIÓN DE TRANSBANK ---
-TRANSBANK_WEBPAY_PLUS_COMMERCE_CODE = 'archivo '
-TRANSBANK_WEBPAY_PLUS_API_KEY = 'archivo'
+TRANSBANK_WEBPAY_PLUS_COMMERCE_CODE = '597055555532'
+TRANSBANK_WEBPAY_PLUS_API_KEY = '579B532A7440BB0C9079DED94D31EA16'
 TRANSBANK_ENVIRONMENT = 'INTEGRACION' # Usa 'PRODUCCION' cuando pases a real

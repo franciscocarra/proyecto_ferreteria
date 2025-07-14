@@ -5,3 +5,6 @@ django
 oracledb
 transbank-sdk
 bcrypt
+xhtml2pdf
+openpyxl
+Pillow

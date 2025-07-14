@@ -4,11 +4,9 @@ from .forms import *
 from django.contrib.auth.models import Group
 from django.contrib.auth import authenticate, login, logout
 import random
-from django.utils.crypto import get_random_string
 from .models import Producto
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib.auth.decorators import permission_required
-from django.db.models import Q
 from .models import Persona, TipoUsuario
 import requests
 from django.views.decorators.csrf import csrf_exempt
@@ -28,8 +26,15 @@ from transbank.common.options import WebpayOptions
 from transbank.common.integration_commerce_codes import IntegrationCommerceCodes
 from transbank.common.integration_api_keys import IntegrationApiKeys
 from transbank.common.integration_type import IntegrationType
-import uuid # Para generar IDs únicos
+from django.db.models import Prefetch, Sum
 import time
+from .models import Venta, DetalleVenta 
+from xhtml2pdf import pisa
+import openpyxl
+from openpyxl.styles import Font, Border, Side, Alignment
+from datetime import datetime, timedelta
+from io import BytesIO
+from django.template.loader import get_template
 
 API_URL = "http://127.0.0.1:8001/productos"
 
@@ -283,36 +288,97 @@ def confirmar_pago(request):
     token = request.POST.get('token_ws') or request.GET.get('token_ws')
     
     if not token:
-        messages.info(request, "Has cancelado la compra o ha ocurrido un error.")
+        messages.info(request, "Compra cancelada o token no encontrado.")
+        print("--- DEBUG: Token no recibido o compra cancelada. Redirigiendo a carrito. ---")
         return redirect('carrito')
 
+    print(f"--- DEBUG: Token recibido: {token} ---")
+
     try:
+        # Intenta confirmar la transacción con Transbank
+        print("--- DEBUG: Intentando confirmar la transacción con Transbank... ---")
         tx = Transaction(WebpayOptions(IntegrationCommerceCodes.WEBPAY_PLUS, IntegrationApiKeys.WEBPAY, IntegrationType.TEST))
         response = tx.commit(token)
+        print(f"--- DEBUG: Respuesta de Transbank (commit): {response} ---")
 
-        if response.status == 'AUTHORIZED' and response.response_code == 0:
-            # ¡PAGO APROBADO!
+        # --- INICIO DE LA CORRECCIÓN: Acceder a los elementos como diccionario ---
+        # Verificar si la respuesta es un diccionario y acceder a sus claves
+        if isinstance(response, dict) and response.get('status') == 'AUTHORIZED' and response.get('response_code') == 0:
+            print("\n--- ¡PAGO APROBADO POR TRANSBANK! (Dentro de if 'AUTHORIZED') ---")
             
-            # --- INICIO DE LA CORRECCIÓN FINAL ---
-            # Verificamos si 'cart' existe en la sesión antes de intentar borrarlo
-            if 'cart' in request.session:
-                # Usamos 'del' para una eliminación explícita y segura del carrito
-                del request.session['cart']
-            # --- FIN DE LA CORRECCIÓN FINAL ---
+            try:
+                print("--- 1. Intentando crear el objeto Venta... ---")
+                # Asegúrate de que request.user esté autenticado y tenga un objeto Persona asociado si lo usas en la plantilla
+                venta = Venta.objects.create(
+                    usuario=request.user,
+                    total=int(response.get('amount')), # Acceder como diccionario
+                    orden_compra=response.get('buy_order'), # Acceder como diccionario
+                    codigo_autorizacion=response.get('authorization_code'), # Acceder como diccionario
+                    tipo_tarjeta=response.get('payment_type_code'), # Acceder como diccionario
+                    # Usa .get() con un valor por defecto para evitar errores si 'card_number' no existe
+                    ultimos_digitos_tarjeta=response.get('card_detail', {}).get('card_number', 'N/A') 
+                )
+                print(f"--- 2. Venta #{venta.id} creada exitosamente para usuario {request.user.username}. ---")
 
+                cart = request.session.get('cart', {})
+                print(f"--- 3. Carrito obtenido de la sesión. Items: {len(cart)} ---")
+
+                if not cart:
+                    print("--- ADVERTENCIA: Carrito vacío al momento de confirmar la venta. ---")
+                    messages.warning(request, "El pago fue exitoso, pero el carrito estaba vacío. No se registraron productos.")
+
+                for sku, item in cart.items():
+                    print(f"    - Procesando producto SKU: {sku}")
+                    try:
+                        # Usar get_object_or_404 es más robusto para asegurar que el producto existe
+                        producto = get_object_or_404(Producto, sku=sku) 
+                        DetalleVenta.objects.create(
+                            venta=venta,
+                            producto=producto,
+                            cantidad=item['quantity'],
+                            precio_unitario=item['price']
+                        )
+                        print(f"    - Detalle para SKU: {sku} guardado.")
+                    except Producto.DoesNotExist:
+                        print(f"    --- ERROR: Producto con SKU '{sku}' no encontrado en la base de datos. ---")
+                        messages.error(request, f"Producto '{sku}' no encontrado para registrar en la venta.")
+                    except Exception as det_e:
+                        print(f"    --- ERROR al guardar detalle para SKU '{sku}': {det_e} ---")
+                        messages.error(request, f"Error al guardar detalle para un producto ({sku}).")
+
+
+                print("--- 4. Todos los detalles de la venta procesados. ---")
+
+            except Exception as e:
+                print(f"--- ERROR CRÍTICO AL GUARDAR LA VENTA EN BASE DE DATOS: {e} ---")
+                # Aunque el pago fue exitoso, no se pudo registrar la venta.
+                messages.error(request, f"El pago fue exitoso, pero hubo un error al registrar tu compra. Por favor, contacta a soporte. Detalles: {e}")
+                return redirect('home')
+
+
+            # Vaciamos el carrito de la sesión
+            if 'cart' in request.session:
+                del request.session['cart']
+                print("--- 5. Carrito vaciado de la sesión. ---")
+            
             messages.success(request, "¡Tu compra ha sido realizada con éxito!")
             context = {'response': response}
             return render(request, 'core/pago_exitoso.html', context)
         else:
-            # PAGO RECHAZADO
+            # PAGO RECHAZADO por Transbank (response.status no es 'AUTHORIZED' o response_code no es 0)
+            # También si response no es un diccionario o si el status no es 'AUTHORIZED'
+            print(f"--- DEBUG: Pago rechazado por Transbank. Estado: {response.get('status', 'N/A')}, Código: {response.get('response_code', 'N/A')} ---")
             messages.error(request, "Tu pago fue rechazado. Inténtalo de nuevo.")
             context = {'response': response}
             return render(request, 'core/pago_fallido.html', context)
+        # --- FIN DE LA CORRECCIÓN ---
 
     except Exception as e:
-        messages.error(request, f"Error al confirmar la transacción: {e}")
+        # Este bloque captura cualquier error *antes* de que Transbank dé una respuesta de commit.
+        # Por ejemplo, problemas de conexión, credenciales inválidas de Transbank, errores en la librería, etc.
+        print(f"--- ERROR CRÍTICO EN LA COMUNICACIÓN CON TRANSBANK O EN LA LÓGICA PRINCIPAL: {e} ---")
+        messages.error(request, f"Ocurrió un error inesperado al procesar tu pago. Por favor, contacta a soporte. Detalles: {e}")
         return redirect('carrito')
-
 
 def users(request):
     return render(request, 'core/A_dmin/users.html')
@@ -550,9 +616,31 @@ def ventas(request):
             messages.error(request, 'Acceso denegado.')
             return redirect('home')
 
-    # 3. Si tiene permiso, le mostramos la página de ventas
-    # En el futuro, aquí podrías obtener los datos de las ventas de la base de datos
-    return render(request, 'core/contador/ventas.html')
+    # Obtenemos todas las ventas y traemos la información relacionada
+    # para que la página cargue más rápido. Las más nuevas primero.
+    # Se elimina 'usuario__persona' de prefetch_related porque no es una relación directa del modelo User.
+    ventas_con_detalles = Venta.objects.prefetch_related(
+        Prefetch('detalles', queryset=DetalleVenta.objects.select_related('producto'))
+    ).order_by('-fecha')
+
+    # --- INICIO DE LA CORRECCIÓN: Obtener y adjuntar el objeto Persona ---
+    # Para cada Venta, obtenemos el objeto Persona asociado al usuario de la venta
+    # y lo adjuntamos como 'persona_obj' para usarlo en la plantilla.
+    for venta in ventas_con_detalles:
+        if venta.usuario: # Aseguramos que haya un usuario vinculado a la venta
+            try:
+                # Buscamos el objeto Persona usando el correo electrónico del usuario
+                venta.usuario.persona_obj = Persona.objects.get(correo=venta.usuario.email)
+            except Persona.DoesNotExist:
+                # Si no se encuentra la Persona, la establecemos como None
+                venta.usuario.persona_obj = None 
+        else:
+            # Si no hay usuario, no hay Persona asociada
+            venta.usuario.persona_obj = None 
+    # --- FIN DE LA CORRECCIÓN ---
+
+    # Pasamos el diccionario de contexto con 'ventas' a la plantilla
+    return render(request, 'core/contador/ventas.html', {'ventas': ventas_con_detalles})
 
 @login_required # 1. Solo usuarios logueados pueden acceder
 def contador(request):
@@ -569,4 +657,250 @@ def contador(request):
         
     # 3. Si tiene permiso, le mostramos la página del panel
     return render(request, 'core/contador/contador.html')
+
+@login_required
+def reporte_ventas(request):
+    # Lógica de seguridad para verificar si el usuario es un contador o superusuario
+    try:
+        persona = Persona.objects.get(correo=request.user.email)
+        if persona.tipo_persona.lower() != 'contador' and not request.user.is_superuser:
+            messages.error(request, 'Acceso denegado. No tienes permisos para ver reportes.')
+            return redirect('home')
+    except Persona.DoesNotExist:
+        if not request.user.is_superuser:
+            messages.error(request, 'Acceso denegado.')
+            return redirect('home')
+
+    # --- Lógica para filtros de fecha ---
+    fecha_inicio_str = request.GET.get('fecha_inicio')
+    fecha_fin_str = request.GET.get('fecha_fin')
+
+    ventas_query = Venta.objects.all()
+
+    if fecha_inicio_str:
+        try:
+            fecha_inicio = datetime.strptime(fecha_inicio_str, '%Y-%m-%d').date()
+            ventas_query = ventas_query.filter(fecha__gte=fecha_inicio)
+        except ValueError:
+            messages.error(request, "Formato de fecha de inicio inválido. Use AAAA-MM-DD.")
+
+    if fecha_fin_str:
+        try:
+            fecha_fin = datetime.strptime(fecha_fin_str, '%Y-%m-%d').date()
+            # Para incluir todo el día de la fecha final, sumamos un día y filtramos por menor que
+            ventas_query = ventas_query.filter(fecha__lt=fecha_fin + timedelta(days=1))
+        except ValueError:
+            messages.error(request, "Formato de fecha de fin inválido. Use AAAA-MM-DD.")
+
+    # Obtenemos las ventas con sus detalles y usuarios/personas relacionadas
+    ventas_reporte = ventas_query.prefetch_related(
+        Prefetch('detalles', queryset=DetalleVenta.objects.select_related('producto')),
+    ).order_by('-fecha')
+
+    # Adjuntar el objeto Persona a cada usuario de la venta (como hicimos en la vista 'ventas')
+    for venta in ventas_reporte:
+        if venta.usuario:
+            try:
+                venta.usuario.persona_obj = Persona.objects.get(correo=venta.usuario.email)
+            except Persona.DoesNotExist:
+                venta.usuario.persona_obj = None
+        else:
+            venta.usuario.persona_obj = None
+
+    # Calcular el total general del reporte
+    total_general_ventas = ventas_reporte.aggregate(Sum('total'))['total__sum'] or 0
+
+    context = {
+        'ventas': ventas_reporte,
+        'total_general': total_general_ventas,
+        'fecha_inicio': fecha_inicio_str,
+        'fecha_fin': fecha_fin_str,
+    }
+    return render(request, 'core/contador/reporte_ventas.html', context)
+
+
+@login_required
+def descargar_reporte_pdf(request):
+    # Reutilizamos la lógica de obtención de datos de reporte_ventas
+    fecha_inicio_str = request.GET.get('fecha_inicio')
+    fecha_fin_str = request.GET.get('fecha_fin')
+
+    ventas_query = Venta.objects.all()
+
+    if fecha_inicio_str:
+        try:
+            fecha_inicio = datetime.strptime(fecha_inicio_str, '%Y-%m-%d').date()
+            ventas_query = ventas_query.filter(fecha__gte=fecha_inicio)
+        except ValueError:
+            pass # Ignorar errores de formato para la descarga, ya se manejan en la vista principal
+
+    if fecha_fin_str:
+        try:
+            fecha_fin = datetime.strptime(fecha_fin_str, '%Y-%m-%d').date()
+            ventas_query = ventas_query.filter(fecha__lt=fecha_fin + timedelta(days=1))
+        except ValueError:
+            pass
+
+    ventas_reporte = ventas_query.prefetch_related(
+        Prefetch('detalles', queryset=DetalleVenta.objects.select_related('producto')),
+    ).order_by('-fecha')
+
+    for venta in ventas_reporte:
+        if venta.usuario:
+            try:
+                venta.usuario.persona_obj = Persona.objects.get(correo=venta.usuario.email)
+            except Persona.DoesNotExist:
+                venta.usuario.persona_obj = None
+        else:
+            venta.usuario.persona_obj = None
+
+    total_general_ventas = ventas_reporte.aggregate(Sum('total'))['total__sum'] or 0
+
+    context = {
+        'ventas': ventas_reporte,
+        'total_general': total_general_ventas,
+        'fecha_inicio': fecha_inicio_str,
+        'fecha_fin': fecha_fin_str,
+        'request': request # Pasar el objeto request para {% static %} si se usa en la plantilla PDF
+    }
+
+    # Renderizar la plantilla HTML para PDF
+    template_path = 'core/contador/reporte_ventas_pdf.html' # Usaremos una plantilla específica para PDF
+    template = get_template(template_path)
+    html = template.render(context)
+
+    # Crear el PDF
+    response = BytesIO()
+    pdf = pisa.CreatePDF(
+        html,
+        dest=response,
+        encoding='utf-8' # Asegura el soporte de caracteres especiales como 'ñ'
+    )
+    if not pdf.err:
+        response = HttpResponse(response.getvalue(), content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="reporte_ventas.pdf"'
+        return response
+    
+    messages.error(request, "Error al generar el reporte PDF.")
+    return redirect('reporte_ventas')
+
+
+@login_required
+def descargar_reporte_excel(request):
+    # Reutilizamos la lógica de obtención de datos de reporte_ventas
+    fecha_inicio_str = request.GET.get('fecha_inicio')
+    fecha_fin_str = request.GET.get('fecha_fin')
+
+    ventas_query = Venta.objects.all()
+
+    if fecha_inicio_str:
+        try:
+            fecha_inicio = datetime.strptime(fecha_inicio_str, '%Y-%m-%d').date()
+            ventas_query = ventas_query.filter(fecha__gte=fecha_inicio)
+        except ValueError:
+            pass
+
+    if fecha_fin_str:
+        try:
+            fecha_fin = datetime.strptime(fecha_fin_str, '%Y-%m-%d').date()
+            ventas_query = ventas_query.filter(fecha__lt=fecha_fin + timedelta(days=1))
+        except ValueError:
+            pass
+
+    ventas_reporte = ventas_query.prefetch_related(
+        Prefetch('detalles', queryset=DetalleVenta.objects.select_related('producto')),
+    ).order_by('-fecha')
+
+    for venta in ventas_reporte:
+        if venta.usuario:
+            try:
+                venta.usuario.persona_obj = Persona.objects.get(correo=venta.usuario.email)
+            except Persona.DoesNotExist:
+                venta.usuario.persona_obj = None
+        else:
+            venta.usuario.persona_obj = None
+
+    total_general_ventas = ventas_reporte.aggregate(Sum('total'))['total__sum'] or 0
+
+    # Crear el libro de Excel
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "Reporte de Ventas"
+
+    # Estilos básicos
+    bold_font = Font(bold=True)
+    thin_border = Border(left=Side(style='thin'), 
+                         right=Side(style='thin'), 
+                         top=Side(style='thin'), 
+                         bottom=Side(style='thin'))
+    center_aligned_text = Alignment(horizontal="center")
+
+    # Cabeceras del reporte
+    headers = [
+        "ID Venta", "Fecha", "Cliente", "Email Cliente", "Orden Compra", 
+        "Total Venta", "Método Pago", "Últimos Dígitos Tarjeta", "Código Autorización",
+        "Productos Comprados"
+    ]
+    ws.append(headers)
+    for col_num, cell in enumerate(ws[1], 1):
+        cell.font = bold_font
+        cell.border = thin_border
+        cell.alignment = center_aligned_text
+
+    # Llenar datos
+    for venta in ventas_reporte:
+        cliente_nombre = "Usuario Desconocido"
+        if venta.usuario and venta.usuario.persona_obj:
+            cliente_nombre = f"{venta.usuario.persona_obj.nombre} {venta.usuario.persona_obj.appaterno}"
+        elif venta.usuario:
+            cliente_nombre = venta.usuario.username
+
+        productos_str = ""
+        for detalle in venta.detalles.all():
+            productos_str += f"{detalle.producto.nombre_producto} (x{detalle.cantidad}) - ${detalle.precio_unitario} c/u; "
+        
+        row_data = [
+            venta.id,
+            venta.fecha.strftime("%d/%m/%Y %H:%M"),
+            cliente_nombre,
+            venta.usuario.email if venta.usuario else "N/A",
+            venta.orden_compra,
+            venta.total,
+            venta.tipo_tarjeta,
+            venta.ultimos_digitos_tarjeta,
+            venta.codigo_autorizacion,
+            productos_str.strip('; ') # Eliminar el último '; '
+        ]
+        ws.append(row_data)
+        for cell in ws[ws.max_row]:
+            cell.border = thin_border
+
+    # Añadir total general
+    ws.append([]) # Fila vacía
+    ws.append(["", "", "", "", "Total General:", total_general_ventas, "", "", "", ""])
+    ws[ws.max_row][5].font = bold_font # Celda del total general
+    ws[ws.max_row][5].border = thin_border
+
+    # Ajustar ancho de columnas
+    for col in ws.columns:
+        max_length = 0
+        column = col[0].column_letter # Get the column name
+        for cell in col:
+            try:
+                if len(str(cell.value)) > max_length:
+                    max_length = len(str(cell.value))
+            except:
+                pass
+        adjusted_width = (max_length + 2)
+        ws.column_dimensions[column].width = adjusted_width
+
+    # Guardar el libro en un buffer en memoria
+    output = BytesIO()
+    wb.save(output)
+    output.seek(0)
+
+    # Crear la respuesta HTTP
+    response = HttpResponse(output.read(), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename="reporte_ventas.xlsx"'
+    return response
 

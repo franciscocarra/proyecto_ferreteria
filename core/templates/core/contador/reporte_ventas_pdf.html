@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Reporte de Ventas</title>
+    <style>
+        /* Estilos generales para un reporte limpio */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20mm;
+            font-size: 9pt;
+            color: #333;
+        }
+
+        .main-header, .company-info, .filters-info, .total-section {
+            margin-bottom: 15px;
+        }
+        
+        .main-header {
+            font-size: 16pt;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .company-info {
+            font-size: 10pt;
+            font-weight: bold;
+            border-bottom: 1px solid #333;
+            padding-bottom: 5px;
+        }
+        .company-info span {
+            font-weight: normal;
+        }
+
+        .filters-info {
+            font-size: 8pt;
+            text-align: center;
+            font-style: italic;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 6px;
+            /* =============================================== */
+            /* INICIO DE LA CORRECCIÓN: Alineación General     */
+            /* =============================================== */
+            text-align: center;   /* Todo el texto centrado por defecto */
+            vertical-align: middle; /* Centrado vertical para mejor apariencia */
+            /* =============================================== */
+            /* FIN DE LA CORRECCIÓN                              */
+            /* =============================================== */
+            word-wrap: break-word;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        .total-section {
+            text-align: right;
+            font-size: 11pt;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        
+        /* Ya no necesitamos clases de alineación específicas para las celdas */
+
+    </style>
+</head>
+<body>
+    <div class="main-header">
+        REPORTE DE VENTAS
+    </div>
+
+    <div class="report-info">
+        <div class="company-info">
+            EMPRESA: <span>FERRETERÍA RINCO DEL HERRERO</span>
+        </div>
+        <p class="filters-info">
+            {% if fecha_inicio %}De: {{ fecha_inicio }}{% else %}Desde el inicio{% endif %}
+            {% if fecha_fin %} | Hasta: {{ fecha_fin }}{% else %} | Hasta la fecha actual{% endif %}
+        </p>
+    </div>
+
+    {% if ventas %}
+        <table class="main-table">
+            <thead>
+                <tr>
+                    <th>ID Venta</th>
+                    <th>Fecha</th>
+                    <th>Cliente</th>
+                    <th>Orden Compra</th>
+                    <th>Total Venta</th>
+                    <th>Método Pago</th>
+                    <th>Productos</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for venta in ventas %}
+                <tr>
+                    <!-- Se eliminan las clases de alineación específicas para que todo quede centrado -->
+                    <td>{{ venta.id }}</td>
+                    <td>{{ venta.fecha|date:"d/m/Y H:i" }}</td>
+                    <td>
+                        {% if venta.usuario.persona %}
+                            {{ venta.usuario.persona.nombre }} {{ venta.usuario.persona.appaterno }} ({{ venta.usuario.email }})
+                        {% else %}
+                            {{ venta.usuario.email }}
+                        {% endif %}
+                    </td>
+                    <td>{{ venta.orden_compra }}</td>
+                    <td>${{ venta.total|floatformat:0 }}</td>
+                    <td>{{ venta.tipo_tarjeta }} (****{{ venta.ultimos_digitos_tarjeta }})</td>
+                    <td>
+                        {% for detalle in venta.detalles.all %}
+                            {{ detalle.producto.nombre_producto }} (x{{ detalle.cantidad }}) - ${{ detalle.precio_unitario|floatformat:0 }} c/u<br>
+                        {% endfor %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="total-section">
+            TOTAL GENERAL DE VENTAS: ${{ total_general|floatformat:0 }}
+        </div>
+
+    {% else %}
+        <p style="text-align: center; color: #666;">No hay ventas registradas para los filtros seleccionados.</p>
+    {% endif %}
+</body>
+</html>
