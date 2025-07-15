@@ -31,8 +31,7 @@
                                     <span>{{ user.email }}</span>
                                     <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                 </button>
-                                <div id="user-menu-dropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 hidden">
-                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Mi Perfil</a>
+                                <div id="user-menu-dropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 hidden">                        
                                     <form action="{% url 'logout' %}" method="post">
                                         {% csrf_token %}
                                         <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
@@ -49,6 +48,15 @@
 
                         <li>
                             <a href="{% url 'carrito' %}" class="relative inline-block w-8 h-8">
+                                <div class="absolute bottom-0 left-0 w-8 h-5 border-2 border-white rounded-sm"></div>
+                        <div class="absolute bottom-5 left-1 w-6 h-2 border-2 border-white border-b-0 rounded-t-sm"></div>
+                        <div class="absolute bottom-1 left-1 w-1 h-1 bg-white rounded-full"></div>
+                        <div class="absolute bottom-1 right-1 w-1 h-1 bg-white rounded-full"></div>
+                        {% if cart_item_count > 0 %}
+                        <span class="absolute -top-2 -right-2 flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-600 rounded-full">
+                            {{ cart_item_count }}
+                        </span>
+                        {% endif %}
                                </a>
                         </li>
                     </ul>

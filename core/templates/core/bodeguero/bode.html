@@ -17,11 +17,7 @@
     <!-- Sidebar -->
     <div class="sidebar p-3">
         <h4 class="text-center py-3">🏬 Bodega</h4>
-        <a href="#"><i class="bi bi-speedometer2"></i> Panel</a>
-        <a href="#"><i class="bi bi-boxes"></i> Inventario</a>
-        <a href="#"><i class="bi bi-truck"></i> Entradas</a>
-        <a href="#"><i class="bi bi-box-arrow-in-down"></i> Salidas</a>
-        <a href="#"><i class="bi bi-tools"></i> Configuración</a>
+        <a href="{% url 'inventario' %}"><i class="bi bi-boxes"></i> Inventario</a>
         <hr>
         <form method="post" action="{% url 'logout' %}">
         {% csrf_token %}

@@ -35,6 +35,7 @@ from openpyxl.styles import Font, Border, Side, Alignment
 from datetime import datetime, timedelta
 from io import BytesIO
 from django.template.loader import get_template
+from django.utils.crypto import get_random_string
 
 API_URL = "http://127.0.0.1:8001/productos"
 
@@ -54,15 +55,13 @@ def producto(request):
     # Enviamos la lista de productos al template
     return render(request, 'core/productos.html', {'lista_productos': productos})
 
-def producto2(request):
-    return render(request, 'core/productos_2.html')
+
 
 def contacto(request):
     return render(request, 'core/contacto.html')
 
 @csrf_exempt
 def iniciar_session(request):
-    # --- Lógica para procesar el login (POST) ---
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
@@ -76,44 +75,78 @@ def iniciar_session(request):
         if user is not None:
             login(request, user)
             
-            redirect_url = 'home' # URL por defecto para clientes, vendedores, etc.
-            
-            # Lógica de redirección mejorada
-            try:
-                # Buscamos en la tabla 'persona' para obtener el tipo
-                persona = Persona.objects.get(correo=user.email)
-                tipo = persona.tipo_persona.lower()
+            # Por defecto, redirigimos a home
+            redirect_url = 'home'
+            is_admin_login = False
 
-                # Comprobamos si es admin por su tipo en la tabla O si es superuser de Django
-                if tipo == 'admin' or user.is_superuser:
-                    redirect_url = 'administracion'
-                elif tipo == 'bodeguero':
-                    redirect_url = 'bodeguero'
-                elif tipo == 'contador':
-                    redirect_url = 'contador'
-                
-            except Persona.DoesNotExist:
-                # Si es un superuser de Django pero no está en la tabla Persona,
-                # también debe ir al panel de administración.
-                if user.is_superuser:
-                    redirect_url = 'administración'
+            # 1. VERIFICACIÓN DE SUPERUSUARIO PRIMERO
+            if user.is_superuser:
+                redirect_url = 'administracion'
+                is_admin_login = True
+                # Nota: La lógica de cambio de contraseña no se ejecutará para superusers
+                # a menos que también tengan un objeto Persona. Considera si esto es lo deseado.
 
-            return JsonResponse({
-                'success': True,
-                'message': 'Inicio de sesión exitoso.',
-                'redirect_url_name': redirect_url
-            })
+            else:
+                # 2. SI NO ES SUPERUSER, BUSCAMOS EL PERFIL
+                try:
+                    persona = Persona.objects.get(correo=user.email)
+                    tipo = persona.tipo_persona.lower().strip()
+                    
+                    # ¡LÍNEA CLAVE PARA DEPURAR! Revisa la consola de Django.
+                    print(f"Login attempt for {user.email}. Found user type: '{tipo}'")
+
+                    if tipo == 'admin':
+                        redirect_url = 'administracion'
+                        is_admin_login = True
+                    elif tipo == 'bodeguero':
+                        redirect_url = 'bodeguero'
+                    elif tipo == 'contador':
+                        redirect_url = 'contador'
+                    # Si el tipo no es ninguno de estos, se quedará en 'home'
+
+                except Persona.DoesNotExist:
+                    # Si no es superuser y no tiene perfil, no puede ser admin.
+                    print(f"Login failed for {user.email}: No Persona object found.")
+                    pass # redirect_url se mantiene como 'home'
+
+            # --- LÓGICA PARA CAMBIAR CONTRASEÑA DE ADMIN ---
+            # Se ejecuta solo si se confirmó que es un admin con perfil Persona
+            if is_admin_login:
+                try:
+                    # Asegurarnos de que 'persona' existe para obtener el RUT
+                    persona_for_pwd_change = Persona.objects.get(correo=user.email)
+                    new_password = get_random_string(length=12)
+                    
+                    api_url = f"http://localhost:3000/personas/{persona_for_pwd_change.rut}"
+                    api_key = 'Admin1234'
+                    
+                    response = requests.patch(
+                        api_url,
+                        headers={'Content-Type': 'application/json', 'x-api-key': api_key},
+                        json={'contrasena': new_password}
+                    )
+                    
+                    if response.ok:
+                        request.session['new_admin_password'] = new_password
+                        print(f"SUCCESS: Password for {user.email} updated via API.")
+                    else:
+                        print(f"API ERROR: Could not update password for {user.email}. Response: {response.text}")
+
+                except Persona.DoesNotExist:
+                     print(f"NOTICE: Cannot change password for superuser {user.email} without a Persona profile.")
+                except Exception as e:
+                    print(f"EXCEPTION during password update: {e}")
+            # --- FIN DE LA LÓGICA ---
+
+            return JsonResponse({'success': True, 'redirect_url_name': redirect_url})
         else:
             return JsonResponse({'success': False, 'error': 'Correo o contraseña incorrectos.'}, status=401)
     
-    # --- Lógica para mostrar la página (GET) ---
-    else:
-        # Si el usuario ya está logueado, lo redirigimos a la página de inicio
-        if request.user.is_authenticated:
-            return redirect('home')
-        
-        # Si no está autenticado, le mostramos la página de login
-        return render(request, 'core/iniciar_session.html')
+    # El método GET no cambia
+    if request.user.is_authenticated:
+        return redirect('home')
+    return render(request, 'core/iniciar_session.html')
+
 
 def registro(request):
     # Ya no se necesita el formulario de Django aquí, porque la página usa
@@ -283,7 +316,9 @@ def iniciar_pago(request):
         print(f"   - Excepción: {e}")
         messages.error(request, f"Error al iniciar la transacción con Transbank.")
         return redirect('carrito')
-    
+
+
+
 def confirmar_pago(request):
     token = request.POST.get('token_ws') or request.GET.get('token_ws')
     
@@ -385,27 +420,32 @@ def users(request):
 
 @login_required
 def administracion(request):
-    # Asumimos que no es admin hasta que se demuestre lo contrario
-    es_admin = False
-    
+    # Lógica de seguridad para verificar si el usuario es admin
+    tiene_permiso = False
     if request.user.is_superuser:
-        es_admin = True
+        tiene_permiso = True
     else:
         try:
-            # Usamos .strip() y .lower() para limpiar los datos y evitar errores
             persona = Persona.objects.get(correo=request.user.email)
             if persona.tipo_persona.strip().lower() == 'admin':
-                es_admin = True
+                tiene_permiso = True
         except Persona.DoesNotExist:
-            es_admin = False # No está en la tabla Persona, no puede ser nuestro admin
-    
-    if not es_admin:
+            tiene_permiso = False
+            
+    if not tiene_permiso:
         messages.error(request, 'No tienes permiso para acceder a esta página.')
         return redirect('home')
 
-    # Si llegamos aquí, es un admin. Mostramos la página.
-    # Le pasamos el usuario a la plantilla para mostrar su email.
-    return render(request, 'core/administración.html', {'user': request.user})
+    # Obtenemos la nueva contraseña de la sesión (y la eliminamos para que se muestre solo una vez)
+    new_password = request.session.pop('new_admin_password', None)
+    
+    context = {
+        'user': request.user,
+        'new_password': new_password
+    }
+    
+    return render(request, 'core/administración.html', context)
+
 
 def bodeguero(request):
     return render(request, 'core/bodeguero/bode.html')

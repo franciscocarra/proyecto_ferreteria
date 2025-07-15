@@ -7,7 +7,6 @@
     <title>Ferretería Rinco Del Herrero - Registro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Si usas Django, mantén tus enlaces a static files. Si es un HTML plano, estos no funcionarán sin un servidor Django. -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link rel="stylesheet" href="{% static 'core/css/registro.css' %}">
 </head>
@@ -28,7 +27,6 @@
                             <div class="absolute bottom-5 left-1 w-6 h-2 border-2 border-white border-b-0 rounded-t-sm"></div>
                             <div class="absolute bottom-1 left-1 w-1 h-1 bg-white rounded-full"></div>
                             <div class="absolute bottom-1 right-1 w-1 h-1 bg-white rounded-full"></div>
-
                             {% if cart_item_count > 0 %}
                             <span class="absolute -top-2 -right-2 flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-600 rounded-full">
                                 {{ cart_item_count }}
@@ -41,22 +39,10 @@
         </div>
     </header>
 
-    <!-- SIDEBAR DE CATEGORÍAS (Se mantiene para la estructura general, pero no funcional en HTML plano sin JS adicional) -->
     <div id="categoriasSidebar" class="fixed top-0 left-0 w-80 h-full bg-white shadow-lg z-50 transform -translate-x-full transition-transform duration-300 ease-in-out overflow-y-auto">
-        <div class="flex items-center justify-between px-4 py-3 border-b">
-            <h2 class="text-lg font-bold text-gray-800">Categorías</h2>
-            <button onclick="toggleCategorias()" class="text-xl font-bold text-gray-600 hover:text-black">&times;</button>
-        </div>
-        <ul class="p-4 space-y-2 text-gray-700">
-            <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Aseo Industrial</li></a> <!-- Assuming error_producto.html -->
-            <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Ropa de Seguridad y Protección Personal</li></a> <!-- Assuming error_producto.html -->
-            <a href="{% url 'materiales' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Materiales de Construcción</li></a>
-            <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Máquinas</li></a> <!-- Assuming error_producto.html -->
-            <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Fijaciones</li></a> <!-- Assuming error_producto.html -->
-            <a href="{% url 'pintura' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Pintura</li></a>
-            <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Tensores</li></a>
-        </ul>
+        <!-- Contenido del Sidebar -->
     </div>
+
     <div class="container-fluid mt-5 pt-3">
         <div class="row justify-content-center">
             <div class="col-lg-6">
@@ -65,76 +51,73 @@
                         Registro de Usuarios
                     </div>
                     <div class="card-body">
-                        <div class="error-message" id="errorMessage"></div>
-                        <div class="success-message" id="successMessage"></div>
+                        <div id="errorMessage" class="alert alert-danger" style="display:none;"></div>
+                        <div id="successMessage" class="alert alert-success" style="display:none;"></div>
 
                         <form id="registroForm">
-                            <div class="grid grid-cols-1 md:grid-cols-2">
-                                <div class="form-group">
-                                    <label for="rut">RUT:</label>
-                                    <input type="text" id="rut" placeholder="Ej: 12345678-9" required>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="rut" class="form-label">RUT:</label>
+                                    <input type="text" class="form-control" id="rut" placeholder="Ej: 12345678-9" required>
                                 </div>
-                                <div class="form-group">
-                                    <label for="nombre">Nombre:</label>
-                                    <input type="text" id="nombre" placeholder="Ej: Juan" required>
+                                <div class="col-md-6 mb-3">
+                                    <label for="nombre" class="form-label">Nombre:</label>
+                                    <input type="text" class="form-control" id="nombre" placeholder="Ej: Juan" required>
                                 </div>
-                                <div class="form-group">
-                                    <label for="appaterno">Apellido Paterno:</label>
-                                    <input type="text" id="appaterno" placeholder="Ej: Pérez" required>
+                                <div class="col-md-6 mb-3">
+                                    <label for="appaterno" class="form-label">Apellido Paterno:</label>
+                                    <input type="text" class="form-control" id="appaterno" placeholder="Ej: Pérez" required>
                                 </div>
-                                <div class="form-group">
-                                    <label for="apmaterno">Apellido Materno:</label>
-                                    <input type="text" id="apmaterno" placeholder="Ej: González" required>
+                                <div class="col-md-6 mb-3">
+                                    <label for="apmaterno" class="form-label">Apellido Materno:</label>
+                                    <input type="text" class="form-control" id="apmaterno" placeholder="Ej: González" required>
                                 </div>
-                                <div class="form-group">
-                                    <label for="correo">Correo:</label>
-                                    <input type="email" id="correo" placeholder="Ej: tu@correo.com" required>
+                                <div class="col-md-6 mb-3">
+                                    <label for="correo" class="form-label">Correo:</label>
+                                    <input type="email" class="form-control" id="correo" placeholder="Ej: tu@correo.com" required>
                                 </div>
-                                <div class="form-group">
-                                    <label for="contrasena">Contraseña:</label>
-                                    <input type="password" id="contrasena" placeholder="Ingresa tu contraseña" required>
+                                <div class="col-md-6 mb-3">
+                                    <label for="telefono" class="form-label">Teléfono:</label>
+                                    <input type="text" class="form-control" id="telefono" placeholder="Ej: 912345678" required>
                                 </div>
-                                <div class="form-group">
-                                    <label for="confirmContrasena">Confirmar Contraseña:</label>
-                                    <input type="password" id="confirmContrasena" placeholder="Confirma tu contraseña" required>
+                                <div class="col-md-12 mb-3">
+                                    <label for="direccion" class="form-label">Dirección:</label>
+                                    <input type="text" class="form-control" id="direccion" placeholder="Ej: Calle Falsa 123" required>
                                 </div>
-                                <div class="form-group">
-                                    <label for="genero">Género:</label>
-                                    <select id="genero" required>
+                                <div class="col-md-6 mb-3">
+                                    <label for="contrasena" class="form-label">Contraseña:</label>
+                                    <input type="password" class="form-control" id="contrasena" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="confirmContrasena" class="form-label">Confirmar Contraseña:</label>
+                                    <input type="password" class="form-control" id="confirmContrasena" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="genero" class="form-label">Género:</label>
+                                    <select id="genero" class="form-select" required>
                                         <option value="">Selecciona</option>
                                         <option value="M">Masculino</option>
                                         <option value="F">Femenino</option>
                                         <option value="O">Otro</option>
                                     </select>
                                 </div>
-                                <div class="form-group">
-                                    <label for="fec_nac">Fecha de Nacimiento:</label>
-                                    <input type="date" id="fec_nac" required>
+                                <div class="col-md-6 mb-3">
+                                    <label for="fec_nac" class="form-label">Fecha de Nacimiento:</label>
+                                    <input type="date" class="form-control" id="fec_nac" required>
                                 </div>
-                                <div class="form-group">
-                                    <label for="telefono">Teléfono:</label>
-                                    <input type="text" id="telefono" placeholder="Ej: 912345678" required>
-                                </div>
-                                <div class="form-group md:col-span-2">
-                                    <label for="direccion">Dirección:</label>
-                                    <input type="text" id="direccion" placeholder="Ej: Calle Falsa 123" required>
-                                </div>
-                                <div class="form-group md:col-span-2">
-                                    <label for="tipo_persona">Tipo de Persona:</label>
-                                    <select id="tipo_persona" required>
+                                <div class="col-md-12 mb-3">
+                                    <label for="tipo_persona" class="form-label">Tipo de Persona:</label>
+                                    <select id="tipo_persona" class="form-select" required>
                                         <option value="cliente">Cliente</option>
                                         <option value="admin">Admin</option>
                                     </select>
                                 </div>
                             </div>
-                            <div class="form-group mt-4">
-                                <button type="submit" class="btn btn-primary">Registrarse</button>
+                            <div class="mt-4">
+                                <button type="submit" class="btn btn-primary w-100">Registrarse</button>
                             </div>
-                            <div class="form-group mt-2 text-center">
-                                <small class="text-muted">¿Ya tienes una cuenta? <a href="{% url 'iniciar_session' %}" class="text-blue-600 hover:underline">Inicia Sesión</a></small>
-                            </div>
-                            <div class="form-group mt-2 text-center">
-                                <small class="text-muted">¿Olvidaste tu contraseña? <a href="{% url 'olvidar_contrasena' %}" class="text-blue-600 hover:underline">¡Crea una nueva!</a></small>
+                            <div class="mt-2 text-center">
+                                <small class="text-muted">¿Ya tienes una cuenta? <a href="{% url 'iniciar_session' %}" class="text-primary">Inicia Sesión</a></small>
                             </div>
                         </form>
                     </div>
@@ -144,191 +127,125 @@
     </div>
 
     <footer class="bg-black text-white py-10 mt-16">
-        <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-5 gap-8 text-sm">
-            <!-- Logo y contacto -->
-            <div>
-                <div class="flex items-center mb-4">
-                    <div class="bg-warning text-white font-bold text-lg px-2 py-1 mr-2">RDH</div>
-                    <span class="font-bold text-xl">Ferretería Rinco Del Herrero</span>
-                </div>
-                <p class="font-semibold">Casa Matriz</p>
-                <p>Av. Américo Vespucio 1252, Pudahuel, Región Metropolitana</p>
-                <div class="flex items-center mt-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10l1.5-1.5M21 10l-1.5-1.5M9 16h6M10 12h4m-1 8v-8m-4 4h8" /></svg>
-                    <span>+56 9 4722 9108</span>
-                </div>
-                <button class="mt-4 bg-white text-red-600 font-bold py-2 px-4 rounded"><a href="#">Contáctanos</a></button>
-            </div>
-            
-            <!-- Nosotros -->
-            <div>
-                <h3 class="font-semibold mb-2">Nosotros</h3>
-                <ul class="space-y-1">
-                    <li><a href="#" class="hover:underline">Quiénes Somos</a></li>
-                    <li><a href="#" class="hover:underline">Tiendas</a></li>
-                    <li><a href="#" class="hover:underline">Canal de Denuncias</a></li>
-                </ul>
-            </div>
-            
-            <!-- Ayuda -->
-            <div>
-                <h3 class="font-semibold mb-2">Ayuda</h3>
-                <ul class="space-y-1">
-                    <li><a href="#" class="hover:underline">FAQ</a></li>
-                    <li><a href="#" class="hover:underline">¿Cómo Comprar?</a></li>
-                    <li><a href="#" class="hover:underline">Condiciones de despacho</a></li>
-                    <li><a href="#" class="hover:underline">Seguimiento de Compra</a></li>
-                </ul>
-            </div>
-            
-            <!-- Categorías -->
-            <div>
-                <h3 class="font-semibold mb-2">Categorías</h3>
-                <ul class="space-y-1">
-                    <li><a href="#" class="hover:underline">Herramientas de Construcción</a></li>
-                    <li><a href="#" class="hover:underline">Herramientas de Aseo y Jardín</a></li>
-                    <li><a href="#" class="hover:underline">Insumos y Accesorios</a></li>
-                    <li><a href="#" class="hover:underline">Pinturas</a></li>
-                </ul>
-            </div>
-            
-            <!-- Legal -->
-            <div>
-                <h3 class="font-semibold mb-2">Legal</h3>
-                <ul class="space-y-1">
-                    <li><a href="#" class="hover:underline">Términos y condiciones</a></li>
-                    <li><a href="#" class="hover:underline">Política de garantía y devoluciones</a></li>
-                    <li><a href="#" class="hover:underline">Políticas de cookies</a></li>
-                    <li><a href="#" class="hover:underline">Políticas de privacidad</a></li>
-                </ul>
-                <div class="mt-4">
-                    <!-- Placeholder de imagen SSL si no usas Django static files -->
-                    <img src="https://placehold.co/100x40/000000/FFFFFF?text=SSL" alt="SSL" class="h-10">
-                </div>
-            </div>
-        </div>
+        <!-- Contenido del footer -->
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Función para el sidebar de categorías (necesita ser implementada si no usas Django)
-        function toggleCategorias() {
-            const sidebar = document.getElementById('categoriasSidebar');
-            sidebar.classList.toggle('-translate-x-full');
+    function toggleCategorias() {
+        const sidebar = document.getElementById('categoriasSidebar');
+        sidebar.classList.toggle('-translate-x-full');
+    }
+
+    const API_BASE_URL = 'http://localhost:3000';
+    const API_KEY_FOR_REGISTRATION = 'Admin1234';
+
+    const registroForm = document.getElementById('registroForm');
+    const errorMessageDiv = document.getElementById('errorMessage');
+    const successMessageDiv = document.getElementById('successMessage');
+
+    // Regex para validaciones
+    const correoRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const telefonoRegex = /^[0-9]{9}$/;
+    const nombreApellidoRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+
+    function showMessage(element, message) {
+        errorMessageDiv.style.display = 'none';
+        successMessageDiv.style.display = 'none';
+        element.textContent = message;
+        element.style.display = 'block';
+    }
+
+    registroForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        
+        // Recolectar datos del formulario
+        const rut = document.getElementById('rut').value.trim();
+        const nombre = document.getElementById('nombre').value.trim();
+        const appaterno = document.getElementById('appaterno').value.trim();
+        const apmaterno = document.getElementById('apmaterno').value.trim();
+        const correo = document.getElementById('correo').value.trim();
+        const contrasena = document.getElementById('contrasena').value;
+        const confirmContrasena = document.getElementById('confirmContrasena').value;
+        const genero = document.getElementById('genero').value;
+        const fec_nac = document.getElementById('fec_nac').value;
+        const telefono = document.getElementById('telefono').value.trim();
+        const direccion = document.getElementById('direccion').value.trim();
+        const tipo_persona = document.getElementById('tipo_persona').value;
+
+        // --- VALIDACIONES ---
+        if (!rut || !nombre || !appaterno || !apmaterno || !correo || !contrasena || !confirmContrasena || !genero || !fec_nac || !telefono || !direccion || !tipo_persona) {
+            return showMessage(errorMessageDiv, 'Por favor, completa todos los campos obligatorios.');
         }
-
-        const API_BASE_URL = 'http://localhost:3000'; // Asegúrate de que esta URL sea correcta para tu API
-        const API_KEY_FOR_REGISTRATION = 'Admin1234'; // Tu API Key estática para el registro
-
-        const registroForm = document.getElementById('registroForm');
-        const errorMessageDiv = document.getElementById('errorMessage');
-        const successMessageDiv = document.getElementById('successMessage');
-
-        // Referencias a los campos del formulario
-        const rutInput = document.getElementById('rut');
-        const nombreInput = document.getElementById('nombre');
-        const appaternoInput = document.getElementById('appaterno');
-        const apmaternoInput = document.getElementById('apmaterno');
-        const correoInput = document.getElementById('correo');
-        const contrasenaInput = document.getElementById('contrasena');
-        const confirmContrasenaInput = document.getElementById('confirmContrasena');
-        const generoInput = document.getElementById('genero');
-        const fecNacInput = document.getElementById('fec_nac');
-        const telefonoInput = document.getElementById('telefono');
-        const direccionInput = document.getElementById('direccion');
-        const tipoPersonaInput = document.getElementById('tipo_persona');
-
-        // Función para mostrar mensajes
-        function showMessage(element, message) {
-            errorMessageDiv.style.display = 'none';
-            successMessageDiv.style.display = 'none';
-
-            element.textContent = message;
-            element.style.display = 'block';
+        // Se ha quitado la validación de formato para el RUT, según lo solicitado.
+        if (!nombreApellidoRegex.test(nombre) || !nombreApellidoRegex.test(appaterno) || !nombreApellidoRegex.test(apmaterno)) {
+            return showMessage(errorMessageDiv, 'Nombre y apellidos deben contener solo letras y espacios.');
         }
+        if (!correoRegex.test(correo)) {
+            return showMessage(errorMessageDiv, 'El correo no tiene un formato válido.');
+        }
+        if (contrasena.length < 8 || !/\d/.test(contrasena) || !/[A-Za-z]/.test(contrasena)) {
+            return showMessage(errorMessageDiv, 'La contraseña debe tener al menos 8 caracteres, incluyendo letras y números.');
+        }
+        if (contrasena !== confirmContrasena) {
+            return showMessage(errorMessageDiv, 'Las contraseñas no coinciden.');
+        }
+        if (!telefonoRegex.test(telefono)) {
+            return showMessage(errorMessageDiv, 'El teléfono debe contener 9 dígitos numéricos. Ej: 912345678');
+        }
+        const fechaNacimiento = new Date(fec_nac);
+        const hoy = new Date();
+        let edad = hoy.getFullYear() - fechaNacimiento.getFullYear();
+        const mesHoy = hoy.getMonth();
+        const diaHoy = hoy.getDate();
+        const mesNac = fechaNacimiento.getMonth();
+        const diaNac = fechaNacimiento.getDate();
+        if (mesHoy < mesNac || (mesHoy === mesNac && diaHoy < diaNac)) {
+            edad--;
+        }
+        if (edad < 14) {
+            return showMessage(errorMessageDiv, 'Debes tener al menos 14 años para registrarte.');
+        }
+        // --- FIN DE LAS VALIDACIONES ---
 
-        registroForm.addEventListener('submit', async (event) => {
-            event.preventDefault(); // Evitar el envío predeterminado del formulario
+        // Construir el objeto de datos para la API
+        const personaData = {
+            rut,
+            nombre,
+            appaterno,
+            apmaterno,
+            correo,
+            contrasena,
+            genero,
+            fec_nac,
+            telefono,
+            direccion,
+            tipo_persona
+        };
 
-            // Limpiar mensajes anteriores
-            errorMessageDiv.style.display = 'none';
-            successMessageDiv.style.display = 'none';
+        try {
+            const response = await fetch(`${API_BASE_URL}/personas`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-api-key': API_KEY_FOR_REGISTRATION
+                },
+                body: JSON.stringify(personaData)
+            });
 
-            // Recolectar datos del formulario
-            const rut = rutInput.value.trim();
-            const nombre = nombreInput.value.trim();
-            const appaterno = appaternoInput.value.trim();
-            const apmaterno = apmaternoInput.value.trim();
-            const correo = correoInput.value.trim();
-            const contrasena = contrasenaInput.value; // No trim password
-            const confirmContrasena = confirmContrasenaInput.value; // No trim password
-            const genero = generoInput.value;
-            const fec_nac = fecNacInput.value;
-            const telefono = telefonoInput.value.trim();
-            const direccion = direccionInput.value.trim();
-            const tipo_persona = tipoPersonaInput.value;
+            const data = await response.json();
 
-            // Validaciones básicas del lado del cliente
-            if (!rut || !nombre || !appaterno || !apmaterno || !correo || !contrasena || !confirmContrasena || !genero || !fec_nac || !telefono || !direccion || !tipo_persona) {
-                showMessage(errorMessageDiv, 'Por favor, completa todos los campos obligatorios.');
-                return;
+            if (response.ok) {
+                showMessage(successMessageDiv, 'Usuario creado exitosamente.');
+                registroForm.reset();
+            } else {
+                showMessage(errorMessageDiv, data.error || data.mensaje || 'Error al registrar usuario.');
             }
-
-            if (contrasena !== confirmContrasena) {
-                showMessage(errorMessageDiv, 'Las contraseñas no coinciden.');
-                return;
-            }
-
-            // Construir el objeto de datos para la API
-            const personaData = {
-                rut,
-                nombre,
-                appaterno,
-                apmaterno,
-                correo,
-                contrasena, // La API se encargará de hashear esto
-                genero,
-                fec_nac,
-                telefono,
-                direccion,
-                tipo_persona
-            };
-
-            try {
-                const response = await fetch(`${API_BASE_URL}/personas`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'x-api-key': API_KEY_FOR_REGISTRATION // Usar la API Key para autenticar el registro
-                    },
-                    body: JSON.stringify(personaData)
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    showMessage(successMessageDiv, data.mensaje || 'Registro exitoso.');
-                    registroForm.reset(); // Limpiar el formulario
-                    // Opcional: Redirigir al usuario a la página de inicio de sesión
-                    // setTimeout(() => {
-                    //     window.location.href = 'login.html';
-                    // }, 2000);
-                } else {
-                    showMessage(errorMessageDiv, data.error || data.mensaje || 'Error al registrar usuario.');
-                }
-            } catch (error) {
-                console.error('Error de red o del servidor:', error);
-                showMessage(errorMessageDiv, 'No se pudo conectar con el servidor. Inténtalo más tarde.');
-            }
-        });
-
-        // Simula la función toggleCategorias si no estás usando Django para el sidebar
-        // Si usas el JS de Django, puedes eliminar esta función.
-        // function toggleCategorias() {
-        //     const sidebar = document.getElementById('categoriasSidebar');
-        //     sidebar.classList.toggle('-translate-x-full');
-        // }
-    </script>
-
+        } catch (error) {
+            console.error('Error de red o del servidor:', error);
+            showMessage(errorMessageDiv, 'No se pudo conectar con el servidor.');
+        }
+    });
+</script>
 </body>
 </html>
