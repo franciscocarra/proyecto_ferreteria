@@ -234,20 +234,24 @@ document.addEventListener("DOMContentLoaded", function() {
         }
 
         // Construir los query params (FastAPI espera params en POST)
-        const params = new URLSearchParams({
+        const datosProducto = {
             nombre_producto: nombre,
             marca: marca,
             descripcion: descripcion,
-            precio: precio,
-            stock: stock,
+            precio: parseFloat(precio), // Asegurarse de que el precio sea un número
+            stock: parseInt(stock),     // Asegurarse de que el stock sea un número entero
             estado_producto: estado,
             imagen_url: imagen_url
-        });
+        };
 
         try {
-            // Hacer POST a la API
-            const respuesta = await fetch(`http://127.0.0.1:8001/productos?${params.toString()}`, {
-                method: "POST"
+            // 2. Hacer POST a la API enviando los datos en el body
+            const respuesta = await fetch('http://127.0.0.1:8001/productos/', { // URL sin parámetros
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json' // Especificar el tipo de contenido
+                },
+                body: JSON.stringify(datosProducto) // Convertir el objeto a un string JSON
             });
 
             if (respuesta.ok) {
